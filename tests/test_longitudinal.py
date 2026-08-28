@@ -70,6 +70,25 @@ class LongitudinalValidationTests(unittest.TestCase):
                 "total": 1559,
             },
         )
+    def test_whitespace_normalization_in_diagnostics(self):
+        from src.build_dataset.monthly import _pair_summary
+        earlier = "2024-07"
+        later = "2024-08"
+        rows = {
+            earlier: [
+                {"project_code": "1", "project_name": "A", "agency": "A", "ministry": "A", "sector": "COAL", "state": "BIHAR", "revised_cost": "", "cumulative_expenditure": "", "physical_progress": ""},
+            ],
+            later: [
+                {"project_code": "1", "project_name": "A", "agency": "A", "ministry": "A", "sector": "COAL ", "state": " BIHAR ", "revised_cost": "", "cumulative_expenditure": "", "physical_progress": ""},
+            ]
+        }
+        summary = _pair_summary(earlier, later, rows)
+        self.assertEqual(summary["identity_field_change_counts"]["sector"], 0)
+        self.assertEqual(summary["identity_field_change_counts"]["state"], 0)
+        self.assertEqual(summary["identity_field_change_counts"]["sector_exact"], 1)
+        self.assertEqual(summary["identity_field_change_counts"]["state_exact"], 1)
+        self.assertEqual(rows[later][0]["sector"], "COAL ")
+        self.assertEqual(rows[later][0]["state"], " BIHAR ")
 
 
 if __name__ == "__main__":

@@ -2,25 +2,28 @@
 
 ## Current exact state
 
-The accepted ongoing-project extraction covers **2024-10 through 2026-07**, inclusive: 22 monthly reports.
+The accepted ongoing-project extraction covers **2024-07 through 2026-07**, inclusive: 25 monthly reports.
 
-- Project-month observations: **33,794**
-- Unique source-reported project identifiers: **4,104**
+- Project-month observations: **39,162**
+- Unique source-reported project identifiers: **4,217**
 - Missing project codes: **0**
 - Duplicate `(project_code, report_month)` keys: **0**
-- Projects with at least 3 observations: **3,914**
-- Projects with at least 6 observations: **3,574**
-- Projects with at least 10 observations: **719**
-- Projects with at least 12 observations: **629**
+- Projects with at least 3 observations: **4,039**
+- Projects with at least 6 observations: **3,658**
+- Projects with at least 10 observations: **2,267**
+- Projects with at least 12 observations: **2,043**
 - Projects with at least 18 observations: **0**, because the identifier system changes between June and July 2025
 - Combined file: `data/processed/projects_monthly.csv`
-- Accepted combined SHA-256: `A3DC4F46C3B382AC2A36DDAF8BE70162F6D1D8857795CF39294F63D2E0310F2B`
-- Current regression suite: **70/70 passing**
+- Accepted combined SHA-256: `16147C02F8C67F35CF814E4ACDE03F0B777B205D7B50B589CEB5BFA67C58BB99`
+- Current regression suite: **76/76 passing**
 
 Monthly row counts are:
 
 | Month | Rows | Layout |
 |---|---:|---|
+| 2024-07 | 1,793 | `legacy-all-ongoing-nine-column-v1` |
+| 2024-08 | 1,783 | `legacy-all-ongoing-nine-column-v1` |
+| 2024-09 | 1,792 | `legacy-all-ongoing-nine-column-v1` |
 | 2024-10 | 1,747 | `legacy-all-ongoing-nine-column-v1` |
 | 2024-11 | 1,742 | `legacy-all-ongoing-nine-column-progress-only-v1` |
 | 2024-12 | 1,724 | `legacy-all-ongoing-nine-column-v1` |
@@ -44,13 +47,13 @@ Monthly row counts are:
 | 2026-06 | 1,847 | `table6-eight-column-v1` |
 | 2026-07 | 1,775 | `table6-eight-column-v1` |
 
-The authoritative machine-readable current summaries are `data/validation/combined_summary.json` and `data/validation/longitudinal_summary_2024_10_2026_07.json`.
+The authoritative machine-readable current summaries are `data/validation/combined_summary.json` and `data/validation/longitudinal_summary_2024_07_2026_07.json`.
 
 ## Layouts and adapters
 
 Four layouts are accepted:
 
-1. `legacy-all-ongoing-nine-column-v1` - October and December 2024 plus January-June 2025. These reports call the project list Table 7 and provide State and Sector separately. They do not provide Ministry or Start Date. Project cells use legacy `N########` or nine-digit-style identifiers. Original/revised/anticipated triplets are parsed without promoting anticipated values to revised fields. January and March 2025 require comparison-only whitespace compaction for character-spaced dates and accept the printed `Mon-YY` convention; raw date text remains unchanged.
+1. `legacy-all-ongoing-nine-column-v1` - July 2024 to October 2024, December 2024 plus January-June 2025. These reports call the project list Table 7 and provide State and Sector separately. They do not provide Ministry or Start Date. Project cells use legacy `N########` or nine-digit-style identifiers. Original/revised/anticipated triplets are parsed without promoting anticipated values to revised fields. January and March 2025 require comparison-only whitespace compaction for character-spaced dates and accept the printed `Mon-YY` convention; raw date text remains unchanged. August 2024 features headerless continuation pages (7, 8, and 9 columns) which are normalized internally by carrying forward State and Sector text extracted from margins or prior pages.
 2. `legacy-all-ongoing-nine-column-progress-only-v1` - November 2024. This narrowly scoped legacy variant prints `Progress (%)` instead of `Physical Progress (%)` while retaining the full verified positional header structure.
 3. `table6-eight-column-approval-only-v1` - July 2025. This report legitimately omits Start Date; `start_date` must remain missing.
 4. `table6-eight-column-v1` - August 2025-July 2026. This is the standard accepted eight-column Table 6 layout.
@@ -78,7 +81,7 @@ Detailed evidence and manual comparisons are in `reports/id_crosswalk_june_july_
 
 ## Last completed task
 
-The last completed task was the October-December 2024 extraction and explicit rebuild through July 2026. October and December used the existing legacy nine-column layout. November required the narrowly scoped `legacy-all-ongoing-nine-column-progress-only-v1` selector because its final header is printed `Progress (%)`. All three months passed structural, parse, provenance, warning, and manual PDF checks; the 19 older monthly hashes remained unchanged. Detailed results are in `reports/extraction_acceptance_2024_10_to_2026_07.md`.
+The last completed task was the focused August 2024 State/Sector spatial reconstruction and full 25-month dataset rebuild through July 2026. This corrected earlier margin association issues by introducing a spatial grid extraction model for 7, 8, and 9-column continuation pages bound to row-level bounding boxes, properly merged multiline group fragments, and resolved false North-East banner exclusions. August 2024 extracts 1,783 rows with 100% continuous serials (1 to 1783), 0 missing IDs, 0 duplicate keys, and 76/76 regression tests passing.
 
 ## Next planned task
 
@@ -90,7 +93,7 @@ Recommended order for a new agent with no chat history:
 
 1. `AGENTS.md` - durable repository rules and safe commands.
 2. `README.md` - short pipeline overview.
-3. `reports/extraction_acceptance_2024_10_to_2026_07.md` - current accepted 22-month extraction, row counts, warnings, layout, manual checks, continuity, and hash.
+3. `reports/extraction_acceptance_2024_07_to_2026_07.md` - current accepted 25-month extraction, row counts, warnings, layout, manual checks, continuity, and hash.
 4. `reports/id_crosswalk_june_july_2025.md` - identifier redesign investigation and limitations.
 5. `reports/data_dictionary.md` and `schemas/project_month.schema.json` - canonical fields. Note that the JSON schema's six-digit `project_code` regex predates the accepted legacy IDs; production validation in `src/validation/core.py` accepts all source formats.
 6. `reports/validation_rules.md` - cross-field warning meanings and QC-only metrics.
@@ -103,15 +106,26 @@ Recommended order for a new agent with no chat history:
 
 Earlier acceptance reports remain useful for incremental history:
 
+- `reports/extraction_acceptance_2024_10_to_2026_07.md`
 - `reports/extraction_acceptance_2025_07_to_2026_07.md`
 - `reports/extraction_acceptance_2025_10_to_2026_07.md`
 - `reports/longitudinal_warning_diagnostic_2026_01_07.md`
 
 Do not copy their large tables into new reports; link to them and record only new deltas.
 
+## Useful facts for new reports
+
+- Serial continuity is reported per monthly manifest and is an invariant across normal tables.
+- A duplicate key in the source data is preserved and written to `duplicates_YYYY_MM.csv`. It is not silently deduplicated.
+- A project at 100% progress may still appear in the ongoing table; the validator flags but retains it.
+- `qc_metrics` contains derived financial progress and physical-financial gap only for validation. Those fields are deliberately absent from canonical data.
+- `src/build_dataset/monthly.py` has an old default month list of January-July 2026. Always pass the complete explicit ordered month list.
+- The extraction CLI combines only PDFs processed in that invocation. Running it against a single PDF would replace `projects_monthly.csv` with that invocation's rows; use `process_pdf` directly for single-month acceptance work.
+- The repository has an unrelated untracked archive `IRIS_data_2025_2026.7z`. Preserve it and do not stage, modify, or delete it without instruction.
+
 ## Known source and implementation quirks
 
-- October 2024-June 2025 are legacy Table 7 reports, not the later Table 6 layout.
+- July 2024-June 2025 are legacy Table 7 reports, not the later Table 6 layout.
 - November 2024 uniquely prints `Progress (%)`; its narrow adapter still requires the complete verified legacy header signature.
 - January and March embed some date strings with spaces between characters and use `Mon-YY`. Parser-only compaction is covered by regression tests; `*_raw` values remain source faithful.
 - Legacy reports omit Start Date and Ministry. Missing values are intentional and must not be inferred.
@@ -119,7 +133,7 @@ Do not copy their large tables into new reports; link to them and record only ne
 - July 2025 is an approval-only layout and legitimately lacks Start Date.
 - June-July 2025 has a source identifier redesign, so ordinary exact-code overlap is zero.
 - Some pages produce an extra enclosing two-column table with implausible geometry. It is logged and ignored only because it fails the semantic header signature.
-- Fourteen accepted non-project rows from October 2025-May 2026 are rejected as `empty_table_row`; these counts are stable. October 2024-June 2025 have zero rejected rows.
+- Fourteen accepted non-project rows from October 2025-May 2026 are rejected as `empty_table_row`; these counts are stable. July 2024-June 2025 have zero rejected rows.
 - Project names, agency labels, sector labels, state strings, revised costs, expenditure, progress, and dates can change between reports. Preserve them and emit warnings; do not normalize the source layer.
 - May-June and June-July 2026 have large longitudinal warning counts, particularly agency/name label changes. These were diagnosed rather than corrected; read the longitudinal diagnostic report.
 - Positive expenditure can become zero and physical progress can decrease in later reports. These are retained source states, not imputation/correction requests.
@@ -141,12 +155,12 @@ Get-Content -Raw data/validation/combined_summary.json
 Get-Content -Raw data/validation/id_crosswalk_summary_june_july_2025.json
 ```
 
-Expected test result: **70 tests, OK**.
+Expected test result: **76 tests, OK**.
 
 Expected combined SHA-256:
 
 ```text
-A3DC4F46C3B382AC2A36DDAF8BE70162F6D1D8857795CF39294F63D2E0310F2B
+16147C02F8C67F35CF814E4ACDE03F0B777B205D7B50B589CEB5BFA67C58BB99
 ```
 
 Before any new extraction, also capture all accepted monthly CSV hashes:
@@ -158,7 +172,7 @@ Get-FileHash data/cleaned/projects_*.csv -Algorithm SHA256 | Sort-Object Path
 To rebuild only after every new month has passed individual acceptance, use the complete explicit month list, extending it at the beginning as authorized:
 
 ```powershell
-python -m src.build_dataset.monthly --months 2024-10 2024-11 2024-12 2025-01 2025-02 2025-03 2025-04 2025-05 2025-06 2025-07 2025-08 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03 2026-04 2026-05 2026-06 2026-07
+python -m src.build_dataset.monthly --months 2024-07 2024-08 2024-09 2024-10 2024-11 2024-12 2025-01 2025-02 2025-03 2025-04 2025-05 2025-06 2025-07 2025-08 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03 2026-04 2026-05 2026-06 2026-07
 ```
 
 Do not run this rebuild merely as a health check because it writes generated data. Tests and hashes are the non-mutating health checks.

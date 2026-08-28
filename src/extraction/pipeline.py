@@ -255,7 +255,13 @@ def _is_table6_page(text: str) -> bool:
             "progress",
         )
     )
-    return current or legacy
+    first_lines = " ".join(normalize_space(line).lower() for line in (text or "").splitlines()[:2])
+    legacy_continuation = (
+        "project list: ongoing projects as of" in first_lines
+        and "north-east" not in first_lines
+        and "north east" not in first_lines
+    )
+    return current or legacy or legacy_continuation
 
 
 def _detect_report_month(text: str, filename: str) -> str:
@@ -310,6 +316,7 @@ def _table_candidate_audit(
     page_number: int,
     page_width: float,
     page_height: float,
+    legacy_header_established: bool = False,
 ) -> tuple[list[list[str | None]], dict[str, Any]]:
     """Assess one detected table against the canonical positional signature."""
     data = table.extract()
@@ -328,13 +335,23 @@ def _table_candidate_audit(
     header = data[0] if data else []
     layout_version = None
     layout_version, header_reasons = _classify_table6_header(header)
-    reasons.extend(header_reasons)
+    is_legacy_continuation = False
+    
+    if layout_version is None and legacy_header_established and column_count in (7, 8, 9):
+        layout_version = "legacy-all-ongoing-nine-column-v1"
+        is_legacy_continuation = True
+    else:
+        reasons.extend(header_reasons)
 
     serial_column = 2 if layout_version in LEGACY_LAYOUTS else 0
-    expected_columns = len(TABLE6_LAYOUT_SIGNATURES[layout_version]) if layout_version else 0
+    if is_legacy_continuation:
+        serial_column = 2 if column_count == 9 else (0 if column_count == 7 else 1)
+        
+    expected_columns = len(TABLE6_LAYOUT_SIGNATURES[layout_version]) if layout_version and not is_legacy_continuation else column_count
+    start_row = 0 if is_legacy_continuation else 1
     project_rows = sum(
         bool(row) and len(row) == expected_columns and normalize_space(row[serial_column]).isdigit()
-        for row in data[1:]
+        for row in data[start_row:]
     )
     if project_rows == 0:
         reasons.append("no rows with a numeric serial in the first column")
@@ -356,13 +373,13 @@ def _table_candidate_audit(
 
 
 def _select_table6_candidate(
-    tables: list[Any], page_number: int, page_width: float, page_height: float
+    tables: list[Any], page_number: int, page_width: float, page_height: float, legacy_header_established: bool = False
 ) -> tuple[list[list[str | None]], int, list[dict[str, Any]]]:
     """Select exactly one semantic Table 6 candidate or fail closed."""
     extracted: list[list[list[str | None]]] = []
     audits: list[dict[str, Any]] = []
     for table_index, table in enumerate(tables):
-        data, audit = _table_candidate_audit(table, table_index, page_number, page_width, page_height)
+        data, audit = _table_candidate_audit(table, table_index, page_number, page_width, page_height, legacy_header_established)
         extracted.append(data)
         audits.append(audit)
     matching = [audit["table_index"] for audit in audits if audit["matches_table6_signature"]]
@@ -377,14 +394,14 @@ def _select_table6_candidate(
 
 
 def _locate_table6_candidate(
-    page: Any, page_number: int
+    page: Any, page_number: int, legacy_header_established: bool = False
 ) -> tuple[list[list[str | None]], int, str, list[dict[str, Any]], list[list[list[str | None]]]]:
     """Find the canonical table, retrying inside the page frame only after zero full-page matches."""
     full_tables = page.find_tables(TABLE_SETTINGS)
     full_extracted = [table.extract() for table in full_tables]
     try:
         table, selected_index, audits = _select_table6_candidate(
-            full_tables, page_number, float(page.width), float(page.height)
+            full_tables, page_number, float(page.width), float(page.height), legacy_header_established
         )
         for audit in audits:
             audit["detection_pass"] = "full_page"
@@ -403,7 +420,7 @@ def _locate_table6_candidate(
     inset_extracted = [table.extract() for table in inset_tables]
     try:
         table, selected_index, inset_audits = _select_table6_candidate(
-            inset_tables, page_number, float(page.width), float(page.height)
+            inset_tables, page_number, float(page.width), float(page.height), legacy_header_established
         )
     except TableCandidateSelectionError as inset_error:
         for audit in inset_error.audits:
@@ -431,30 +448,59 @@ def _normalize_cell(value: str | None) -> str:
     return "\n".join(normalize_space(line) for line in (value or "").splitlines() if normalize_space(line))
 
 
-def _legacy_group_cells(page: Any, selection_pass: str, selected_index: int) -> list[tuple[str, str]]:
-    """Recover State/Sector text split by underlines inside visually merged cells."""
+def _legacy_group_cells(page: Any, selection_pass: str, selected_index: int, is_continuation: bool = False, col_count: int = 9) -> list[tuple[str, str]]:
+    """Recover State/Sector text split by underlines inside visually merged cells or continuation margins."""
     source = page
     if selection_pass == "page_frame_excluded":
         inset = float(page.width) * PAGE_FRAME_EXCLUSION_RATIO
         source = page.crop((inset, 0, float(page.width) - inset, float(page.height)))
     table = source.find_tables(TABLE_SETTINGS)[selected_index]
-    header_cells = table.rows[0].cells
-    columns = [header_cells[0], header_cells[1]]
     recovered: list[tuple[str, str]] = []
-    row_tops = [min(cell[1] for cell in row.cells if cell is not None) for row in table.rows]
-    for row_index, row in enumerate(table.rows):
-        boxes = [cell for cell in row.cells if cell is not None]
+
+    if not is_continuation and col_count == 9:
+        header_cells = table.rows[0].cells
+        columns = [header_cells[0], header_cells[1]]
+        row_tops = [min(cell[1] for cell in row.cells if cell is not None) for row in table.rows]
+        for row_index, row in enumerate(table.rows):
+            boxes = [cell for cell in row.cells if cell is not None]
+            if not boxes:
+                recovered.append(("", ""))
+                continue
+            top = row_tops[row_index]
+            bottom = row_tops[row_index + 1] if row_index + 1 < len(row_tops) else float(table.bbox[3])
+            values = []
+            for column in columns:
+                assert column is not None
+                bbox = (column[0] + 0.2, top + 0.2, column[2] - 0.2, bottom - 0.2)
+                values.append(_normalize_cell(page.crop(bbox).extract_text() or ""))
+            recovered.append((values[0], values[1]))
+        return recovered
+
+    words = page.extract_words()
+    page_words = [w for w in words if 80 < w["top"] < 750 and w["text"].lower() not in ("state", "sector", "sl", "no.", "table:-7.", "mospi_")]
+    sl_idx = 2 if col_count == 9 else (1 if col_count == 8 else 0)
+
+    for row in table.rows:
+        boxes = [cell for cell in row.cells[sl_idx:] if cell is not None]
+        if not boxes:
+            boxes = [cell for cell in row.cells if cell is not None]
         if not boxes:
             recovered.append(("", ""))
             continue
-        top = row_tops[row_index]
-        bottom = row_tops[row_index + 1] if row_index + 1 < len(row_tops) else float(table.bbox[3])
-        values = []
-        for column in columns:
-            assert column is not None
-            bbox = (column[0] + 0.2, top + 0.2, column[2] - 0.2, bottom - 0.2)
-            values.append(_normalize_cell(page.crop(bbox).extract_text() or ""))
-        recovered.append((values[0], values[1]))
+        r_top = min(b[1] for b in boxes)
+        r_bottom = max(b[3] for b in boxes)
+
+        s_words = [w for w in page_words if 30.0 <= w["x0"] < 81.5 and r_top - 2.5 <= w["top"] <= r_bottom - 1.5]
+        sec_words = [w for w in page_words if 81.5 <= w["x0"] < 132.0 and r_top - 2.5 <= w["top"] <= r_bottom - 1.5]
+
+        s_words.sort(key=lambda w: (w["top"], w["x0"]))
+        sec_words.sort(key=lambda w: (w["top"], w["x0"]))
+
+        s_text = " ".join(w["text"] for w in s_words) if s_words else ""
+        sec_text = " ".join(w["text"] for w in sec_words) if sec_words else ""
+
+        recovered.append((_normalize_cell(s_text), _normalize_cell(sec_text)))
+
     return recovered
 
 
@@ -623,10 +669,11 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
         LOGGER.info("Detected Table 6 pages: %s-%s", table_pages[0], table_pages[-1])
 
         raw_sequence = 0
+        legacy_header_established = False
         for page_number in table_pages:
             page = pdf.pages[page_number - 1]
             try:
-                table, selected_table_index, selection_pass, table_audits, extracted_tables = _locate_table6_candidate(page, page_number)
+                table, selected_table_index, selection_pass, table_audits, extracted_tables = _locate_table6_candidate(page, page_number, legacy_header_established)
             except TableCandidateSelectionError as exc:
                 message = str(exc)
                 raw_pages.append(
@@ -680,34 +727,59 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
                     "page_text": dict(page_texts)[page_number],
                 }
             )
+            is_legacy_continuation = False
             try:
                 layout_version = _validate_header(table[0])
+                if layout_version in LEGACY_LAYOUTS:
+                    legacy_header_established = True
             except SchemaChangeDetected as exc:
-                _write_schema_failure(
-                    extracted_dir,
-                    pdf_path.name,
-                    page_number,
-                    dict(page_texts)[page_number],
-                    extracted_tables,
-                    str(exc),
-                    raw_rows,
-                    raw_pages,
-                    table_audits,
-                )
-                raise
+                if legacy_header_established and len(table[0]) in (7, 8, 9):
+                    layout_version = "legacy-all-ongoing-nine-column-v1"
+                    is_legacy_continuation = True
+                else:
+                    _write_schema_failure(
+                        extracted_dir,
+                        pdf_path.name,
+                        page_number,
+                        dict(page_texts)[page_number],
+                        extracted_tables,
+                        str(exc),
+                        raw_rows,
+                        raw_pages,
+                        table_audits,
+                    )
+                    raise
             layout_versions.add(layout_version)
             raw_pages[-1]["layout_version"] = layout_version
-            removed_counts["repeated_header"] += 1
-            legacy_groups = (
-                _legacy_group_cells(page, selection_pass, selected_table_index)
-                if layout_version in LEGACY_LAYOUTS
-                else []
-            )
-            for page_row_number, source_row in enumerate(table[1:], 1):
+            
+            if is_legacy_continuation:
+                legacy_groups = _legacy_group_cells(page, selection_pass, selected_table_index, is_continuation=True, col_count=len(table[0]))
+                start_row = 0
+            else:
+                removed_counts["repeated_header"] += 1
+                legacy_groups = (
+                    _legacy_group_cells(page, selection_pass, selected_table_index, is_continuation=False, col_count=len(table[0]))
+                    if layout_version in LEGACY_LAYOUTS
+                    else []
+                )
+                start_row = 1
+
+            for page_row_number, source_row in enumerate(table[start_row:], start_row):
                 raw_sequence += 1
                 cells = [_normalize_cell(cell) for cell in source_row]
+                
+                if is_legacy_continuation:
+                    if len(cells) == 7:
+                        cells = ["", ""] + cells
+                    elif len(cells) == 8:
+                        cells = ["", ""] + cells[1:]
+                
                 if legacy_groups:
-                    cells[0], cells[1] = legacy_groups[page_row_number]
+                    s_rec, sec_rec = legacy_groups[page_row_number]
+                    if s_rec:
+                        cells[0] = s_rec
+                    if sec_rec:
+                        cells[1] = sec_rec
                 raw = {
                     "raw_sequence": raw_sequence,
                     "source_file": pdf_path.name,

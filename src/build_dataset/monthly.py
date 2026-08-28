@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -45,6 +46,10 @@ def _expenditure_state(value: str) -> str:
     return "negative"
 
 
+def _normalize_diagnostic(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
+
+
 def _pair_summary(earlier: str, later: str, rows_by_month: dict[str, list[dict[str, str]]]) -> dict[str, Any]:
     left = {row["project_code"]: row for row in rows_by_month[earlier]}
     right = {row["project_code"]: row for row in rows_by_month[later]}
@@ -61,14 +66,26 @@ def _pair_summary(earlier: str, later: str, rows_by_month: dict[str, list[dict[s
     )
     identity_changes = {
         field: sum(left[code][field] != right[code][field] for code in both)
-        for field in ("project_name", "agency", "ministry", "sector", "state")
+        for field in ("project_name", "agency", "ministry")
     }
+    for field in ("sector", "state"):
+        identity_changes[field] = sum(
+            _normalize_diagnostic(left[code][field]) != _normalize_diagnostic(right[code][field])
+            for code in both
+        )
+        identity_changes[f"{field}_exact"] = sum(
+            left[code][field] != right[code][field] for code in both
+        )
     warning_counts = {
         "revised_cost_decreased": numeric_changes["revised_cost"].get("decreased", 0),
         "cumulative_expenditure_decreased": numeric_changes["cumulative_expenditure"].get("decreased", 0),
         "physical_progress_decreased": numeric_changes["physical_progress"].get("decreased", 0),
         "positive_to_zero_expenditure": expenditure_transitions.get("positive_to_zero", 0),
-        **{f"{field}_changed": count for field, count in identity_changes.items()},
+        "project_name_changed": identity_changes["project_name"],
+        "agency_changed": identity_changes["agency"],
+        "ministry_changed": identity_changes["ministry"],
+        "sector_changed": identity_changes["sector"],
+        "state_changed": identity_changes["state"],
     }
     warning_counts["total"] = sum(warning_counts.values())
     return {

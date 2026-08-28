@@ -131,6 +131,45 @@ class TableSelectionRegressionTests(unittest.TestCase):
         with self.assertRaisesRegex(TableCandidateSelectionError, "found 0"):
             _select_table6_candidate([wrong], 1, 600, 800)
 
+    def test_legacy_continuation_accepts_7_column_without_header(self):
+        # 7 columns
+        table = FakeTable([["1"] + ["value"] * 6])
+        data, index, audits = _select_table6_candidate([table], 1, 600, 800, legacy_header_established=True)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(len(data[0]), 7)
+        self.assertEqual(audits[0]["layout_version"], "legacy-all-ongoing-nine-column-v1")
+
+    def test_legacy_continuation_accepts_8_column_without_header(self):
+        table = FakeTable([["Sector", "2"] + ["value"] * 6])
+        data, index, audits = _select_table6_candidate([table], 1, 600, 800, legacy_header_established=True)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(len(data[0]), 8)
+        self.assertEqual(audits[0]["layout_version"], "legacy-all-ongoing-nine-column-v1")
+
+    def test_legacy_continuation_accepts_9_column_without_header(self):
+        table = FakeTable([["State", "Sector", "3"] + ["value"] * 6])
+        data, index, audits = _select_table6_candidate([table], 1, 600, 800, legacy_header_established=True)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(len(data[0]), 9)
+        self.assertEqual(audits[0]["layout_version"], "legacy-all-ongoing-nine-column-v1")
+
+    def test_legacy_continuation_without_established_header_fails_closed(self):
+        table_7 = FakeTable([["1"] + ["value"] * 6])
+        with self.assertRaisesRegex(TableCandidateSelectionError, "found 0"):
+            _select_table6_candidate([table_7], 1, 600, 800, legacy_header_established=False)
+        table_8 = FakeTable([["Sector", "1"] + ["value"] * 6])
+        with self.assertRaisesRegex(TableCandidateSelectionError, "found 0"):
+            _select_table6_candidate([table_8], 1, 600, 800, legacy_header_established=False)
+
+    def test_multiline_group_fragment_merging(self):
+        from src.extraction.pipeline import _merge_legacy_group_fragment
+        merged = _merge_legacy_group_fragment("HEALTH AND", "FAMILY WELFARE")
+        self.assertEqual(merged, "HEALTH AND FAMILY WELFARE")
+        merged_tele = _merge_legacy_group_fragment("TELECOMMUN", "ICATIONS")
+        self.assertEqual(merged_tele, "TELECOMMUN ICATIONS")
+        # Existing complete label not overwritten by duplicate fragment
+        self.assertEqual(_merge_legacy_group_fragment("ANDHRA PRADESH", "ANDHRA"), "ANDHRA PRADESH")
+
 
 if __name__ == "__main__":
     unittest.main()
