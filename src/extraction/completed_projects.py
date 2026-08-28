@@ -177,12 +177,53 @@ def is_table3_page(text: str) -> bool:
     Explicitly rejects North-Eastern region ongoing projects and general ongoing tables.
     """
     normalized = normalize_space(text).lower()
-    if "ongoing projects" in normalized or "north eastern region" in normalized or "north-east region" in normalized:
-        return False
-    
     legacy_match = "project list: completed during" in normalized
     seven_col_match = "completed projects during month" in normalized
-    return legacy_match or seven_col_match
+    if not (legacy_match or seven_col_match):
+        return False
+    if "ongoing projects" in normalized and ("table 3" in normalized or "table:-3" in normalized or "table-3" in normalized):
+        return False
+    return True
+
+
+def _get_page_sector_headings(page: Any, table: Any) -> list[tuple[float, str]]:
+    """Find all sector headings on the page with their top y-coordinate from Column 0 margin."""
+    headings: list[tuple[float, str]] = []
+    c0_hdr = table.rows[0].cells[0]
+    if not c0_hdr:
+        return []
+    x0_min, x0_max = c0_hdr[0] - 10, c0_hdr[2] + 10
+    y0_min = c0_hdr[3]
+    y0_max = table.bbox[3]
+    margin_words = [w for w in page.extract_words() if x0_min <= w["x0"] <= x0_max and y0_min <= w["top"] <= y0_max]
+    lines: list[tuple[float, str]] = []
+    curr_line: list[str] = []
+    curr_top: float | None = None
+    for w in sorted(margin_words, key=lambda x: (x["top"], x["x0"])):
+        if curr_top is None or abs(w["top"] - curr_top) < 6:
+            curr_line.append(w["text"])
+            curr_top = w["top"]
+        else:
+            lines.append((curr_top, " ".join(curr_line)))
+            curr_line = [w["text"]]
+            curr_top = w["top"]
+    if curr_line and curr_top is not None:
+        lines.append((curr_top, " ".join(curr_line)))
+    merged_lines: list[list[Any]] = []
+    for top, text in lines:
+        if not merged_lines:
+            merged_lines.append([top, text])
+        else:
+            prev_top, prev_text = merged_lines[-1]
+            if top - prev_top < 16:
+                merged_lines[-1][1] = f"{prev_text} {text}"
+            else:
+                merged_lines.append([top, text])
+    for top, text in merged_lines:
+        clean = normalize_space(text)
+        if clean and clean.lower() not in ("sector", "total"):
+            headings.append((top, clean))
+    return headings
 
 
 def classify_table3_header(row: list[str | None]) -> tuple[str | None, list[str]]:
@@ -407,6 +448,8 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
                 raise SchemaChangeDetected(f"Layout changed across pages in {pdf_path.name}: {detected_layout} -> {page_layout}")
 
             header_row = data[0]
+            table_obj = tables[selected_idx]
+            page_headings = _get_page_sector_headings(page, table_obj) if page_layout == LAYOUT_LEGACY_SIX_COLUMN else []
 
             for r_idx, row in enumerate(data[1:], start=1):
                 # Check for repeated header
@@ -434,6 +477,12 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
                         continue
 
                     # Canonical project row
+                    row_obj = table_obj.rows[r_idx]
+                    row_top = min(cell[1] for cell in row_obj.cells if cell is not None)
+                    applicable = [h for h in page_headings if h[0] <= row_top + 2]
+                    if applicable:
+                        current_sector = applicable[-1][1]
+
                     sector = c0 or current_sector
                     if not sector:
                         raise SchemaChangeDetected(f"Missing sector in legacy row: {row}")
@@ -579,25 +628,65 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
         return records, manifest
 
 
-def extract_all_completed_projects(raw_dir: Path, output_csv: Path) -> list[dict[str, Any]]:
-    """Extract Completed Projects across all Flash Reports and write combined CSV."""
-    pdf_paths = sorted(raw_dir.rglob("*.pdf"))
-    all_records: list[dict[str, Any]] = []
+def extract_all_completed_projects(
+    raw_dir: Path,
+    output_csv: Path,
+    target_pdfs: list[Path] | None = None,
+) -> list[dict[str, Any]]:
+    """Extract Completed Projects across Flash Reports and write combined CSV.
+    
+    If output_csv exists, preserves existing accepted records and additively incorporates
+    newly extracted records.
+    """
+    existing_records: list[dict[str, Any]] = []
+    if output_csv.exists():
+        with output_csv.open(encoding="utf-8-sig", newline="") as stream:
+            existing_records = list(csv.DictReader(stream))
+
+    existing_keys = {(r["project_code"], r["report_month"]) for r in existing_records}
+
+    if target_pdfs is not None:
+        pdf_paths = target_pdfs
+    else:
+        pdf_paths = [
+            p for p in sorted(raw_dir.rglob("*.pdf"))
+            if "synopsis" not in p.name.lower() and p.name not in (
+                "July_Part-I.pdf",
+                "May_Part-1.pdf",
+                "April_Part-I_Synopsis.pdf",
+                "April_Part-II_List_of_tables.pdf",
+                "May_Part-2.pdf",
+            )
+        ]
+
+    new_records: list[dict[str, Any]] = []
     manifests: list[dict[str, Any]] = []
 
     for pdf_path in pdf_paths:
         records, manifest = extract_completed_projects_from_pdf(pdf_path)
-        all_records.extend(records)
+        for rec in records:
+            key = (rec["project_code"], rec["report_month"])
+            if key not in existing_keys:
+                new_records.append(rec)
         manifests.append(manifest)
 
-    # Sort deterministically by (report_month, source_serial_number)
-    all_records.sort(key=lambda r: (r["report_month"], r["source_serial_number"]))
+    # Format new records as strings matching CSV schema representation
+    combined_records: list[dict[str, Any]] = list(existing_records)
+    for nr in new_records:
+        str_rec = {}
+        for k in COMPLETED_FIELDS:
+            v = nr.get(k)
+            str_rec[k] = "" if v is None else str(v)
+        combined_records.append(str_rec)
+
+    # Sort deterministically by (report_month, int(source_serial_number))
+    combined_records.sort(key=lambda r: (r["report_month"], int(r["source_serial_number"])))
 
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     with output_csv.open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=COMPLETED_FIELDS, extrasaction="ignore")
         writer.writeheader()
-        writer.writerows(all_records)
+        writer.writerows(combined_records)
 
-    LOGGER.info("Wrote %s completed project records to %s", len(all_records), output_csv)
-    return all_records
+    LOGGER.info("Wrote %s completed project records to %s (added %s new)", len(combined_records), output_csv, len(new_records))
+    return combined_records

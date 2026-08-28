@@ -188,9 +188,9 @@ class CompletedProjectsTests(unittest.TestCase):
         self.assertTrue(self.output_csv.exists(), f"Missing {self.output_csv}")
         summary = validate_completed_csv(self.output_csv)
 
-        # Total records must match 375 exactly
-        self.assertEqual(summary["total_records"], 375)
-        self.assertEqual(summary["unique_projects"], 375)
+        # Total records must match 617 exactly (375 baseline + 242 historical)
+        self.assertEqual(summary["total_records"], 617)
+        self.assertEqual(summary["unique_projects"], 617)
         self.assertEqual(summary["missing_project_codes"], 0)
         self.assertEqual(summary["duplicate_keys"], 0)
         self.assertTrue(summary["serial_continuity_all_months"])
@@ -205,6 +205,25 @@ class CompletedProjectsTests(unittest.TestCase):
         with self.output_csv.open(encoding="utf-8-sig", newline="") as stream:
             header = next(csv.reader(stream))
         self.assertEqual(header, COMPLETED_FIELDS)
+
+    def test_historical_legacy_extraction(self):
+        """Test extraction of historical legacy reports with sector margin headings and NER project names."""
+        july_pdf = self.raw_dir / "2024" / "July_Part-II.pdf"
+        if july_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(july_pdf)
+            self.assertEqual(len(records), 21)
+            self.assertEqual(manifest["layout_version"], LAYOUT_LEGACY_SIX_COLUMN)
+            self.assertEqual(records[0]["sector"], "POWER")
+            self.assertEqual(records[13]["sector"], "ROAD TRANSPORT AND HIGHWAYS")
+            self.assertEqual(records[20]["sector"], "STEEL")
+
+        dec_pdf = self.raw_dir / "2024" / "December.pdf"
+        if dec_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(dec_pdf)
+            self.assertEqual(len(records), 22)
+            self.assertEqual(manifest["layout_version"], LAYOUT_LEGACY_SIX_COLUMN)
+            self.assertEqual(records[6]["project_code"], "N18000316")
+            self.assertIn("NORTH EASTERN REGION", records[6]["project_name"])
 
 
 if __name__ == "__main__":

@@ -2,53 +2,77 @@
 
 ## 1. Executive Summary
 
-This report documents the standalone extraction pipeline and validated output dataset for **Table 3: Completed Projects** across all 16 Flash Report PDFs in `data/raw/` (covering April 2025 through July 2026).
+This report documents the completed extraction and validation for **Table 3: Completed Projects** across 24 accepted Flash Report monthly datasets spanning **June 2024 through July 2026** (10 historical reports added in Phase 2 plus 14 previously accepted reports).
 
-The extraction strictly enforces source-faithfulness, positional header matching, fail-closed candidate selection, and exact source-issued project code preservation. Existing monthly extraction pipelines, schemas, validation outputs, and canonical monthly datasets remain completely untouched and byte-identical.
+The extraction strictly enforces source-faithfulness, positional header matching, fail-closed candidate selection, additive dataset extension, and exact source-issued project code preservation. All previously accepted Completed Projects records (375 rows) remain 100% byte-identical, and existing monthly extraction pipelines, schemas, validation outputs, and canonical monthly datasets remain completely untouched and byte-identical.
 
 - **Output dataset**: `data/processed/projects_completed.csv`
-- **Output SHA-256**: `CDE695898623FAEE380B834DCE764BE1A79F7681760B99A18F2C911C4C045456`
-- **Total completed project records**: **375**
-- **Unique completed projects**: **375** (zero duplicates across reports)
+- **Output SHA-256**: `D8A06675FBDCA847A2B12D02665679AD4077402FDBE741C461C6FB369A8A8C2E`
+- **Total completed project records**: **617** (375 baseline + 242 newly validated)
+- **Unique completed projects**: **617** (zero duplicate keys)
 - **Missing project codes**: **0**
 - **Duplicate `(project_code, report_month)` keys**: **0**
-- **Serial continuity**: **100% continuous (1..N)** within each report month with **0 gaps** and **0 duplicates**
+- **Serial continuity**: **100% continuous (1..N)** within each report month with **0 gaps** and **0 duplicates** across all 24 active months
 - **Parse rate for present values**: **100%** across dates and numerics
-- **Dedicated test suite**: **27/27 passing** (`tests/test_completed_projects.py`, `tests/test_parsers.py`, `tests/test_validation.py`, `tests/test_manual_fixtures.py`)
+- **Dedicated test suite**: **Passing** (`tests/test_completed_projects.py`)
 - **Combined monthly dataset integrity**: `data/processed/projects_monthly.csv` and all 16 monthly CSVs are **byte-for-byte identical** to pre-implementation baselines.
 
 ---
 
-## 2. PDFs Processed & Table 3 Presence
+## 2. Reports Processed & Completed Projects Inventory
 
-| Report Month | PDF Filename | Table 3 Completed Projects Present? | Table 3 Page Range | Layout Type | Project Rows Extracted |
+| Report Month | PDF Filename | Table Presence & Status | Pages Used | Layout Variant | Project Rows Extracted |
 |---|---|---|---|---|---:|
-| **2025-04** | `2025/FR_April_2025.pdf` | **Yes** | Pages 11–14 | `table3-completed-legacy-six-column-v1` | 34 |
-| **2025-05** | `2025/FR_May2025.pdf` | **Yes** | Pages 11–15 | `table3-completed-legacy-six-column-v1` | 40 |
-| **2025-06** | `2025/FR_JUNE_2025.pdf` | **Yes** | Pages 11–15 | `table3-completed-legacy-six-column-v1` | 42 |
-| **2025-07** | `2025/FlashReport_July_2025.pdf` | **No** (Table 3 is *North-East Ongoing*) | N/A | Absent | 0 |
-| **2025-08** | `2025/FlashReport_August_2025.pdf` | **No** (Table 3 is *North-East Ongoing*) | N/A | Absent | 0 |
-| **2025-09** | `2025/FlashReport_September_2025.pdf` | **Yes** | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 6 |
-| **2025-10** | `2025/FlashReport_October_2025.pdf` | **Yes** | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 6 |
-| **2025-11** | `2025/FlashReport_November_2025.pdf` | **Yes** | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 13 |
-| **2025-12** | `2025/FlashReport_December_2025.pdf` | **Yes** | Pages 34–36 (pp. 35–36 data) | `table3-completed-seven-column-v1` | 17 |
-| **2026-01** | `FlashReport_January_2026.pdf` | **Yes** | Pages 35–36 (p. 36 data) | `table3-completed-seven-column-v1` | 3 |
-| **2026-02** | `FlashReport_February_2026.pdf` | **Yes** | Pages 35–36 (p. 36 data) | `table3-completed-seven-column-v1` | 9 |
-| **2026-03** | `FlashReport_March_2026.pdf` | **Yes** | Pages 35–37 (pp. 36–37 data) | `table3-completed-seven-column-v1` | 25 |
-| **2026-04** | `FlashReport_April2026.pdf` | **Yes** | Pages 34–35 (p. 35 data) | `table3-completed-seven-column-v1` | 9 |
-| **2026-05** | `FlashReport_May2026.pdf` | **Yes** | Pages 34–35 (p. 35 data) | `table3-completed-seven-column-v1` | 16 |
-| **2026-06** | `FlashReport_June_2026.pdf` | **Yes** | Pages 35–42 (pp. 36–42 data) | `table3-completed-seven-column-v1` | 130 |
-| **2026-07** | `FlashReport_July_2026.pdf` | **Yes** | Pages 35–37 (pp. 36–37 data) | `table3-completed-seven-column-v1` | 25 |
-| **TOTAL** | | | | | **375** |
+| **2024-04** | `April_Part-II_List_of_tables.pdf` | **DEFERRED** (Completed Projects in Table 2, 5-col) | N/A | Table 2 (Future Task) | 0 |
+| **2024-05** | `May_Part-2.pdf` | **DEFERRED** (Completed Projects in Table 2, 5-col) | N/A | Table 2 (Future Task) | 0 |
+| **2024-06** | `2024/June.pdf` | **Yes** (Table 3) | Pages 7–9 | `table3-completed-legacy-six-column-v1` | 18 |
+| **2024-07** | `2024/July_Part-II.pdf` | **Yes** (Table 3) | Pages 7–9 | `table3-completed-legacy-six-column-v1` | 21 |
+| **2024-08** | `2024/August_Part-2(List_of_tables).pdf` | **Yes** (Table 3) | Pages 8–10 | `table3-completed-legacy-six-column-v1` | 16 |
+| **2024-09** | `2024/September_Part-2(List_of_tables).pdf` | **Yes** (Table 3) | Pages 8–9 | `table3-completed-legacy-six-column-v1` | 13 |
+| **2024-10** | `2024/October.pdf` | **Yes** (Table 3) | Pages 12–18 | `table3-completed-legacy-six-column-v1` | 62 |
+| **2024-11** | `2024/November.pdf` | **Yes** (Table 3) | Pages 12–13 | `table3-completed-legacy-six-column-v1` | 12 |
+| **2024-12** | `2024/December.pdf` | **Yes** (Table 3) | Pages 11–13 | `table3-completed-legacy-six-column-v1` | 22 |
+| **2025-01** | `2025/FRJanuary2025.pdf` | **Yes** (Table 3) | Pages 11–13 | `table3-completed-legacy-six-column-v1` | 20 |
+| **2025-02** | `2025/FRFebruary2025.pdf` | **Yes** (Table 3) | Pages 12–16 | `table3-completed-legacy-six-column-v1` | 41 |
+| **2025-03** | `2025/FRMarch2025.pdf` | **Yes** (Table 3) | Pages 11–12 | `table3-completed-legacy-six-column-v1` | 17 |
+| **2025-04** | `2025/FR_April_2025.pdf` | **Yes** (Table 3) | Pages 11–14 | `table3-completed-legacy-six-column-v1` | 34 |
+| **2025-05** | `2025/FR_May2025.pdf` | **Yes** (Table 3) | Pages 11–15 | `table3-completed-legacy-six-column-v1` | 40 |
+| **2025-06** | `2025/FR_JUNE_2025.pdf` | **Yes** (Table 3) | Pages 11–15 | `table3-completed-legacy-six-column-v1` | 42 |
+| **2025-07** | `2025/FlashReport_July_2025.pdf` | **Absent** (Table 3 is *North-East Ongoing*) | N/A | Absent | 0 |
+| **2025-08** | `2025/FlashReport_August_2025.pdf` | **Absent** (Table 3 is *North-East Ongoing*) | N/A | Absent | 0 |
+| **2025-09** | `2025/FlashReport_September_2025.pdf` | **Yes** (Table 3) | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 6 |
+| **2025-10** | `2025/FlashReport_October_2025.pdf` | **Yes** (Table 3) | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 6 |
+| **2025-11** | `2025/FlashReport_November_2025.pdf` | **Yes** (Table 3) | Pages 32–33 (p. 33 data) | `table3-completed-seven-column-v1` | 13 |
+| **2025-12** | `2025/FlashReport_December_2025.pdf` | **Yes** (Table 3) | Pages 34–36 (pp. 35–36 data) | `table3-completed-seven-column-v1` | 17 |
+| **2026-01** | `FlashReport_January_2026.pdf` | **Yes** (Table 3) | Pages 35–36 (p. 36 data) | `table3-completed-seven-column-v1` | 3 |
+| **2026-02** | `FlashReport_February_2026.pdf` | **Yes** (Table 3) | Pages 35–36 (p. 36 data) | `table3-completed-seven-column-v1` | 9 |
+| **2026-03** | `FlashReport_March_2026.pdf` | **Yes** (Table 3) | Pages 35–37 (pp. 36–37 data) | `table3-completed-seven-column-v1` | 25 |
+| **2026-04** | `FlashReport_April2026.pdf` | **Yes** (Table 3) | Pages 34–35 (p. 35 data) | `table3-completed-seven-column-v1` | 9 |
+| **2026-05** | `FlashReport_May2026.pdf` | **Yes** (Table 3) | Pages 34–35 (p. 35 data) | `table3-completed-seven-column-v1` | 16 |
+| **2026-06** | `FlashReport_June_2026.pdf` | **Yes** (Table 3) | Pages 35–42 (pp. 36–42 data) | `table3-completed-seven-column-v1` | 130 |
+| **2026-07** | `FlashReport_July_2026.pdf` | **Yes** (Table 3) | Pages 35–37 (pp. 36–37 data) | `table3-completed-seven-column-v1` | 25 |
+| **TOTAL** | | | | | **617** |
 
-### July & August 2025 Absence Note
-In July and August 2025, the reports publish no Completed Projects table. Table 3 in those months is titled *"Table 3: Ongoing Projects of North Eastern Region"*. The semantic selector explicitly checks for `"ongoing projects"` and `"north eastern region"` and rejects those pages, recording `table3_present = False` and extracting 0 records.
+### Supporting-Only Synopses (No Completed Project Tables)
+The following 5 files were inspected and verified as narrative/executive summaries containing no completed projects tables:
+- `data/raw/2024/April_Part-I_Synopsis.pdf`
+- `data/raw/2024/May_Part-1.pdf`
+- `data/raw/2024/July_Part-I.pdf`
+- `data/raw/2024/August_Part-1(synopsis).pdf`
+- `data/raw/2024/September_Part-1(synopsis).pdf`
+
+### Deferred Reports: April & May 2024 (Table 2)
+In `data/raw/2024/April_Part-II_List_of_tables.pdf` and `data/raw/2024/May_Part-2.pdf`, Completed Projects are located in **Table 2**, not Table 3.
+- **Table 2 Title**: `Table 2: Projects Completed During ...` (e.g. April 2024 pp. 9–11; May 2024 pp. 9–11)
+- **Structure**: 5 columns (`Sl. No.`, `Project Name (Agency) (Project Code)`, `Original Cost`, `Original Date of Commissioning`, `Cumulative Expenditure`)
+- **Key differences**: No `Sector` column or band rows; no `State` identifier in composite cells; project codes printed as bracketed `[N########]`; Table 3 in these reports is *Deleted Projects*.
+- Per project instructions, April and May 2024 are left unresolved and documented as a separate future task requiring a dedicated Table 2 adapter.
 
 ---
 
-## 3. Layout Specifications
+## 3. Technical Discoveries & Layout Adapters
 
-### Layout 1: `table3-completed-legacy-six-column-v1` (April–June 2025)
+### Layout 1: `table3-completed-legacy-six-column-v1`
 * **Header text**: `Table:-3. Project List: Completed during <Month> <Year>`
 * **Columns (6)**:
   1. `Sector`
@@ -57,80 +81,34 @@ In July and August 2025, the reports publish no Completed Projects table. Table 
   4. `Original Cost in Rs. Crore`
   5. `Date of Commissioning Original (MM/YYYY)`
   6. `Cumulative Expenditure in Rs. Crore`
-* **Sector context**: Captured from Sector band rows or Col 0.
-* **Fields absent from source**: `ministry`, `approval_date`, `start_date`, `actual_completion_date`, `revised_completion_date`, `revised_cost`. These remain `None` / empty to preserve source fidelity.
 
-### Layout 2: `table3-completed-seven-column-v1` (September 2025–July 2026)
-* **Header text**: `Completed Projects During Month <MONTH> <YEAR>` (Divider: `Table 3: Completed Projects`)
-* **Columns (7)**:
-  1. `Sl.No`
-  2. `Project Name / (Agency) / Project Code` (Composite cell)
-  3. `State`
-  4. `Date of Approval / (Start Date) MM/YYYY`
-  5. `Actual Date of Completion / (Orignal/Target DoC) / (Revised DoC) MM/YYYY` (June 2026 variant omits actual DoC header)
-  6. `Orignal Cost / Revised Cost in Rs. Crore`
-  7. `Cumulative Expenditure in Rs. Crore`
-* **Ministry & Sector context**: Extracted from section band rows (e.g. `['', 'Ministry of ...', ...]`, `['', 'Sector Name', ...]`).
+#### Legacy Sector Column Ruling Quirk & Resolution
+In several 2024 reports (July 2024, August 2024, October 2024, December 2024), MoSPI PDF generation omitted the vertical ruling line separating Column 0 (`Sector`) and Column 1 (`Sl. No.`) for body rows or sector band rows. Consequently, `pdfplumber.find_tables()` returned `row[0] = None`, while the sector name was printed in the left margin within Column 0's x-span.
+- **Resolution**: `_get_page_sector_headings` scans margin words in Column 0 (`x0` from `hdr.x0 - 10` to `hdr.x1 + 10`) and groups them into vertical bands. Project rows match against the active sector heading at or above their `top` coordinate, carrying the sector forward until the next sector header.
+
+#### Robust Semantic Page Detection
+`is_table3_page` checks `project list: completed during` or `completed projects during month`. To avoid false rejections when project names contain regional descriptors (such as Project 7 in December 2024: `NORTH EASTERN REGION STRENGTHENING SCHEME-XII`), ongoing table exclusion requires both `"ongoing projects"` and a Table 3 heading label.
 
 ---
 
 ## 4. Final CSV Schema (`projects_completed.csv`)
 
-The output schema follows the repository's standard ordering and convention:
+The output schema preserves source representation and provenance:
 
-1. **Identity & Source Labels**:
-   - `project_code`: Source-issued project identifier (`N########` or 9-digit in legacy; 6 digits in 7-column). Preserved exactly as printed.
-   - `project_name`: Extracted from composite cell.
-   - `agency`: Extracted from composite cell.
-   - `ministry`: Extracted from band rows (seven-column layout) or empty (legacy).
-   - `sector`: Extracted from band rows or Sector column.
-   - `state`: Extracted from composite cell (legacy) or separate State column (seven-column).
-2. **Parsed Dates** (`YYYY-MM`):
-   - `approval_date`: Approval date where printed.
-   - `start_date`: Start date where printed.
-   - `original_completion_date`: Original or target completion date.
-   - `revised_completion_date`: Revised completion date where printed.
-   - `actual_completion_date`: Actual completion date where printed.
-3. **Parsed Numerics** (Rs. crore, float):
-   - `original_cost`: Parsed original cost.
-   - `revised_cost`: Parsed revised cost where printed.
-   - `cumulative_expenditure`: Parsed cumulative expenditure.
-4. **Time**:
-   - `report_month`: Report month in `YYYY-MM` format.
-5. **Source Raw Representations**:
-   - `approval_date_raw`
-   - `start_date_raw`
-   - `original_completion_date_raw`
-   - `revised_completion_date_raw`
-   - `actual_completion_date_raw`
-   - `original_cost_raw`
-   - `revised_cost_raw`
-   - `cumulative_expenditure_raw`
-6. **Provenance**:
-   - `source_file`: PDF basename.
-   - `source_page`: Physical 1-indexed PDF page.
-   - `source_row_number`: 1-indexed row number in the detected table.
-   - `source_serial_number`: Source-printed integer serial number (`1..N`).
-   - `extraction_method`: `"pdfplumber-table3-v1"`.
+1. **Identity & Source Labels**: `project_code`, `project_name`, `agency`, `ministry`, `sector`, `state`
+2. **Parsed Dates** (`YYYY-MM`): `approval_date`, `start_date`, `original_completion_date`, `revised_completion_date`, `actual_completion_date`
+3. **Parsed Numerics** (Rs. crore, float): `original_cost`, `revised_cost`, `cumulative_expenditure`
+4. **Time**: `report_month`
+5. **Source Representations**: `approval_date_raw`, `start_date_raw`, `original_completion_date_raw`, `revised_completion_date_raw`, `actual_completion_date_raw`, `original_cost_raw`, `revised_cost_raw`, `cumulative_expenditure_raw`
+6. **Provenance**: `source_file`, `source_page`, `source_row_number`, `source_serial_number`, `extraction_method`
 
 ---
 
-## 5. Non-Project Row Exclusions
-
-Across the 14 reports containing Table 3, all non-project rows were identified and excluded deterministically:
-- **Repeated headers**: On multi-page continuation pages (e.g. June 2026, Dec 2025, Mar 2026, July 2026), repeated header rows are detected and excluded.
-- **Section band rows**: Ministry and Sector band rows are consumed for hierarchical context and excluded from project rows.
-- **Group total rows**: Summary rows such as `['', 'Total (1)', '', '', '', '287.2', '310']` are recognized and excluded.
-- **Empty / whitespace rows**: Blank padding rows are cleanly dropped.
-- **Enclosing page-frame tables**: Enclosing 1-column tables (e.g. 3x1 layout frames) fail the semantic project table signature and are excluded.
-
----
-
-## 6. Dataset Integrity & Hash Verification
+## 5. Dataset Integrity & Hash Verification
 
 ### Baseline & Re-Verification of Monthly Dataset Files
 
-Before and after the Completed Projects implementation, SHA-256 hashes of all existing files were captured. All files are **byte-for-byte identical**:
+Before and after the Phase 2 Completed Projects processing, SHA-256 hashes of all canonical ongoing datasets and monthly cleaned CSVs were verified. All files are **byte-for-byte identical**:
 
 | File | Status | SHA-256 Hash |
 |---|---|---|
@@ -152,28 +130,21 @@ Before and after the Completed Projects implementation, SHA-256 hashes of all ex
 | `data/cleaned/projects_2026_06.csv` | **MATCH** | `829E7B8A7A6C9611AB7C3A228CCA97C25A0FE7E4AF043FAFF27C560D77ACE289` |
 | `data/cleaned/projects_2026_07.csv` | **MATCH** | `05BF807B4C4E8C0A93D5952EC963141F4AC246A22C9BCD5BF0A70C68544DDC17` |
 
----
+### Completed Projects Dataset Hash Comparison
 
-## 7. Files Changed / Created
-
-### New Self-Contained Files Created:
-1. `src/extraction/completed_projects.py`: Dedicated Table 3 extraction pipeline, semantic table selector, layout adapters, and row parsers.
-2. `src/validation/completed_projects.py`: Dedicated Table 3 validation module for structural integrity, serial continuity, parse rates, and provenance completeness.
-3. `tests/test_completed_projects.py`: Dedicated regression and unit test suite covering semantic detection, header matching, composite cell parsing, date/cost parsing, July/August 2025 absence, and dataset integrity.
-4. `reports/completed_projects_acceptance.md`: This acceptance report.
-5. `data/processed/projects_completed.csv`: The target canonical completed projects dataset (ignored by git per repository rules).
-
-### Shared Files Modified:
-- **Zero**. No existing shared files were modified.
+| Stage | Row Count | SHA-256 Hash | Notes |
+|---|---:|---|---|
+| **Baseline (April 2025–July 2026)** | 375 | `CDE695898623FAEE380B834DCE764BE1A79F7681760B99A18F2C911C4C045456` | 14 active months |
+| **Phase 2 (June 2024–July 2026)** | **617** | `D8A06675FBDCA847A2B12D02665679AD4077402FDBE741C461C6FB369A8A8C2E` | 24 active months (+242 rows) |
 
 ---
 
-## 8. Summary of Validation Checks
+## 6. Summary of Validation Checks
 
-- `total_records`: **375**
-- `unique_projects`: **375**
+- `total_records`: **617**
+- `unique_projects`: **617**
 - `missing_project_codes`: **0**
 - `duplicate_keys`: **0**
-- `serial_continuity_all_months`: **True** (1..N in every month)
+- `serial_continuity_all_months`: **True** (1..N across all 24 active months)
 - `warnings_count`: **0**
-- `test_results`: **27/27 OK** (Ran 27 tests in 22.988s)
+- `tests.test_completed_projects`: **8/8 OK**

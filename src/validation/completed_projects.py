@@ -19,6 +19,16 @@ from typing import Any
 LOGGER = logging.getLogger("paimana.validation.completed_projects")
 
 EXPECTED_MONTHLY_ROW_COUNTS = {
+    "2024-06": 18,
+    "2024-07": 21,
+    "2024-08": 16,
+    "2024-09": 13,
+    "2024-10": 62,
+    "2024-11": 12,
+    "2024-12": 22,
+    "2025-01": 20,
+    "2025-02": 41,
+    "2025-03": 17,
     "2025-04": 34,
     "2025-05": 40,
     "2025-06": 42,
