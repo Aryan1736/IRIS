@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+tmp/
+
+# Source reports and generated datasets are local artifacts.
+data/raw/**/*.pdf
+data/raw/*.pdf
+data/extracted/
+data/cleaned/
+data/processed/
+data/validation/
+*.parquet
+
+.env
+*.log
+
+reports/*.xlsx
+reports/*.inspect.ndjson

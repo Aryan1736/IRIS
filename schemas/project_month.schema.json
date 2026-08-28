@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PAIMANA Table 6 project-month record",
+  "type": "object",
+  "required": [
+    "project_code",
+    "project_name",
+    "report_month",
+    "source_file",
+    "source_page",
+    "extraction_method"
+  ],
+  "properties": {
+    "project_code": {"type": "string", "pattern": "^[0-9]{6}$"},
+    "legacy_ocms_code": {"type": ["string", "null"]},
+    "pmgid": {"type": ["string", "null"]},
+    "project_name": {"type": "string", "minLength": 1},
+    "agency": {"type": ["string", "null"]},
+    "ministry": {"type": ["string", "null"]},
+    "sector": {"type": ["string", "null"]},
+    "state": {"type": ["string", "null"]},
+    "approval_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"},
+    "start_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"},
+    "original_completion_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"},
+    "revised_completion_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"},
+    "original_cost": {"type": ["number", "null"]},
+    "revised_cost": {"type": ["number", "null"]},
+    "cumulative_expenditure": {"type": ["number", "null"]},
+    "physical_progress": {"type": ["number", "null"]},
+    "report_month": {"type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"},
+    "source_file": {"type": "string"},
+    "source_page": {"type": "integer", "minimum": 1},
+    "source_pages": {"type": "string"},
+    "source_row_number": {"type": "integer", "minimum": 1},
+    "source_serial_number": {"type": "integer", "minimum": 1},
+    "extraction_method": {"const": "pdfplumber-lines-v1"}
+  }
+}
