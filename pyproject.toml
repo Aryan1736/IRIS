@@ -1,0 +1,29 @@
+[project]
+name = "paimana-iris"
+version = "0.1.0"
+description = "PAIMANA / IRIS project-month extraction and backend serving layer"
+requires-python = ">=3.11"
+dependencies = [
+    "pdfplumber>=0.11,<1",
+    "pypdf>=5,<7",
+    "fastapi>=0.115.0,<1.0.0",
+    "uvicorn[standard]>=0.30.0,<1.0.0",
+    "pydantic>=2.8.0,<3.0.0",
+    "pydantic-settings>=2.4.0,<3.0.0",
+    "sqlalchemy>=2.0.30,<3.0.0",
+    "alembic>=1.13.0,<2.0.0",
+    "psycopg2-binary>=2.9.9,<3.0.0",
+    "pytest>=8.3.0,<9.0.0",
+    "httpx>=0.27.0,<1.0.0",
+]
+
+[tool.pyright]
+include = [".", "backend", "src", "tests"]
+extraPaths = [".", "./.venv/Lib/site-packages"]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.13"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests", "backend/tests"]

@@ -19,3 +19,15 @@ data/validation/
 
 reports/*.xlsx
 reports/*.inspect.ndjson
+
+# Backend local artifacts and caches
+backend/*.db
+*.sqlite
+*.sqlite3
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.vscode/
+.idea/
+
