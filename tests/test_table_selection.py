@@ -88,6 +88,20 @@ class TableSelectionRegressionTests(unittest.TestCase):
                 self.assertEqual(len(selected[0]), 9)
                 self.assertTrue(any(row[2] and row[2].isdigit() for row in selected[1:]))
 
+    def test_november_2024_progress_only_legacy_layout_selects_semantically(self):
+        path = self.root / "data/raw/2024/November.pdf"
+        with pdfplumber.open(path) as pdf:
+            selected, _, _, audits, _ = _locate_table6_candidate(pdf.pages[45], 46)
+        matching = [audit for audit in audits if audit["matches_table6_signature"]]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(
+            matching[0]["layout_version"],
+            "legacy-all-ongoing-nine-column-progress-only-v1",
+        )
+        self.assertEqual(len(selected[0]), 9)
+        self.assertNotIn("Physical", selected[0][8])
+        self.assertTrue(any(row[2] and row[2].isdigit() for row in selected[1:]))
+
     def test_page_frame_exclusion_recovers_merged_grid_pages(self):
         cases = (
             ("data/raw/FlashReport_January_2026.pdf", 76),

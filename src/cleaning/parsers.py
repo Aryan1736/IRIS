@@ -20,7 +20,9 @@ def normalize_space(value: str | None) -> str:
 
 
 def is_missing(value: str | None) -> bool:
-    return normalize_space(value).lower() in MISSING_TOKENS
+    normalized = normalize_space(value).lower()
+    compact = re.sub(r"\s+", "", normalized)
+    return normalized in MISSING_TOKENS or compact in MISSING_TOKENS
 
 
 def normalize_identifier(value: str | None) -> str | None:
@@ -55,14 +57,20 @@ def parse_month(value: str | None) -> str | None:
 def parse_legacy_month(value: str | None) -> str | None:
     """Parse the explicitly reported month formats in the legacy project list."""
     value = normalize_space(value)
-    if is_missing(value):
+    # January and March 2025 use the same visual date semantics as the other
+    # legacy reports, but their embedded text layer inserts spaces between
+    # characters (for example ``2 - 2 0 1 8`` and ``J u n -24``). Keep that
+    # representation in the *_raw field and compact only the parser input.
+    compact = re.sub(r"\s+", "", value)
+    if is_missing(value) or compact.lower() in MISSING_TOKENS:
         return None
-    numeric = re.fullmatch(r"(0?[1-9]|1[0-2])[-/](19|20)(\d{2})", value)
+    numeric = re.fullmatch(r"(0?[1-9]|1[0-2])[-/](19|20)(\d{2})", compact)
     if numeric:
         return f"{numeric.group(2)}{numeric.group(3)}-{int(numeric.group(1)):02d}"
-    named = re.fullmatch(r"([A-Za-z]{3})-(20\d{2})", value)
+    named = re.fullmatch(r"([A-Za-z]{3})-(\d{2}|20\d{2})", compact)
     if named and named.group(1).lower() in LEGACY_MONTH_NAME:
-        return f"{named.group(2)}-{LEGACY_MONTH_NAME[named.group(1).lower()]:02d}"
+        year = named.group(2) if len(named.group(2)) == 4 else f"20{named.group(2)}"
+        return f"{year}-{LEGACY_MONTH_NAME[named.group(1).lower()]:02d}"
     return None
 
 

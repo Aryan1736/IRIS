@@ -79,10 +79,26 @@ LEGACY_ALL_ONGOING_HEADER_SIGNATURE = (
     ("cumulative", "expenditure"),
     ("physical", "progress"),
 )
+LEGACY_ALL_ONGOING_PROGRESS_ONLY_HEADER_SIGNATURE = (
+    ("state",),
+    ("sector",),
+    ("sl no",),
+    ("project name", "agency name", "project code"),
+    ("date", "approval"),
+    ("date of commissioning", "original", "revised", "anticipated"),
+    ("cost original", "revised", "anticipated"),
+    ("cumulative", "expenditure"),
+    ("progress",),
+)
 TABLE6_LAYOUT_SIGNATURES = {
     "table6-eight-column-v1": TABLE6_HEADER_SIGNATURE,
     "table6-eight-column-approval-only-v1": TABLE6_APPROVAL_ONLY_HEADER_SIGNATURE,
     "legacy-all-ongoing-nine-column-v1": LEGACY_ALL_ONGOING_HEADER_SIGNATURE,
+    "legacy-all-ongoing-nine-column-progress-only-v1": LEGACY_ALL_ONGOING_PROGRESS_ONLY_HEADER_SIGNATURE,
+}
+LEGACY_LAYOUTS = {
+    "legacy-all-ongoing-nine-column-v1",
+    "legacy-all-ongoing-nine-column-progress-only-v1",
 }
 MONTH_NAMES = {
     name.upper(): index
@@ -228,7 +244,16 @@ def _is_table6_page(text: str) -> bool:
     current = all(token in normalized for token in ("all ongoing projects", "sl.no", "project name", "physical progress"))
     legacy = all(
         token in normalized
-        for token in ("project list: ongoing projects as of", "sl no", "project name", "physical", "progress")
+        for token in (
+            "project list: ongoing projects as of",
+            "state",
+            "sector",
+            "sl no",
+            "project name",
+            "cumulative",
+            "expenditure",
+            "progress",
+        )
     )
     return current or legacy
 
@@ -257,6 +282,11 @@ def _classify_table6_header(row: list[str | None]) -> tuple[str | None, list[str
                 missing.append(f"column {column} missing {', '.join(absent)}")
         if layout_version == "table6-eight-column-approval-only-v1" and "start date" in cells[3]:
             missing.append("column 4 unexpectedly contains start date")
+        if (
+            layout_version == "legacy-all-ongoing-nine-column-progress-only-v1"
+            and "physical" in cells[8]
+        ):
+            missing.append("column 9 unexpectedly contains physical")
         if missing:
             failures.append(f"{layout_version}: {'; '.join(missing)}")
         else:
@@ -300,7 +330,7 @@ def _table_candidate_audit(
     layout_version, header_reasons = _classify_table6_header(header)
     reasons.extend(header_reasons)
 
-    serial_column = 2 if layout_version == "legacy-all-ongoing-nine-column-v1" else 0
+    serial_column = 2 if layout_version in LEGACY_LAYOUTS else 0
     expected_columns = len(TABLE6_LAYOUT_SIGNATURES[layout_version]) if layout_version else 0
     project_rows = sum(
         bool(row) and len(row) == expected_columns and normalize_space(row[serial_column]).isdigit()
@@ -670,7 +700,7 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
             removed_counts["repeated_header"] += 1
             legacy_groups = (
                 _legacy_group_cells(page, selection_pass, selected_table_index)
-                if layout_version == "legacy-all-ongoing-nine-column-v1"
+                if layout_version in LEGACY_LAYOUTS
                 else []
             )
             for page_row_number, source_row in enumerate(table[1:], 1):
@@ -688,10 +718,10 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
                 }
                 raw_rows.append(raw)
 
-                serial_column = 2 if layout_version == "legacy-all-ongoing-nine-column-v1" else 0
+                serial_column = 2 if layout_version in LEGACY_LAYOUTS else 0
                 serial = cells[serial_column]
                 populated = sum(bool(cell) for cell in cells)
-                if serial.isdigit() and layout_version == "legacy-all-ongoing-nine-column-v1":
+                if serial.isdigit() and layout_version in LEGACY_LAYOUTS:
                     if cells[0]:
                         fragment = normalize_space(cells[0])
                         if state and fragment.casefold().replace(" ", "") in state.casefold().replace(" ", ""):
@@ -714,7 +744,7 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
                     legacy_sector_group.append(project_index)
                 elif serial.isdigit():
                     projects.append(_clean_project_row(cells, month, pdf_path.name, page_number, page_row_number, ministry, sector))
-                elif layout_version == "legacy-all-ongoing-nine-column-v1" and (cells[0] or cells[1]) and populated <= 2:
+                elif layout_version in LEGACY_LAYOUTS and (cells[0] or cells[1]) and populated <= 2:
                     if cells[0]:
                         fragment = normalize_space(cells[0])
                         state = _merge_legacy_group_fragment(state, fragment)
@@ -727,7 +757,7 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
                             projects[index]["sector"] = sector
                 elif not serial and cells[1].lower().startswith("total"):
                     removed_counts["total"] += 1
-                elif layout_version == "legacy-all-ongoing-nine-column-v1" and not serial and cells[3].lower().startswith("total"):
+                elif layout_version in LEGACY_LAYOUTS and not serial and cells[3].lower().startswith("total"):
                     removed_counts["total"] += 1
                 elif not serial and populated == 1 and cells[1]:
                     if cells[1].startswith(("Ministry of ", "Department of ", "Department for ")):

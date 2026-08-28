@@ -57,7 +57,7 @@ Dates printed as `MM/YYYY` are represented as `YYYY-MM`; no day is invented. Num
 
 ## June-July 2025 identifier redesign
 
-April-June 2025 use legacy `N########` or nine-digit-style project identifiers. July 2025 onward uses six-digit project codes. Direct June-to-July `project_code` overlap is therefore zero.
+January-June 2025 use legacy `N########` or nine-digit-style project identifiers. July 2025 onward uses six-digit project codes. Direct June-to-July `project_code` overlap is therefore zero.
 
 Neither June nor July prints an explicit old-to-new crosswalk, populated legacy OCMS code, or PMGID bridge. `data/validation/id_crosswalk_june_july_2025.csv` contains 137 conservative high-confidence **analytical proposals**, not source mappings. The ambiguous table and investigation report must remain separate from canonical data.
 
@@ -78,7 +78,8 @@ Never automatically integrate the proposed crosswalk, create `stable_project_id`
 
 ## Supported layout adapters
 
-- `legacy-all-ongoing-nine-column-v1`: April, May, and June 2025. The reports call the project list Table 7. Columns include separate State and Sector, but no Ministry or Start Date. Project codes are legacy formats. Original/revised/anticipated triplets require legacy parsing.
+- `legacy-all-ongoing-nine-column-v1`: October and December 2024 plus January through June 2025. The reports call the project list Table 7. Columns include separate State and Sector, but no Ministry or Start Date. Project codes are legacy formats. Original/revised/anticipated triplets require legacy parsing. January and March 2025 have character-spaced embedded date text and use `Mon-YY`; parser compaction must not alter `*_raw` values.
+- `legacy-all-ongoing-nine-column-progress-only-v1`: November 2024 only. It has the same verified legacy nine-column semantics, but the final header is printed `Progress (%)` rather than `Physical Progress (%)`. Keep this distinct signature narrow; do not accept arbitrary progress-only tables without the full positional legacy header match.
 - `table6-eight-column-approval-only-v1`: July 2025 only. This verified Table 6 variant has Date of Approval without Start Date; keep `start_date` empty.
 - `table6-eight-column-v1`: August 2025 through July 2026. The standard eight-column Table 6 structure includes approval/start, original/revised completion, original/revised cost, expenditure, and progress semantics.
 
@@ -160,7 +161,7 @@ Do not point that CLI at a single new PDF if the accepted multi-month `projects_
 Explicit accepted-range rebuild command:
 
 ```powershell
-python -m src.build_dataset.monthly --months 2025-04 2025-05 2025-06 2025-07 2025-08 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03 2026-04 2026-05 2026-06 2026-07
+python -m src.build_dataset.monthly --months 2024-10 2024-11 2024-12 2025-01 2025-02 2025-03 2025-04 2025-05 2025-06 2025-07 2025-08 2025-09 2025-10 2025-11 2025-12 2026-01 2026-02 2026-03 2026-04 2026-05 2026-06 2026-07
 ```
 
 Reproduce the diagnostic June-July crosswalk outputs only when identity diagnostics are explicitly requested:

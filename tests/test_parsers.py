@@ -28,6 +28,14 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(parse_legacy_month("9/2018"), "2018-09")
         self.assertIsNone(parse_legacy_month("N.A."))
 
+    def test_legacy_date_parser_accepts_character_spaced_2025_source_forms(self):
+        self.assertEqual(parse_legacy_month("2 - 2 0 1 8"), "2018-02")
+        self.assertEqual(parse_legacy_month("7 / 2 019"), "2019-07")
+        self.assertEqual(parse_legacy_month("May-23"), "2023-05")
+        self.assertEqual(parse_legacy_month("J u n -24"), "2024-06")
+        self.assertIsNone(parse_legacy_month("N . A ."))
+        self.assertIsNone(parse_legacy_month("N .A."))
+
     def test_legacy_triplet_does_not_promote_anticipated_value(self):
         self.assertEqual(
             split_legacy_triplet("235.72\n(N.A.)\n{235.72}"),
