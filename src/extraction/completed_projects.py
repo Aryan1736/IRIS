@@ -189,6 +189,8 @@ def is_table2_page(text: str) -> bool:
         return False
     if "ongoing projects" in normalized or "deleted projects" in normalized:
         return False
+    if "1000 crore" in normalized or "table-20" in normalized or "table 20" in normalized:
+        return False
     return True
 
 
@@ -362,7 +364,8 @@ def table_candidate_audit(
             bool(r) and len(r) == column_count and normalize_space(r[serial_column]).isdigit()
             for r in data[header_row_idx + 1 :]
         )
-        if project_rows == 0:
+        has_content = any(any(normalize_space(c) for c in r) for r in data[header_row_idx + 1 :])
+        if project_rows == 0 and has_content:
             reasons.append("no rows with numeric serial in serial column")
 
     audit = {
