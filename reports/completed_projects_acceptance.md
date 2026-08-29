@@ -2,19 +2,19 @@
 
 ## 1. Executive Summary
 
-This report documents the completed extraction and validation for **Completed Projects** across 33 accepted Flash Report monthly datasets spanning **April 2023 through July 2026** (Batch 1: April–June 2023 [+84 rows], Batch 2: July–September 2023 [+70 rows], Batch 3: October–December 2023 [+40 rows], Phase 2: 10 historical reports from FY 2024-25, plus 14 reports from Phase 1).
+This report documents the completed extraction and validation for **Completed Projects** across 36 accepted Flash Report monthly datasets spanning **April 2023 through July 2026** (Batch 1: April–June 2023 [+84 rows], Batch 2: July–September 2023 [+70 rows], Batch 3: October–December 2023 [+40 rows], Batch 4: January–March 2024 [+65 rows], Phase 2: 10 historical reports from FY 2024-25, plus 14 reports from Phase 1).
 
-The extraction strictly enforces source-faithfulness, positional header matching, fail-closed candidate selection, additive dataset extension, and exact source-issued project code preservation. All previously accepted Completed Projects records (771 rows) remain 100% byte-identical, and existing monthly extraction pipelines, schemas, validation outputs, and canonical monthly datasets remain completely untouched and byte-identical.
+The extraction strictly enforces source-faithfulness, positional header matching, fail-closed candidate selection, additive dataset extension, and exact source-issued project code preservation. All previously accepted Completed Projects records (811 rows) remain 100% byte-identical, and existing monthly extraction pipelines, schemas, validation outputs, and canonical monthly datasets remain completely untouched and byte-identical.
 
 - **Output dataset**: `data/processed/projects_completed.csv`
-- **Output SHA-256**: `C8CB9672551827E91832682B9877012A1FA0F48F880EC5C917EBE8476C2F0D3C`
-- **Total completed project records**: **811** (771 baseline + 40 Batch 3)
-- **Unique completed projects**: **811** (zero duplicate keys)
+- **Output SHA-256**: `89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910`
+- **Total completed project records**: **876** (811 baseline + 65 Batch 4)
+- **Unique completed projects**: **876** (zero duplicate keys)
 - **Missing project codes**: **0**
 - **Duplicate `(project_code, report_month)` keys**: **0**
-- **Serial continuity**: **100% continuous** within each report month (serials 1..20 for April 2023, 21..30 for May 2023, 31..84 for June 2023, 85..91 for July 2023, 92..106 for August 2023, 107..154 for September 2023, 155..183 for October 2023, 184..194 for November 2023, and 1..N for subsequent months)
+- **Serial continuity**: **100% continuous** within each report month (serials 1..20 for April 2023, 21..30 for May 2023, 31..84 for June 2023, 85..91 for July 2023, 92..106 for August 2023, 107..154 for September 2023, 155..183 for October 2023, 184..194 for November 2023, 217..229 for January 2024, 230..249 for February 2024, 250..281 for March 2024, and 1..N for subsequent months)
 - **Parse rate for present values**: **100%** across dates and numerics
-- **Dedicated test suite**: **Passing** (`tests/test_completed_projects.py`: 14/14 tests OK)
+- **Dedicated test suite**: **Passing** (`tests/test_completed_projects.py`: 15/15 tests OK)
 - **Combined monthly dataset integrity**: `data/processed/projects_monthly.csv` and all 16 monthly CSVs are **byte-for-byte identical** to pre-implementation baselines.
 
 ---
@@ -32,6 +32,9 @@ The extraction strictly enforces source-faithfulness, positional header matching
 | **2023-10** | `2023/FR_oct_2023.pdf` | **Yes** (Table 2) | Pages 24–35 (serials 155–183 on pp. 33–34; p. 35 blank continuation) | `table2-completed-legacy-five-column-v1` | 29 |
 | **2023-11** | `2023/FR_nov_2023.pdf` | **Yes** (Table 2) | Pages 25–36 (serials 184–194 on p. 36) | `table2-completed-legacy-five-column-v1` | 11 |
 | **2023-12** | `2023/FR_dec_2023.pdf` | **Absent** (Executive synopsis only) | N/A | Absent | 0 |
+| **2024-01** | `2023/FR_jan_2024.pdf` | **Yes** (Table 2) | Pages 25–39 (serials 217–229 on p. 38) | `table2-completed-legacy-five-column-v1` | 13 |
+| **2024-02** | `2023/FR_feb_2024.pdf` | **Yes** (Table 2) | Pages 26–41 (serials 230–249 on pp. 40–41) | `table2-completed-legacy-five-column-v1` | 20 |
+| **2024-03** | `2023/FR_mar_2024.pdf` | **Yes** (Table 2) | Pages 23–40 (serials 250–281 on pp. 38–40) | `table2-completed-legacy-five-column-v1` | 32 |
 | **2024-04** | `April_Part-II_List_of_tables.pdf` | **DEFERRED** (Completed Projects in Table 2, 5-col) | N/A | Table 2 (Future Task) | 0 |
 | **2024-05** | `May_Part-2.pdf` | **DEFERRED** (Completed Projects in Table 2, 5-col) | N/A | Table 2 (Future Task) | 0 |
 | **2024-06** | `2024/June.pdf` | **Yes** (Table 3) | Pages 7–9 | `table3-completed-legacy-six-column-v1` | 18 |
@@ -60,7 +63,7 @@ The extraction strictly enforces source-faithfulness, positional header matching
 | **2026-05** | `FlashReport_May2026.pdf` | **Yes** (Table 3) | Pages 34–35 (p. 35 data) | `table3-completed-seven-column-v1` | 16 |
 | **2026-06** | `FlashReport_June_2026.pdf` | **Yes** (Table 3) | Pages 35–42 (pp. 36–42 data) | `table3-completed-seven-column-v1` | 130 |
 | **2026-07** | `FlashReport_July_2026.pdf` | **Yes** (Table 3) | Pages 35–37 (pp. 36–37 data) | `table3-completed-seven-column-v1` | 25 |
-| **TOTAL** | | | | | **811** |
+| **TOTAL** | | | | | **876** |
 
 ### Supporting-Only Synopses (No Completed Project Tables)
 The following 6 files were inspected and verified as narrative/executive summaries containing no completed projects tables:
@@ -82,7 +85,7 @@ In `data/raw/2024/April_Part-II_List_of_tables.pdf` and `data/raw/2024/May_Part-
 
 ## 3. Technical Discoveries & Layout Adapters
 
-### Layout 0: `table2-completed-legacy-five-column-v1` (Batch 1, 2, & 3: April–November 2023)
+### Layout 0: `table2-completed-legacy-five-column-v1` (Batch 1, 2, 3, & 4: April 2023–March 2024)
 * **Header text**: `Month wise List of Completed Projects Costing Rs. 150 crore and above during 2023-2024`
 * **Columns (5)**:
   1. `Sl. No.`
@@ -91,8 +94,8 @@ In `data/raw/2024/April_Part-II_List_of_tables.pdf` and `data/raw/2024/May_Part-
   4. `Original Date of commissioning`
   5. `Cumulative Expenditure (Rs. crore)`
 * **Cumulative Financial-Year Ledger Semantics**:
-  - The 2023-24 Table 2 is a cumulative FY ledger. April reports serials 1–20, May reports serials 1–30, June reports serials 1–84, July reports serials 1–91, August reports serials 1–106, September reports serials 1–154, October reports serials 1–183, and November reports serials 1–194.
-  - Section banners within the table indicate completion months (`April,2023`, `May,2023`, `June,2023`, `July, 2023`, `August, 2023`, `September, 2023`, `October,2023`, `November,2023`).
+  - The 2023-24 Table 2 is a cumulative FY ledger. April reports serials 1–20, May reports serials 1–30, June reports serials 1–84, July reports serials 1–91, August reports serials 1–106, September reports serials 1–154, October reports serials 1–183, November reports serials 1–194, January 2024 reports serials 1–229, February 2024 reports serials 1–249, and March 2024 reports serials 1–281.
+  - Section banners within the table indicate completion months (`April,2023`, `May,2023`, `June,2023`, `July, 2023`, `August, 2023`, `September, 2023`, `October,2023`, `November,2023`, `December,2023`, `January,2024`, `February,2024`, `March,2024`).
   - The extraction assigns each project row to its reported completion month banner, extracting only newly completed projects per month:
     - 20 in April (serials 1–20)
     - 10 in May (serials 21–30)
@@ -102,7 +105,11 @@ In `data/raw/2024/April_Part-II_List_of_tables.pdf` and `data/raw/2024/May_Part-
     - 48 in September (serials 107–154)
     - 29 in October (serials 155–183)
     - 11 in November (serials 184–194)
-    This prevents duplication while preserving exact cumulative ledger serial continuity (1..20, 21..30, 31..84, 85..91, 92..106, 107..154, 155..183, 184..194).
+    - 13 in January 2024 (serials 217–229)
+    - 20 in February 2024 (serials 230–249)
+    - 32 in March 2024 (serials 250–281)
+    This prevents duplication while preserving exact cumulative ledger serial continuity (1..20, 21..30, 31..84, 85..91, 92..106, 107..154, 155..183, 184..194, 217..229, 230..249, 250..281).
+  - Note on December 2023: `FR_dec_2023.pdf` had no Table 2 (synopsis only). In the January, February, and March 2024 reports, the cumulative ledger includes December 2023 projects (serials 195–216, 22 rows). Per batch boundary instructions, only January, February, and March 2024 records were extracted in Batch 4.
   - Sector banners appear as structural rows (`PETROLEUM`, `POWER`, `STEEL`, `ROAD TRANSPORT AND HIGHWAYS`, `DEPARTMENT OF HIGHER EDUCATION`, `COAL`, `HEALTH AND FAMILY WELFARE`, etc.) and are carried forward into `sector`. State and Ministry are source-absent (stored as `None`).
 * **Trailing Blank Continuation Page Handling (October 2023)**:
   - In `FR_oct_2023.pdf`, Table 2 ends on page 34 at serial 183. MoSPI generated page 35 with the Table 2 header and 4 empty table rows before transitioning to Table 3 (*Deleted Projects*) on page 36.
@@ -177,16 +184,17 @@ Before and after the Phase 2, Batch 1, Batch 2, and Batch 3 Completed Projects p
 | **Phase 2 (June 2024–July 2026)** | 617 | `D8A06675FBDCA847A2B12D02665679AD4077402FDBE741C461C6FB369A8A8C2E` | 24 active months (+242 rows) |
 | **Batch 1 (April 2023–July 2026)** | 701 | `47D1A82F234A4144E68410302B624315E96567DF0C1FC5541C4A9296A5489BAF` | 27 active months (+84 rows) |
 | **Batch 2 (April 2023–July 2026)** | 771 | `2650E56E107170E0BE5248D25B47ABBEB03A641E7A63EBA7398630879475BFDA` | 30 active months (+70 rows) |
-| **Batch 3 (April 2023–July 2026)** | **811** | `C8CB9672551827E91832682B9877012A1FA0F48F880EC5C917EBE8476C2F0D3C` | 32 active months (+40 rows) |
+| **Batch 3 (April 2023–July 2026)** | 811 | `C8CB9672551827E91832682B9877012A1FA0F48F880EC5C917EBE8476C2F0D3C` | 32 active months (+40 rows) |
+| **Batch 4 (April 2023–July 2026)** | **876** | `89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910` | 35 active months (+65 rows) |
 
 ---
 
 ## 6. Summary of Validation Checks
 
-- `total_records`: **811**
-- `unique_projects`: **811**
+- `total_records`: **876**
+- `unique_projects`: **876**
 - `missing_project_codes`: **0**
 - `duplicate_keys`: **0**
-- `serial_continuity_all_months`: **True** (serials 1..20 for 2023-04, 21..30 for 2023-05, 31..84 for 2023-06, 85..91 for 2023-07, 92..106 for 2023-08, 107..154 for 2023-09, 155..183 for 2023-10, 184..194 for 2023-11, and 1..N across all subsequent active months)
+- `serial_continuity_all_months`: **True** (serials 1..20 for 2023-04, 21..30 for 2023-05, 31..84 for 2023-06, 85..91 for 2023-07, 92..106 for 2023-08, 107..154 for 2023-09, 155..183 for 2023-10, 184..194 for 2023-11, 217..229 for 2024-01, 230..249 for 2024-02, 250..281 for 2024-03, and 1..N across all subsequent active months)
 - `warnings_count`: **0**
-- `tests.test_completed_projects`: **14/14 OK**
+- `tests.test_completed_projects`: **15/15 OK**

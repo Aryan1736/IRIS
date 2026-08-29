@@ -28,6 +28,9 @@ EXPECTED_MONTHLY_ROW_COUNTS = {
     "2023-10": 29,
     "2023-11": 11,
     "2023-12": 0,
+    "2024-01": 13,
+    "2024-02": 20,
+    "2024-03": 32,
     "2024-06": 18,
     "2024-07": 21,
     "2024-08": 16,
@@ -92,6 +95,9 @@ def validate_completed_records(records: list[dict[str, Any]]) -> dict[str, Any]:
         "2023-09": list(range(107, 155)),
         "2023-10": list(range(155, 184)),
         "2023-11": list(range(184, 195)),
+        "2024-01": list(range(217, 230)),
+        "2024-02": list(range(230, 250)),
+        "2024-03": list(range(250, 282)),
     }
     serial_continuity: dict[str, bool] = {}
     for month, month_records in records_by_month.items():

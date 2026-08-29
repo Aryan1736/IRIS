@@ -49,6 +49,22 @@ MONTH_NAMES = {
     "DECEMBER": 12,
 }
 
+MONTH_ABBRS = {
+    "JAN": 1,
+    "FEB": 2,
+    "MAR": 3,
+    "APR": 4,
+    "MAY": 5,
+    "JUN": 6,
+    "JUL": 7,
+    "AUG": 8,
+    "SEP": 9,
+    "SEPT": 9,
+    "OCT": 10,
+    "NOV": 11,
+    "DEC": 12,
+}
+
 MISSING_TOKENS = {"", "-", "(-)", "na", "n/a", "n.a.", "nil", "none"}
 
 # Signatures for header matching
@@ -174,12 +190,15 @@ def parse_cost_number(value: str | None) -> float | None:
 
 def detect_report_month(text: str, filename: str) -> str:
     """Extract report month (YYYY-MM) from text or fallback to filename."""
-    match = re.search(r"\b(" + "|".join(MONTH_NAMES) + r")[\s,]+(20\d{2})\b", text.upper())
+    match = re.search(r"(?:\b|FOR)(" + "|".join(MONTH_NAMES) + r")[\s,]+(20\d{2})\b", text.upper())
     if not match:
         match = re.search(r"(" + "|".join(MONTH_NAMES) + r")[_ -]+(20\d{2})", filename.upper())
     if not match:
+        match = re.search(r"[_ -](" + "|".join(MONTH_ABBRS) + r")[_ -]+(20\d{2})", filename.upper())
+    if not match:
         raise SchemaChangeDetected(f"Could not determine report month for {filename}")
-    return f"{match.group(2)}-{MONTH_NAMES[match.group(1)]:02d}"
+    month_val = MONTH_NAMES.get(match.group(1)) or MONTH_ABBRS.get(match.group(1))
+    return f"{match.group(2)}-{month_val:02d}"
 
 
 def is_table2_page(text: str) -> bool:
@@ -576,7 +595,8 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
             return records, manifest
 
         if is_t2:
-            cover_text = dict(page_texts).get(1) or pdf.pages[0].extract_text() or ""
+            early_texts = [txt for _, txt in page_texts[:5] if txt]
+            cover_text = " ".join(early_texts)
             month = detect_report_month(cover_text, pdf_path.name)
         else:
             month = detect_report_month(dict(page_texts)[table_pages[0]], pdf_path.name)

@@ -244,9 +244,9 @@ class CompletedProjectsTests(unittest.TestCase):
         self.assertTrue(self.output_csv.exists(), f"Missing {self.output_csv}")
         summary = validate_completed_csv(self.output_csv)
 
-        # Total records must match 811 exactly (771 baseline + 40 Batch 3)
-        self.assertEqual(summary["total_records"], 811)
-        self.assertEqual(summary["unique_projects"], 811)
+        # Total records must match 876 exactly (811 baseline + 65 Batch 4)
+        self.assertEqual(summary["total_records"], 876)
+        self.assertEqual(summary["unique_projects"], 876)
         self.assertEqual(summary["missing_project_codes"], 0)
         self.assertEqual(summary["duplicate_keys"], 0)
         self.assertTrue(summary["serial_continuity_all_months"])
@@ -372,6 +372,44 @@ class CompletedProjectsTests(unittest.TestCase):
             records, manifest = extract_completed_projects_from_pdf(dec_pdf)
             self.assertEqual(len(records), 0)
             self.assertFalse(manifest.get("completed_present", manifest.get("table3_present")))
+
+    def test_batch4_table2_extraction(self):
+        """Test extraction of Batch 4 reports (January, February, March 2024) using Table 2 adapter."""
+        jan_pdf = self.raw_dir / "2023" / "FR_jan_2024.pdf"
+        if jan_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(jan_pdf)
+            self.assertEqual(len(records), 13)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 217)
+            self.assertEqual(records[-1]["source_serial_number"], 229)
+            self.assertEqual(records[0]["project_code"], "N06000095")
+            self.assertEqual(records[0]["sector"], "COAL")
+            self.assertEqual(records[-1]["project_code"], "N24001776")
+            self.assertEqual(records[-1]["sector"], "ROAD TRANSPORT AND HIGHWAYS")
+
+        feb_pdf = self.raw_dir / "2023" / "FR_feb_2024.pdf"
+        if feb_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(feb_pdf)
+            self.assertEqual(len(records), 20)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 230)
+            self.assertEqual(records[-1]["source_serial_number"], 249)
+            self.assertEqual(records[0]["project_code"], "N16000321")
+            self.assertEqual(records[0]["sector"], "PETROLEUM")
+            self.assertEqual(records[-1]["project_code"], "N24001760")
+            self.assertEqual(records[-1]["sector"], "ROAD TRANSPORT AND HIGHWAYS")
+
+        mar_pdf = self.raw_dir / "2023" / "FR_mar_2024.pdf"
+        if mar_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(mar_pdf)
+            self.assertEqual(len(records), 32)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 250)
+            self.assertEqual(records[-1]["source_serial_number"], 281)
+            self.assertEqual(records[0]["project_code"], "N16000249")
+            self.assertEqual(records[0]["sector"], "PETROLEUM")
+            self.assertEqual(records[-1]["project_code"], "N24001497")
+            self.assertEqual(records[-1]["sector"], "ROAD TRANSPORT AND HIGHWAYS")
 
 
 if __name__ == "__main__":
