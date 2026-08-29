@@ -27,8 +27,10 @@ import pdfplumber
 LOGGER = logging.getLogger("paimana.completed_projects")
 
 EXTRACTION_METHOD = "pdfplumber-table3-v1"
+EXTRACTION_METHOD_TABLE2 = "pdfplumber-table2-v1"
 TABLE_SELECTION_METHOD = "semantic-table3-header-v1"
 
+LAYOUT_TABLE2_LEGACY_FIVE_COLUMN = "table2-completed-legacy-five-column-v1"
 LAYOUT_LEGACY_SIX_COLUMN = "table3-completed-legacy-six-column-v1"
 LAYOUT_SEVEN_COLUMN = "table3-completed-seven-column-v1"
 
@@ -50,6 +52,15 @@ MONTH_NAMES = {
 MISSING_TOKENS = {"", "-", "(-)", "na", "n/a", "n.a.", "nil", "none"}
 
 # Signatures for header matching
+# Table 2 legacy 5-column layout (Apr - Jun 2023)
+TABLE2_LEGACY_FIVE_COLUMN_SIGNATURE = (
+    ("sl",),
+    ("project name",),
+    ("original", "cost"),
+    ("commissioning",),
+    ("cumulative", "expenditure"),
+)
+
 # Legacy 6-column layout (Apr - Jun 2025)
 TABLE3_LEGACY_SIX_COLUMN_SIGNATURE = (
     ("sector",),
@@ -163,12 +174,22 @@ def parse_cost_number(value: str | None) -> float | None:
 
 def detect_report_month(text: str, filename: str) -> str:
     """Extract report month (YYYY-MM) from text or fallback to filename."""
-    match = re.search(r"\b(" + "|".join(MONTH_NAMES) + r")\s+(20\d{2})\b", text.upper())
+    match = re.search(r"\b(" + "|".join(MONTH_NAMES) + r")[\s,]+(20\d{2})\b", text.upper())
     if not match:
         match = re.search(r"(" + "|".join(MONTH_NAMES) + r")[_ -]+(20\d{2})", filename.upper())
     if not match:
         raise SchemaChangeDetected(f"Could not determine report month for {filename}")
     return f"{match.group(2)}-{MONTH_NAMES[match.group(1)]:02d}"
+
+
+def is_table2_page(text: str) -> bool:
+    """Semantically detect if a page belongs to Table 2 Completed Projects."""
+    normalized = normalize_space(text).lower()
+    if "month wise list of completed projects" not in normalized:
+        return False
+    if "ongoing projects" in normalized or "deleted projects" in normalized:
+        return False
+    return True
 
 
 def is_table3_page(text: str) -> bool:
@@ -224,6 +245,22 @@ def _get_page_sector_headings(page: Any, table: Any) -> list[tuple[float, str]]:
         if clean and clean.lower() not in ("sector", "total"):
             headings.append((top, clean))
     return headings
+
+
+def classify_table2_header(row: list[str | None]) -> tuple[str | None, list[str]]:
+    """Positional matching of Table 2 header row against supported 5-column signature."""
+    cells = [normalize_space(c).lower() for c in row]
+    if len(row) == 5:
+        missing: list[str] = []
+        for col_idx, required_tokens in enumerate(TABLE2_LEGACY_FIVE_COLUMN_SIGNATURE):
+            actual = cells[col_idx]
+            absent = [tok for tok in required_tokens if tok not in actual]
+            if absent:
+                missing.append(f"col {col_idx} missing {absent}")
+        if not missing:
+            return LAYOUT_TABLE2_LEGACY_FIVE_COLUMN, []
+        return None, [f"{LAYOUT_TABLE2_LEGACY_FIVE_COLUMN}: {'; '.join(missing)}"]
+    return None, [f"unsupported column count {len(row)}; expected 5"]
 
 
 def classify_table3_header(row: list[str | None]) -> tuple[str | None, list[str]]:
@@ -282,8 +319,9 @@ def table_candidate_audit(
     page_number: int,
     page_width: float,
     page_height: float,
+    is_table2: bool = False,
 ) -> tuple[list[list[str | None]], dict[str, Any]]:
-    """Assess one detected table candidate against Table 3 canonical signatures."""
+    """Assess one detected table candidate against canonical signatures."""
     data = table.extract()
     row_count = len(data)
     column_count = max((len(r) for r in data), default=0)
@@ -296,8 +334,25 @@ def table_candidate_audit(
         and bbox[0] < bbox[2]
         and bbox[1] < bbox[3]
     )
-    header = data[0] if data else []
-    layout_version, header_reasons = classify_table3_header(header)
+    layout_version = None
+    header_reasons: list[str] = []
+    header_row_idx = 0
+
+    if is_table2:
+        for idx, candidate_row in enumerate(data[:4]):
+            l, reasons = classify_table2_header(candidate_row)
+            if l is not None:
+                layout_version = l
+                header_reasons = reasons
+                header_row_idx = idx
+                break
+        if layout_version is None:
+            header_reasons = classify_table2_header(data[0])[1] if data else ["empty table"]
+    else:
+        header = data[0] if data else []
+        layout_version, header_reasons = classify_table3_header(header)
+        header_row_idx = 0
+
     reasons: list[str] = list(header_reasons)
 
     serial_column = 1 if layout_version == LAYOUT_LEGACY_SIX_COLUMN else 0
@@ -305,7 +360,7 @@ def table_candidate_audit(
     if layout_version is not None:
         project_rows = sum(
             bool(r) and len(r) == column_count and normalize_space(r[serial_column]).isdigit()
-            for r in data[1:]
+            for r in data[header_row_idx + 1 :]
         )
         if project_rows == 0:
             reasons.append("no rows with numeric serial in serial column")
@@ -321,7 +376,7 @@ def table_candidate_audit(
         "project_row_count": project_rows,
         "layout_version": layout_version,
         "matches_table3_signature": (layout_version is not None and not reasons),
-        "reason": "matched canonical Table 3 signature" if not reasons else "; ".join(reasons),
+        "reason": "matched canonical signature" if not reasons else "; ".join(reasons),
     }
     return data, audit
 
@@ -331,19 +386,21 @@ def select_table3_candidate(
     page_number: int,
     page_width: float,
     page_height: float,
+    is_table2: bool = False,
 ) -> tuple[list[list[str | None]], int, list[dict[str, Any]]]:
-    """Select exactly one canonical Table 3 candidate or fail closed."""
+    """Select exactly one canonical completed projects table candidate or fail closed."""
     extracted: list[list[list[str | None]]] = []
     audits: list[dict[str, Any]] = []
     for idx, t in enumerate(tables):
-        data, audit = table_candidate_audit(t, idx, page_number, page_width, page_height)
+        data, audit = table_candidate_audit(t, idx, page_number, page_width, page_height, is_table2=is_table2)
         extracted.append(data)
         audits.append(audit)
 
     matching = [a["table_index"] for a in audits if a["matches_table3_signature"]]
     if len(matching) != 1:
+        tbl_label = "Table 2" if is_table2 else "Table 3"
         raise TableCandidateSelectionError(
-            f"Page {page_number}: expected exactly 1 canonical Table 3 candidate; found {len(matching)} among {len(tables)} tables",
+            f"Page {page_number}: expected exactly 1 canonical {tbl_label} candidate; found {len(matching)} among {len(tables)} tables",
             audits,
             extracted,
         )
@@ -402,22 +459,110 @@ def parse_seven_column_composite_cell(text: str) -> tuple[str, str, str]:
     return name, agency, code
 
 
+def parse_month_banner(text: str | None) -> str | None:
+    """Parse month banner e.g. 'April,2023' or 'May, 2023' into YYYY-MM."""
+    if not text:
+        return None
+    normalized = normalize_space(text)
+    m = re.search(r"\b(" + "|".join(MONTH_NAMES) + r")\s*,\s*(20\d{2})\b", normalized, re.I)
+    if m:
+        return f"{m.group(2)}-{MONTH_NAMES[m.group(1).upper()]:02d}"
+    return None
+
+
+def parse_table2_composite_cell(text: str) -> tuple[str, str, str]:
+    """Parse composite project cell from Table 2 legacy 5-column layout.
+    
+    Structure:
+    Project Name (multiline)
+    (Agency)
+    - [Project Code: N######## or 9-digit]
+    """
+    m_code = re.search(r"\[(N\d{8}|\d{9})\]\s*$", text)
+    if not m_code:
+        m_code = re.search(r"\[(N\d{8}|\d{9})\]", text)
+    if not m_code:
+        raise SchemaChangeDetected(f"Could not locate project code [N########] or 9-digit in Table 2 cell: {repr(text)}")
+    code = m_code.group(1)
+
+    before_code = text[: m_code.start()].rstrip()
+    if before_code.endswith("-"):
+        before_code = before_code[:-1].rstrip()
+
+    if not before_code.endswith(")"):
+        raise SchemaChangeDetected(f"Agency missing closing parenthesis in Table 2 cell: {repr(text)}")
+
+    paren_depth = 0
+    agency_start = -1
+    for i in range(len(before_code) - 1, -1, -1):
+        if before_code[i] == ")":
+            paren_depth += 1
+        elif before_code[i] == "(":
+            paren_depth -= 1
+            if paren_depth == 0:
+                agency_start = i
+                break
+
+    if agency_start == -1:
+        raise SchemaChangeDetected(f"Unbalanced parentheses in agency in Table 2 cell: {repr(text)}")
+
+    agency = before_code[agency_start + 1 : -1].strip()
+    agency = " ".join(agency.split())
+
+    name_raw = before_code[:agency_start].rstrip()
+    name = " ".join(name_raw.split())
+
+    if not name:
+        raise SchemaChangeDetected(f"Empty project name in Table 2 cell: {repr(text)}")
+    if not agency:
+        raise SchemaChangeDetected(f"Empty agency in Table 2 cell: {repr(text)}")
+
+    return name, agency, code
+
+
 def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Extract all Table 3 Completed Projects from a single Flash Report PDF."""
+    """Extract all Completed Projects from a single Flash Report PDF (Table 2 or Table 3)."""
     records: list[dict[str, Any]] = []
     audits_all: list[dict[str, Any]] = []
-    removed_counts = {"repeated_header": 0, "total": 0, "ministry_heading": 0, "sector_heading": 0, "empty_row": 0}
+    removed_counts = {
+        "repeated_header": 0,
+        "total": 0,
+        "ministry_heading": 0,
+        "sector_heading": 0,
+        "empty_row": 0,
+        "month_heading": 0,
+        "prior_cumulative_project": 0,
+    }
 
     with pdfplumber.open(pdf_path) as pdf:
-        page_texts = [(idx + 1, page.extract_text() or "") for idx, page in enumerate(pdf.pages)]
-        table_pages = [pno for pno, txt in page_texts if is_table3_page(txt)]
+        page_texts: list[tuple[int, str]] = []
+        t3_pages: list[int] = []
+        t2_pages: list[int] = []
+        for idx, page in enumerate(pdf.pages):
+            pno = idx + 1
+            txt = page.extract_text() or ""
+            page_texts.append((pno, txt))
+            page.flush_cache()
+
+            if is_table2_page(txt):
+                t2_pages.append(pno)
+            elif is_table3_page(txt):
+                t3_pages.append(pno)
+            elif (t2_pages or t3_pages) and pno > (t2_pages or t3_pages)[-1] + 1:
+                break
+            elif pno > 60 and not (t2_pages or t3_pages):
+                break
+
+        is_t2 = bool(t2_pages)
+        table_pages = t2_pages if is_t2 else t3_pages
 
         if not table_pages:
-            # Table 3 completed projects absent (e.g. July 2025, August 2025)
-            LOGGER.info("Table 3 Completed Projects absent in %s", pdf_path.name)
+            # Completed projects absent (e.g. July 2025, August 2025)
+            LOGGER.info("Completed Projects absent in %s", pdf_path.name)
             manifest = {
                 "source_file": pdf_path.name,
                 "table3_present": False,
+                "completed_present": False,
                 "pages_processed": 0,
                 "table_pages": [],
                 "row_count": 0,
@@ -427,18 +572,23 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
             }
             return records, manifest
 
-        month = detect_report_month(dict(page_texts)[table_pages[0]], pdf_path.name)
-        LOGGER.info("Processing %s: detected month %s, Table 3 pages %s", pdf_path.name, month, table_pages)
+        if is_t2:
+            cover_text = dict(page_texts).get(1) or pdf.pages[0].extract_text() or ""
+            month = detect_report_month(cover_text, pdf_path.name)
+        else:
+            month = detect_report_month(dict(page_texts)[table_pages[0]], pdf_path.name)
+        LOGGER.info("Processing %s: detected month %s, Completed Projects pages %s (is_table2=%s)", pdf_path.name, month, table_pages, is_t2)
 
         current_ministry: str | None = None
         current_sector: str | None = None
+        current_section_month: str | None = None
         detected_layout: str | None = None
 
         for pno in table_pages:
             page = pdf.pages[pno - 1]
             tables = page.find_tables()
             data, selected_idx, page_audits = select_table3_candidate(
-                tables, pno, float(page.width), float(page.height)
+                tables, pno, float(page.width), float(page.height), is_table2=is_t2
             )
             audits_all.extend(page_audits)
             page_layout = page_audits[selected_idx]["layout_version"]
@@ -451,78 +601,159 @@ def extract_completed_projects_from_pdf(pdf_path: Path) -> tuple[list[dict[str, 
             table_obj = tables[selected_idx]
             page_headings = _get_page_sector_headings(page, table_obj) if page_layout == LAYOUT_LEGACY_SIX_COLUMN else []
 
-            for r_idx, row in enumerate(data[1:], start=1):
-                # Check for repeated header
-                if any("sl" in str(c or "").lower() for c in row[:2]) and any("cost" in str(c or "").lower() for c in row[2:]):
-                    removed_counts["repeated_header"] += 1
-                    continue
-
-                if page_layout == LAYOUT_LEGACY_SIX_COLUMN:
+            if page_layout == LAYOUT_TABLE2_LEGACY_FIVE_COLUMN:
+                for r_idx, row in enumerate(data):
                     c0 = normalize_space(row[0])
                     c1 = normalize_space(row[1])
-                    # Check sector band row
-                    if c0 and not c1.isdigit() and not any(normalize_space(x) for x in row[2:]):
-                        current_sector = c0
-                        removed_counts["sector_heading"] += 1
+                    rest = [normalize_space(x) for x in row[2:]]
+
+                    # Header rows
+                    if "month wise list" in c0.lower() or "2023-2024" in c0 or "sl. no" in c0.lower() or "sl" in c0.lower():
+                        removed_counts["repeated_header"] += 1
                         continue
-                    # Check blank row
-                    if not any(normalize_space(x) for x in row):
+
+                    # Empty row
+                    if not c0 and not c1 and not any(rest):
                         removed_counts["empty_row"] += 1
                         continue
-                    if not c1.isdigit():
-                        if "total" in " ".join(normalize_space(x) for x in row).lower():
-                            removed_counts["total"] += 1
-                        else:
-                            removed_counts["empty_row"] += 1
+
+                    # Month banner
+                    mb = parse_month_banner(c1)
+                    if not c0 and mb and not any(rest):
+                        current_section_month = mb
+                        removed_counts["month_heading"] += 1
+                        continue
+
+                    # Sector banner
+                    if not c0 and c1 and not any(rest):
+                        current_sector = c1
+                        removed_counts["sector_heading"] += 1
                         continue
 
                     # Canonical project row
-                    row_obj = table_obj.rows[r_idx]
-                    row_top = min(cell[1] for cell in row_obj.cells if cell is not None)
-                    applicable = [h for h in page_headings if h[0] <= row_top + 2]
-                    if applicable:
-                        current_sector = applicable[-1][1]
+                    if c0.isdigit():
+                        sno = int(c0)
+                        if current_section_month == month:
+                            name, agency, code = parse_table2_composite_cell(str(row[1] or ""))
+                            orig_cost_raw = normalize_space(row[2]) or None
+                            orig_doc_raw = normalize_space(row[3]) or None
+                            exp_raw = normalize_space(row[4]) or None
 
-                    sector = c0 or current_sector
-                    if not sector:
-                        raise SchemaChangeDetected(f"Missing sector in legacy row: {row}")
-                    name, agency, code, state = parse_legacy_composite_cell(str(row[2] or ""))
-                    
-                    orig_cost_raw = normalize_space(row[3]) or None
-                    orig_doc_raw = normalize_space(row[4]) or None
-                    exp_raw = normalize_space(row[5]) or None
+                            record = {
+                                "project_code": code,
+                                "project_name": name,
+                                "agency": agency,
+                                "ministry": None,
+                                "sector": current_sector,
+                                "state": None,
+                                "approval_date": None,
+                                "start_date": None,
+                                "original_completion_date": parse_month_string(orig_doc_raw),
+                                "revised_completion_date": None,
+                                "actual_completion_date": None,
+                                "original_cost": parse_cost_number(orig_cost_raw),
+                                "revised_cost": None,
+                                "cumulative_expenditure": parse_cost_number(exp_raw),
+                                "report_month": month,
+                                "approval_date_raw": None,
+                                "start_date_raw": None,
+                                "original_completion_date_raw": orig_doc_raw,
+                                "revised_completion_date_raw": None,
+                                "actual_completion_date_raw": None,
+                                "original_cost_raw": orig_cost_raw,
+                                "revised_cost_raw": None,
+                                "cumulative_expenditure_raw": exp_raw,
+                                "source_file": pdf_path.name,
+                                "source_page": pno,
+                                "source_row_number": r_idx,
+                                "source_serial_number": sno,
+                                "extraction_method": EXTRACTION_METHOD_TABLE2,
+                            }
+                            records.append(record)
+                        else:
+                            removed_counts["prior_cumulative_project"] += 1
+                        continue
 
-                    record = {
-                        "project_code": code,
-                        "project_name": name,
-                        "agency": agency,
-                        "ministry": None,
-                        "sector": sector,
-                        "state": state,
-                        "approval_date": None,
-                        "start_date": None,
-                        "original_completion_date": parse_month_string(orig_doc_raw),
-                        "revised_completion_date": None,
-                        "actual_completion_date": None,
-                        "original_cost": parse_cost_number(orig_cost_raw),
-                        "revised_cost": None,
-                        "cumulative_expenditure": parse_cost_number(exp_raw),
-                        "report_month": month,
-                        "approval_date_raw": None,
-                        "start_date_raw": None,
-                        "original_completion_date_raw": orig_doc_raw,
-                        "revised_completion_date_raw": None,
-                        "actual_completion_date_raw": None,
-                        "original_cost_raw": orig_cost_raw,
-                        "revised_cost_raw": None,
-                        "cumulative_expenditure_raw": exp_raw,
-                        "source_file": pdf_path.name,
-                        "source_page": pno,
-                        "source_row_number": r_idx,
-                        "source_serial_number": int(c1),
-                        "extraction_method": EXTRACTION_METHOD,
-                    }
-                    records.append(record)
+                    # Totals or unknown non-project rows
+                    if "total" in (" ".join([c0, c1] + rest)).lower():
+                        removed_counts["total"] += 1
+                        continue
+
+                    raise SchemaChangeDetected(f"Unexpected non-project row in Table 2: {row}")
+
+            else:
+                for r_idx, row in enumerate(data[1:], start=1):
+                    # Check for repeated header
+                    if any("sl" in str(c or "").lower() for c in row[:2]) and any("cost" in str(c or "").lower() for c in row[2:]):
+                        removed_counts["repeated_header"] += 1
+                        continue
+
+                    if page_layout == LAYOUT_LEGACY_SIX_COLUMN:
+                        c0 = normalize_space(row[0])
+                        c1 = normalize_space(row[1])
+                        # Check sector band row
+                        if c0 and not c1.isdigit() and not any(normalize_space(x) for x in row[2:]):
+                            current_sector = c0
+                            removed_counts["sector_heading"] += 1
+                            continue
+                        # Check blank row
+                        if not any(normalize_space(x) for x in row):
+                            removed_counts["empty_row"] += 1
+                            continue
+                        if not c1.isdigit():
+                            if "total" in " ".join(normalize_space(x) for x in row).lower():
+                                removed_counts["total"] += 1
+                            else:
+                                removed_counts["empty_row"] += 1
+                            continue
+
+                        # Canonical project row
+                        row_obj = table_obj.rows[r_idx]
+                        row_top = min(cell[1] for cell in row_obj.cells if cell is not None)
+                        applicable = [h for h in page_headings if h[0] <= row_top + 2]
+                        if applicable:
+                            current_sector = applicable[-1][1]
+
+                        sector = c0 or current_sector
+                        if not sector:
+                            raise SchemaChangeDetected(f"Missing sector in legacy row: {row}")
+                        name, agency, code, state = parse_legacy_composite_cell(str(row[2] or ""))
+                        
+                        orig_cost_raw = normalize_space(row[3]) or None
+                        orig_doc_raw = normalize_space(row[4]) or None
+                        exp_raw = normalize_space(row[5]) or None
+
+                        record = {
+                            "project_code": code,
+                            "project_name": name,
+                            "agency": agency,
+                            "ministry": None,
+                            "sector": sector,
+                            "state": state,
+                            "approval_date": None,
+                            "start_date": None,
+                            "original_completion_date": parse_month_string(orig_doc_raw),
+                            "revised_completion_date": None,
+                            "actual_completion_date": None,
+                            "original_cost": parse_cost_number(orig_cost_raw),
+                            "revised_cost": None,
+                            "cumulative_expenditure": parse_cost_number(exp_raw),
+                            "report_month": month,
+                            "approval_date_raw": None,
+                            "start_date_raw": None,
+                            "original_completion_date_raw": orig_doc_raw,
+                            "revised_completion_date_raw": None,
+                            "actual_completion_date_raw": None,
+                            "original_cost_raw": orig_cost_raw,
+                            "revised_cost_raw": None,
+                            "cumulative_expenditure_raw": exp_raw,
+                            "source_file": pdf_path.name,
+                            "source_page": pno,
+                            "source_row_number": r_idx,
+                            "source_serial_number": int(c1),
+                            "extraction_method": EXTRACTION_METHOD,
+                        }
+                        records.append(record)
 
                 else:  # LAYOUT_SEVEN_COLUMN
                     c0 = normalize_space(row[0])
@@ -656,6 +887,12 @@ def extract_all_completed_projects(
                 "April_Part-I_Synopsis.pdf",
                 "April_Part-II_List_of_tables.pdf",
                 "May_Part-2.pdf",
+                "FR_july1_2023.pdf",
+                "FR_august_2023.pdf",
+                "FR_sept_2023.pdf",
+                "FR_oct_2023.pdf",
+                "FR_nov_2023.pdf",
+                "FR_dec_2023.pdf",
             )
         ]
 

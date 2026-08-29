@@ -8,16 +8,20 @@ from src.extraction.completed_projects import (
     COMPLETED_FIELDS,
     LAYOUT_LEGACY_SIX_COLUMN,
     LAYOUT_SEVEN_COLUMN,
+    LAYOUT_TABLE2_LEGACY_FIVE_COLUMN,
     SchemaChangeDetected,
     TableCandidateSelectionError,
+    classify_table2_header,
     classify_table3_header,
     detect_report_month,
     extract_completed_projects_from_pdf,
+    is_table2_page,
     is_table3_page,
     parse_cost_number,
     parse_legacy_composite_cell,
     parse_month_string,
     parse_seven_column_composite_cell,
+    parse_table2_composite_cell,
 )
 from src.validation.completed_projects import (
     EXPECTED_MONTHLY_ROW_COUNTS,
@@ -183,14 +187,66 @@ class CompletedProjectsTests(unittest.TestCase):
                 self.assertFalse(manifest["table3_present"])
                 self.assertEqual(manifest["row_count"], 0)
 
+    def test_semantic_table2_page_detection(self):
+        """Verify semantic identification of Table 2 Completed Projects pages and rejection of others."""
+        t2_txt = "Month wise List of Completed Projects Costing Rs. 150 crore and above during 2023-2024"
+        self.assertTrue(is_table2_page(t2_txt))
+
+        # Ongoing projects or deleted projects pages must be rejected
+        ongoing_txt = "All Ongoing Projects as of April 2023"
+        self.assertFalse(is_table2_page(ongoing_txt))
+
+        deleted_txt = "List of Deleted Projects during 2023-2024"
+        self.assertFalse(is_table2_page(deleted_txt))
+
+    def test_table2_header_classification(self):
+        """Test Table 2 5-column positional header matching and rejection of invalid headers."""
+        valid_hdr = [
+            "Sl. No",
+            "Project Name",
+            "Original Cost\n(Rs. crore)",
+            "Original Date of\ncommissioning",
+            "Cumulative\nExpenditure\n(Rs. crore)",
+        ]
+        layout, failures = classify_table2_header(valid_hdr)
+        self.assertEqual(layout, LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+        self.assertEqual(failures, [])
+
+        bad_hdr = ["Sl. No", "Project Name", "Cost", "Exp", "Progress"]
+        layout, failures = classify_table2_header(bad_hdr)
+        self.assertIsNone(layout)
+        self.assertTrue(len(failures) > 0)
+
+    def test_parse_table2_composite_cell(self):
+        """Test parsing of composite project cells from Table 2 legacy 5-column layout."""
+        cell1 = "Hindustan Petroleum Corporation Ltd. (Petroleum)\n- [N16000282]"
+        name, agency, code = parse_table2_composite_cell(cell1)
+        self.assertEqual(name, "Hindustan Petroleum Corporation Ltd.")
+        self.assertEqual(agency, "Petroleum")
+        self.assertEqual(code, "N16000282")
+
+        # Cell with parentheses within project name
+        cell2 = "Flyover (Phase 1) Construction (PWD) - [N24000866]"
+        name, agency, code = parse_table2_composite_cell(cell2)
+        self.assertEqual(name, "Flyover (Phase 1) Construction")
+        self.assertEqual(agency, "PWD")
+        self.assertEqual(code, "N24000866")
+
+        # Cell with 9-digit numeric legacy code
+        cell3 = "Khurda Road-Barang 3rd Line (BBS-BRAG) (ECOR) - [220100164]"
+        name, agency, code = parse_table2_composite_cell(cell3)
+        self.assertEqual(name, "Khurda Road-Barang 3rd Line (BBS-BRAG)")
+        self.assertEqual(agency, "ECOR")
+        self.assertEqual(code, "220100164")
+
     def test_output_dataset_integrity(self):
         """Verify generated projects_completed.csv passes all structural and quality checks."""
         self.assertTrue(self.output_csv.exists(), f"Missing {self.output_csv}")
         summary = validate_completed_csv(self.output_csv)
 
-        # Total records must match 617 exactly (375 baseline + 242 historical)
-        self.assertEqual(summary["total_records"], 617)
-        self.assertEqual(summary["unique_projects"], 617)
+        # Total records must match 701 exactly (617 baseline + 84 Batch 1)
+        self.assertEqual(summary["total_records"], 701)
+        self.assertEqual(summary["unique_projects"], 701)
         self.assertEqual(summary["missing_project_codes"], 0)
         self.assertEqual(summary["duplicate_keys"], 0)
         self.assertTrue(summary["serial_continuity_all_months"])
@@ -224,6 +280,34 @@ class CompletedProjectsTests(unittest.TestCase):
             self.assertEqual(manifest["layout_version"], LAYOUT_LEGACY_SIX_COLUMN)
             self.assertEqual(records[6]["project_code"], "N18000316")
             self.assertIn("NORTH EASTERN REGION", records[6]["project_name"])
+
+    def test_batch1_table2_extraction(self):
+        """Test extraction of Batch 1 reports (April, May, June 2023) using Table 2 adapter."""
+        apr_pdf = self.raw_dir / "2023" / "FR_APril_2023.pdf"
+        if apr_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(apr_pdf)
+            self.assertEqual(len(records), 20)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 1)
+            self.assertEqual(records[-1]["source_serial_number"], 20)
+            self.assertEqual(records[0]["project_code"], "N16000282")
+            self.assertEqual(records[0]["sector"], "PETROLEUM")
+
+        may_pdf = self.raw_dir / "2023" / "FR_may_2023.pdf"
+        if may_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(may_pdf)
+            self.assertEqual(len(records), 10)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 21)
+            self.assertEqual(records[-1]["source_serial_number"], 30)
+
+        jun_pdf = self.raw_dir / "2023" / "FR_june_2023.pdf"
+        if jun_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(jun_pdf)
+            self.assertEqual(len(records), 54)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 31)
+            self.assertEqual(records[-1]["source_serial_number"], 84)
 
 
 if __name__ == "__main__":

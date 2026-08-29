@@ -19,6 +19,9 @@ from typing import Any
 LOGGER = logging.getLogger("paimana.validation.completed_projects")
 
 EXPECTED_MONTHLY_ROW_COUNTS = {
+    "2023-04": 20,
+    "2023-05": 10,
+    "2023-06": 54,
     "2024-06": 18,
     "2024-07": 21,
     "2024-08": 16,
@@ -73,16 +76,24 @@ def validate_completed_records(records: list[dict[str, Any]]) -> dict[str, Any]:
     if duplicate_keys:
         raise CompletedProjectsValidationError(f"Found {len(duplicate_keys)} duplicate (project_code, report_month) keys: {duplicate_keys}")
 
-    # 3. Serial continuity 1..N per month
+    # 3. Serial continuity 1..N per month (or cumulative ledger range for FY 2023-24)
+    CUMULATIVE_MONTH_SERIALS = {
+        "2023-04": list(range(1, 21)),
+        "2023-05": list(range(21, 31)),
+        "2023-06": list(range(31, 85)),
+    }
     serial_continuity: dict[str, bool] = {}
     for month, month_records in records_by_month.items():
-        serials = [r["source_serial_number"] for r in month_records]
-        expected_serials = list(range(1, len(month_records) + 1))
+        serials = [int(r["source_serial_number"]) for r in month_records]
+        if month in CUMULATIVE_MONTH_SERIALS:
+            expected_serials = CUMULATIVE_MONTH_SERIALS[month]
+        else:
+            expected_serials = list(range(1, len(month_records) + 1))
         is_continuous = serials == expected_serials
         serial_continuity[month] = is_continuous
         if not is_continuous:
             raise CompletedProjectsValidationError(
-                f"Serial discontinuity in {month}: expected 1..{len(month_records)}, found {serials}"
+                f"Serial discontinuity in {month}: expected {expected_serials[0]}..{expected_serials[-1]}, found {serials}"
             )
 
     # 4. Provenance completeness
