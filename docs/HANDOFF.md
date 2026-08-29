@@ -146,19 +146,19 @@ Do not copy their large tables into new reports; link to them and record only ne
 ## Completed projects dataset state
 
 - Dataset file: `data/processed/projects_completed.csv`
-- Accepted SHA-256: `47D1A82F234A4144E68410302B624315E96567DF0C1FC5541C4A9296A5489BAF`
-- Total records: **701** (617 baseline + 84 Batch 1: April, May, June 2023)
-- Unique projects: **701**
+- Accepted SHA-256: `2650E56E107170E0BE5248D25B47ABBEB03A641E7A63EBA7398630879475BFDA`
+- Total records: **771** (701 baseline + 70 Batch 2: July, August, September 2023)
+- Unique projects: **771**
 - Missing project codes: **0**
 - Duplicate keys: **0**
-- Serial continuity: **100% continuous** within each month (FY 2023-24 cumulative ledger serial ranges 1..20, 21..30, 31..84; and 1..N thereafter)
-- Completed Projects test suite: `python -m unittest discover -s tests -p "*completed*" -v` (12 tests, OK)
+- Serial continuity: **100% continuous** within each month (FY 2023-24 cumulative ledger serial ranges 1..20, 21..30, 31..84, 85..91, 92..106, 107..154; and 1..N thereafter)
+- Completed Projects test suite: `python -m unittest discover -s tests -p "*completed*" -v` (13 tests, OK)
 - Adapters supported:
-  1. `table2-completed-legacy-five-column-v1` (April, May, June 2023)
+  1. `table2-completed-legacy-five-column-v1` (April through September 2023)
   2. `table3-completed-legacy-six-column-v1` (June 2024–June 2025)
   3. `table3-completed-seven-column-v1` (September 2025–July 2026)
 - July & August 2025: Completed Projects absent (Table 3 is North-Eastern Ongoing Projects; cleanly returns 0 records)
-- Next planned Completed Projects task: Batch 2 (July, August, September 2023). Do not proceed until explicitly instructed.
+- Next planned Completed Projects task: Batch 3 (October, November, December 2023). Do not proceed until explicitly instructed.
 
 ## First health checks
 

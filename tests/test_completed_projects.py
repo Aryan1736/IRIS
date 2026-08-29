@@ -244,9 +244,9 @@ class CompletedProjectsTests(unittest.TestCase):
         self.assertTrue(self.output_csv.exists(), f"Missing {self.output_csv}")
         summary = validate_completed_csv(self.output_csv)
 
-        # Total records must match 701 exactly (617 baseline + 84 Batch 1)
-        self.assertEqual(summary["total_records"], 701)
-        self.assertEqual(summary["unique_projects"], 701)
+        # Total records must match 771 exactly (701 baseline + 70 Batch 2)
+        self.assertEqual(summary["total_records"], 771)
+        self.assertEqual(summary["unique_projects"], 771)
         self.assertEqual(summary["missing_project_codes"], 0)
         self.assertEqual(summary["duplicate_keys"], 0)
         self.assertTrue(summary["serial_continuity_all_months"])
@@ -308,6 +308,38 @@ class CompletedProjectsTests(unittest.TestCase):
             self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
             self.assertEqual(records[0]["source_serial_number"], 31)
             self.assertEqual(records[-1]["source_serial_number"], 84)
+
+    def test_batch2_table2_extraction(self):
+        """Test extraction of Batch 2 reports (July, August, September 2023) using Table 2 adapter."""
+        jul_pdf = self.raw_dir / "2023" / "FR_july1_2023.pdf"
+        if jul_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(jul_pdf)
+            self.assertEqual(len(records), 7)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 85)
+            self.assertEqual(records[-1]["source_serial_number"], 91)
+            self.assertEqual(records[0]["project_code"], "N16000272")
+            self.assertEqual(records[0]["sector"], "PETROLEUM")
+
+        aug_pdf = self.raw_dir / "2023" / "FR_august_2023.pdf"
+        if aug_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(aug_pdf)
+            self.assertEqual(len(records), 15)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 92)
+            self.assertEqual(records[-1]["source_serial_number"], 106)
+            self.assertEqual(records[0]["project_code"], "N16000342")
+            self.assertEqual(records[0]["sector"], "PETROLEUM")
+
+        sep_pdf = self.raw_dir / "2023" / "FR_sept_2023.pdf"
+        if sep_pdf.exists():
+            records, manifest = extract_completed_projects_from_pdf(sep_pdf)
+            self.assertEqual(len(records), 48)
+            self.assertEqual(manifest["layout_version"], LAYOUT_TABLE2_LEGACY_FIVE_COLUMN)
+            self.assertEqual(records[0]["source_serial_number"], 107)
+            self.assertEqual(records[-1]["source_serial_number"], 154)
+            self.assertEqual(records[0]["project_code"], "N12000086")
+            self.assertEqual(records[0]["sector"], "STEEL")
 
 
 if __name__ == "__main__":
