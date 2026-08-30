@@ -1,9 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { App } from "./App.tsx";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Failed to find the root DOM element.");
+}
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
