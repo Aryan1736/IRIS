@@ -152,6 +152,7 @@ DETAIL_MILESTONES_SECTORS = {
     "URBAN DEVELOPMENT", "WATER RESOURCES",
 }
 DETAIL_MILESTONES_CODE_RE = re.compile(r"\[(N\d{8}|\d{9})\]")
+DETAIL_MILESTONES_STATES = {*ANNEXURE_XVIII_STATES, "MULTI STATE"}
 MONTH_NAMES = {
     name.upper(): index
     for index, name in enumerate(
@@ -446,7 +447,13 @@ def _table_candidate_audit(
         bool(row) and len(row) == expected_columns and normalize_space(row[serial_column]).isdigit()
         for row in data[start_row:]
     )
-    if project_rows == 0:
+    detail_identity_continuation_rows = 0
+    if is_legacy_continuation and layout_version == LEGACY_DETAIL_MILESTONES_LAYOUT:
+        detail_identity_continuation_rows = sum(
+            len(row) == 7 and bool(DETAIL_MILESTONES_CODE_RE.search(normalize_space(row[1])))
+            for row in data
+        )
+    if project_rows == 0 and detail_identity_continuation_rows != 1:
         reasons.append("no rows with a numeric serial in the first column")
 
     audit = {
@@ -458,6 +465,7 @@ def _table_candidate_audit(
         "bbox": bbox,
         "bbox_within_page": within_page,
         "project_row_count": project_rows,
+        "detail_identity_continuation_rows": detail_identity_continuation_rows,
         "layout_version": layout_version,
         "matches_table6_signature": not reasons,
         "reason": "matched canonical Table 6 signature" if not reasons else "; ".join(reasons),
@@ -486,11 +494,36 @@ def _select_table6_candidate(
     return extracted[selected_index], selected_index, audits
 
 
+def _without_centered_footer_page_number(page: Any) -> Any:
+    """Exclude small centered footer glyphs that can overlap a bottom table row.
+
+    Some legacy reports extend the ruled project table through the footer. On
+    July 2023 page 108, the 8-point printed page number is geometrically
+    superimposed on a 9-point completion date. Filtering only the narrow footer
+    band and smaller font preserves the source table text and avoids merging
+    the footer digits into the reported cell value.
+    """
+    width = float(page.width)
+    height = float(page.height)
+
+    def keep(obj: dict[str, Any]) -> bool:
+        if obj.get("object_type") != "char":
+            return True
+        return not (
+            height - 50 <= float(obj.get("top", -1)) <= height
+            and width * 0.45 <= float(obj.get("x0", -1)) <= width * 0.55
+            and float(obj.get("size", 100)) <= 8.5
+        )
+
+    return page.filter(keep)
+
+
 def _locate_table6_candidate(
     page: Any, page_number: int, legacy_header_established: bool | str = False
 ) -> tuple[list[list[str | None]], int, str, list[dict[str, Any]], list[list[list[str | None]]]]:
     """Find the canonical table, retrying inside the page frame only after zero full-page matches."""
-    full_tables = page.find_tables(TABLE_SETTINGS)
+    detection_page = _without_centered_footer_page_number(page)
+    full_tables = detection_page.find_tables(TABLE_SETTINGS)
     full_extracted = [table.extract() for table in full_tables]
     try:
         table, selected_index, audits = _select_table6_candidate(
@@ -508,7 +541,7 @@ def _locate_table6_candidate(
         full_audits = full_error.audits
 
     inset = float(page.width) * PAGE_FRAME_EXCLUSION_RATIO
-    cropped = page.crop((inset, 0, float(page.width) - inset, float(page.height)))
+    cropped = detection_page.crop((inset, 0, float(page.width) - inset, float(page.height)))
     inset_tables = cropped.find_tables(TABLE_SETTINGS)
     inset_extracted = [table.extract() for table in inset_tables]
     try:
@@ -857,6 +890,16 @@ def _clean_detail_milestones_row(
         parts = [normalize_space(x) for x in after.split(",") if normalize_space(x)]
         agency = parts[0] if len(parts) >= 1 else None
         state = parts[1] if len(parts) >= 2 else None
+        if state:
+            compact_state = re.sub(r"[^A-Z0-9]+", "", state.upper())
+            state = next(
+                (
+                    source_state
+                    for source_state in DETAIL_MILESTONES_STATES
+                    if re.sub(r"[^A-Z0-9]+", "", source_state) == compact_state
+                ),
+                state,
+            )
 
     orig_doc, rev_doc, _ = split_legacy_triplet(cells[3])
     orig_cost, rev_cost, _ = split_legacy_triplet(cells[4])
@@ -954,7 +997,13 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
     raw_pages: list[dict[str, Any]] = []
     projects: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
-    removed_counts = {"repeated_header": 0, "total": 0, "ministry_heading": 0, "sector_heading": 0}
+    removed_counts = {
+        "repeated_header": 0,
+        "total": 0,
+        "ministry_heading": 0,
+        "sector_heading": 0,
+        "agency_heading": 0,
+    }
     schema_events: list[dict[str, Any]] = []
     layout_versions: set[str] = set()
     ministry = sector = None
@@ -1264,6 +1313,23 @@ def process_pdf(pdf_path: Path, paths: PipelinePaths) -> dict[str, Any]:
                             projects.append(_clean_detail_milestones_row(pending_milestones_record, month, pdf_path.name))
                             pending_milestones_record = None
                         removed_counts["total"] += 1
+                    elif (
+                        not serial
+                        and populated == 1
+                        and bool(cells[1])
+                        and (
+                            pending_milestones_record is None
+                            or DETAIL_MILESTONES_CODE_RE.search(pending_milestones_record["cells"][1])
+                        )
+                    ):
+                        # In the October 2023 source, underlined agency group
+                        # headings are separate one-cell rows. A project code
+                        # terminates the preceding project cell, so text after
+                        # that code cannot be a wrapped continuation of it.
+                        if pending_milestones_record:
+                            projects.append(_clean_detail_milestones_row(pending_milestones_record, month, pdf_path.name))
+                            pending_milestones_record = None
+                        removed_counts["agency_heading"] += 1
                     elif not serial and not populated:
                         rejected.append({**raw, "raw_text": "", "reason": "empty_table_row"})
                     elif not serial and pending_milestones_record:
