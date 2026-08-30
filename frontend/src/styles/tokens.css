@@ -1,0 +1,96 @@
+/**
+ * IRIS Design System - Core Design Tokens
+ * Authoritative Locked Tokens from Stitch Project 3577362493477061556
+ */
+
+:root {
+  /* Evergreen Primary Brand */
+  --color-primary: #1a3c2b;
+  --color-primary-900: #1a3c2b;
+  --color-primary-950: #022617;
+  --color-primary-800: #28443b;
+  --color-primary-700: #305448;
+  --color-primary-600: #3a6958;
+  --color-primary-500: #4a8570;
+  --color-primary-400: #68a38d;
+  --color-primary-300: #92c2b0;
+  --color-primary-200: #bbdacb;
+  --color-primary-100: #dcece3;
+  --color-primary-50: #f0f6f3;
+
+  /* Paper / Surface Canvas */
+  --color-surface: #faf9f6;
+  --color-surface-paper: #f7f7f5;
+  --color-surface-bright: #ffffff;
+  --color-surface-dim: #dadad7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f4f0;
+  --color-surface-container: #eeeeeb;
+  --color-surface-container-high: #e8e8e5;
+  --color-surface-container-highest: #e2e3df;
+
+  /* Ink & Typography */
+  --color-text-main: #1a1c1a;
+  --color-text-muted: #5f5e5c;
+  --color-text-variant: #414843;
+  --color-text-dim: #727973;
+  --color-text-inverse: #ffffff;
+
+  /* Structural Hairline Grid */
+  --color-grid: rgba(58, 58, 56, 0.08);
+  --color-grid-structural: #3a3a38;
+  --color-border-hairline: #e2e3df;
+  --color-border-outline: #c1c8c1;
+  --color-border-strong: #727973;
+
+  /* Semantic Signal Accents */
+  --color-mint: #c5ecd3;
+  --color-mint-subtle: #a9cfb7;
+  --color-coral: #ba1a1a;
+  --color-error: #ba1a1a;
+  --color-gold: #eab308;
+  --color-amber: #eab308;
+
+  /* Risk Indicators */
+  --color-risk-high: #ba1a1a;
+  --color-risk-high-bg: #ffdad6;
+  --color-risk-high-text: #93000a;
+
+  --color-risk-medium: #b45309;
+  --color-risk-medium-bg: #fef3c7;
+  --color-risk-medium-text: #78350f;
+
+  --color-risk-low: #1a3c2b;
+  --color-risk-low-bg: #dcece3;
+  --color-risk-low-text: #1a3c2b;
+
+  /* Spacing Scale (4px unit grid) */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Geometry: 0px default, 2px for chips, flat surfaces */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-full: 9999px;
+
+  /* Flat Surfaces: No artificial shadows */
+  --shadow-none: none;
+  --shadow-card: none;
+  --shadow-subtle: none;
+  --shadow-elevated: none;
+
+  /* Layout Max Widths */
+  --max-width-content: 1440px;
+  --max-width-editorial: 1200px;
+  --max-width-narrow: 800px;
+}

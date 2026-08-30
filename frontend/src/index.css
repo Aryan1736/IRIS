@@ -1,0 +1,144 @@
+@import "./styles/tokens.css";
+@import "./styles/typography.css";
+@import "./styles/projects.css";
+@import "./styles/dashboard.css";
+@import "./styles/project-detail.css";
+@import "./styles/analytics.css";
+@import "./styles/intelligence.css";
+
+/* Base Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-none);
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  min-height: 100vh;
+  line-height: var(--line-height-base);
+  overflow-x: hidden;
+}
+
+/* Background Systems: Section-contained Local Grid */
+.bg-mosaic-grid {
+  background-color: var(--color-surface);
+  background-image: url('/mosaic-grid.svg');
+  background-size: 800px 800px;
+  background-repeat: repeat;
+  /* Local scrolling attachment - NOT floating across sections */
+  background-attachment: scroll;
+}
+
+.bg-paper-solid {
+  background-color: var(--color-surface);
+}
+
+/* Structural Hairlines */
+.hairline-t { border-top: 1px solid var(--color-border-hairline); }
+.hairline-b { border-bottom: 1px solid var(--color-border-hairline); }
+.hairline-l { border-left: 1px solid var(--color-border-hairline); }
+.hairline-r { border-right: 1px solid var(--color-border-hairline); }
+.hairline-all { border: 1px solid var(--color-border-hairline); }
+
+/* Layout Containers */
+.container-main {
+  width: 100%;
+  max-width: var(--max-width-content);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.container-editorial {
+  width: 100%;
+  max-width: var(--max-width-editorial);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+/* Precision Badges & Tags (2px radius for chips) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+
+.badge-primary {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-900);
+  border-color: var(--color-primary-300);
+}
+
+.badge-risk-high {
+  background-color: var(--color-risk-high-bg);
+  color: var(--color-risk-high-text);
+  border-color: rgba(186, 26, 26, 0.3);
+}
+
+.badge-risk-medium {
+  background-color: var(--color-risk-medium-bg);
+  color: var(--color-risk-medium-text);
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.badge-risk-low {
+  background-color: var(--color-risk-low-bg);
+  color: var(--color-risk-low-text);
+  border-color: rgba(26, 60, 43, 0.3);
+}
+
+.badge-neutral {
+  background-color: var(--color-surface-container-high);
+  color: var(--color-text-muted);
+  border-color: var(--color-border-hairline);
+}
+
+/* Custom Precision Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-outline);
+  border-radius: var(--radius-none);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-600);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary-200);
+  color: var(--color-primary-950);
+}
