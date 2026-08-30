@@ -5,18 +5,17 @@ __pycache__/
 venv/
 tmp/
 
-# Source reports and generated datasets are local artifacts.
-data/raw/**/*.pdf
-data/raw/*.pdf
-data/extracted/
-data/cleaned/
-data/processed/
-data/validation/
-data/serving/
+# Source reports, runtime, ML, and generated datasets are local artifacts.
+data/
 *.parquet
-dashboard/node_modules/
-dashboard/dist/
-dashboard/*.tsbuildinfo
+# Frontend local artifacts and caches
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+node_modules/
+dist/
+*.tsbuildinfo
+
 
 .env
 *.log

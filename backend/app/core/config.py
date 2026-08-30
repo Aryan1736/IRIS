@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     DB_POOL_TIMEOUT: int = 30
     DB_POOL_RECYCLE: int = 1800
 
+    # Serving Artifact Configuration
+    SERVING_DIR: str = "data/serving"
+
+
+
     # CORS Configuration
     BACKEND_CORS_ORIGINS: list[str] = [
         "http://localhost:3000",

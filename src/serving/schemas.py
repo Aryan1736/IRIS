@@ -153,3 +153,27 @@ class SummaryResponse(StrictModel):
     top_risk_projects: list[TopRiskProject]
     regimes: list[RegimeMetadata]
     sector_summary: list[SectorSummary]
+
+
+class ModelDetail(StrictModel):
+    regime: Literal["LEGACY", "MODERN"]
+    model_id: str
+    family: str
+    target: Literal["target_effective_schedule_ext_3m"]
+    horizon_months: int = 3
+    features_count: int = Field(ge=0)
+    explanation_method: Literal[
+        "CATBOOST_NATIVE_TREESHAP",
+        "LOGISTIC_COEFFICIENT_TIMES_TRANSFORMED_VALUE",
+    ]
+    calibration_policy: str
+    status: Literal["READY", "NOT_TRAINED", "MODEL_NOT_DEPLOYED"] = "READY"
+
+
+class ModelInfoResponse(StrictModel):
+    serving_artifact_version: str
+    target: Literal["target_effective_schedule_ext_3m"]
+    horizon_months: int = 3
+    status: Literal["READY", "NOT_TRAINED", "MODEL_NOT_DEPLOYED"] = "READY"
+    models: list[ModelDetail]
+

@@ -1,5 +1,6 @@
+/// <reference types="vitest" />
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
@@ -8,12 +9,12 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8000",
-        changeOrigin: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        changeOrigin: true,
       },
     },
   },
   test: {
+    globals: true,
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     css: true,

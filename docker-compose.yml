@@ -17,6 +17,24 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: paimana_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/paimana_db
+      SERVING_DIR: /app/data/serving
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data/serving:/app/data/serving:ro
+
 volumes:
   postgres_data:
     driver: local
+

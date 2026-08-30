@@ -67,6 +67,39 @@ class ServingRepository:
             "project_month_records": self.manifest["record_counts"]["project_months"],
         }
 
+    def model_info(self) -> dict[str, Any]:
+        return {
+            "serving_artifact_version": self.manifest["serving_artifact_version"],
+            "target": self.manifest["target"],
+            "horizon_months": 3,
+            "status": "READY",
+            "models": [
+                {
+                    "regime": "LEGACY",
+                    "model_id": "catboost_full_v1__unweighted",
+                    "family": "Gradient Boosted Decision Trees (CatBoost)",
+                    "target": "target_effective_schedule_ext_3m",
+                    "horizon_months": 3,
+                    "features_count": 18,
+                    "explanation_method": "CATBOOST_NATIVE_TREESHAP",
+                    "calibration_policy": "Uncalibrated (ranking score matches operational probability)",
+                    "status": "READY",
+                },
+                {
+                    "regime": "MODERN",
+                    "model_id": "logistic_static_only__unweighted",
+                    "family": "L2-Regularized Logistic Regression",
+                    "target": "target_effective_schedule_ext_3m",
+                    "horizon_months": 3,
+                    "features_count": 12,
+                    "explanation_method": "LOGISTIC_COEFFICIENT_TIMES_TRANSFORMED_VALUE",
+                    "calibration_policy": "Temporal Platt Scaling (active on 2026-04)",
+                    "status": "READY",
+                },
+            ],
+        }
+
+
     @staticmethod
     def _where(
         *,

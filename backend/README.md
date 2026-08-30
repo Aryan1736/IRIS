@@ -250,14 +250,27 @@ Returns chronological observations ordered by `report_month ASC`:
 
 ---
 
-## 4. Foundation Endpoints
+## 4. Risk Intelligence Endpoints
+
+Backed by the deterministic, locked serving artifact (`data/serving/iris_risk_serving_v1.sqlite3`):
+
+- `GET /api/v1/risk/options` — Available evaluation report months, default active month, available regimes, and distinct non-null metadata filter values.
+- `GET /api/v1/risk/summary` — Portfolio score distribution quantiles (p25, median, p75, p90, p95), regime metadata, sector summaries, and top-N ranked projects.
+- `GET /api/v1/risk/projects` — Paginated list of projects ordered by `risk_rank`, with calibrated probabilities, percentiles, and signed feature contributors.
+- `GET /api/v1/risk/project/{project_code}` — Single project `RiskRecord` for a specific report month with top positive/negative TreeSHAP/logistic contributors.
+- `GET /api/v1/risk/project/{project_code}/history` — Chronological risk history for an exact project code.
+- `GET /api/v1/risk/model-info` — Model governance, methodology, target specification, and feature counts.
+
+---
+
+## 5. Foundation Endpoints
 
 - `GET /api/v1/health` — Verifies API health and live database connection (`SELECT 1`).
 - `GET /api/v1/system/dataset-info` — Inspects currently active dataset version, canonical SHA-256 hash, and monthly coverage.
 
 ---
 
-## 5. Structured Error Envelope & Request Tracing
+## 6. Structured Error Envelope & Request Tracing
 
 All API errors return a standard JSON envelope with correlation tracing:
 ```json
@@ -273,14 +286,15 @@ All API errors return a standard JSON envelope with correlation tracing:
 
 ---
 
-## 6. Running Automated Tests
+## 7. Running Automated Tests
 
-The test suite runs hermetically against in-memory SQLite:
+The test suite runs hermetically against in-memory SQLite and temporary serving artifacts:
 
 ```bash
-# Run all backend tests (31 tests)
+# Run all backend tests (51 tests)
 pytest backend/tests/ -v
 
-# Run extraction parser & validation regression tests (21 tests)
+# Run extraction parser & validation regression tests (22 tests)
 python -m unittest tests.test_parsers tests.test_validation -v
 ```
+

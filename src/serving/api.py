@@ -13,6 +13,7 @@ from src.serving.schemas import (
     DashboardOptionsResponse,
     HealthResponse,
     HistoryResponse,
+    ModelInfoResponse,
     ProjectListResponse,
     RiskRecord,
     SummaryResponse,
@@ -128,6 +129,10 @@ def create_app(
             return store().dashboard_options(month)
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @app.get("/risk/model-info", response_model=ModelInfoResponse)
+    def model_info() -> dict[str, Any]:
+        return store().model_info()
 
     @app.get("/risk/project/{project_code}", response_model=RiskRecord)
     def project(

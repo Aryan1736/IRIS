@@ -56,6 +56,11 @@ def create_application() -> FastAPI:
     # 4. Mount API v1 Router
     app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
+    # 4b. Mount Risk Router at root /risk for direct dashboard proxy compatibility
+    from backend.app.api.v1.endpoints import risk
+    app.include_router(risk.router, prefix="/risk", tags=["Risk Intelligence (Direct)"], include_in_schema=False)
+
+
     # 5. Root Info Endpoint
     @app.get("/", tags=["Root"], summary="API Root Info")
     def root_info() -> dict[str, str]:
