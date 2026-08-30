@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IRIS Industrial Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=General+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#1a3c2b',
+              50: '#f0f6f3',
+              100: '#dcece3',
+              200: '#bbdacb',
+              300: '#92c2b0',
+              400: '#68a38d',
+              500: '#4a8570',
+              600: '#3a6958',
+              700: '#305448',
+              800: '#28443b',
+              900: '#1a3c2b',
+            },
+            surface: {
+              DEFAULT: '#faf9f6',
+              dim: '#dadad7',
+            },
+            grid: 'rgba(58, 58, 56, 0.08)',
+            mint: '#a9cfb7',
+            gold: '#eab308',
+            coral: '#ff8a65'
+          },
+          fontFamily: {
+            sans: ['"General Sans"', 'sans-serif'],
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          borderWidth: {
+            'DEFAULT': '1px',
+          },
+          gridTemplateColumns: {
+            'editorial': '1fr 3fr',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    body {
+      background-color: theme('colors.surface.DEFAULT');
+      color: theme('colors.brand.DEFAULT');
+      font-family: theme('fontFamily.sans');
+      -webkit-font-smoothing: antialiased;
+      background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1X_GmguFXfb5FcuWZBPWC1EcztuFRq-h3KhOax-8RnYBiUQTPB7K35ahAg1bHu2YbVn55xqXEdS-capYSN9ozR4eLse5hRTdd5aNUgPgXHD0G7qQIRLhdOHCmAfRvMyOEz6QA2z3REbbmYkZTphN4ernN1RGelPZ81PBrS6LFTCU4uqcJEYr008WUoEhS0WhuSUzogvLyLR5qa_YBDfmPqv-TJZikjesUiWYEM5i5Ls60GAHipmi825NUU');
+      background-size: 800px 800px;
+      background-repeat: repeat;
+      background-attachment: fixed;
+    }
+    
+    .font-heading { font-family: theme('fontFamily.heading'); }
+    .font-mono { font-family: theme('fontFamily.mono'); }
+    
+    .hairline-b { border-bottom: 1px solid theme('colors.grid'); }
+    .hairline-t { border-top: 1px solid theme('colors.grid'); }
+    .hairline-l { border-left: 1px solid theme('colors.grid'); }
+    .hairline-r { border-right: 1px solid theme('colors.grid'); }
+
+    /* Remove default border radius everywhere, except where specified */
+    * { border-radius: 0 !important; }
+    .rounded-sm { border-radius: 2px !important; }
+    .rounded-full { border-radius: 9999px !important; }
+
+    .section-padding {
+      padding-top: 10rem;
+      padding-bottom: 10rem;
+    }
+
+    /* Timeline Animations */
+    @keyframes drawLine {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+    @keyframes popNode {
+        0% { transform: scale(0); opacity: 0; }
+        70% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .timeline-line {
+        animation: drawLine 2s ease-out forwards;
+        transform-origin: left;
+    }
+    
+    .timeline-node {
+        opacity: 0;
+        animation: popNode 0.5s ease-out forwards;
+    }
+    
+    .timeline-node:nth-child(1) { animation-delay: 0.5s; }
+    .timeline-node:nth-child(2) { animation-delay: 0.8s; }
+    .timeline-node:nth-child(3) { animation-delay: 1.1s; }
+    .timeline-node:nth-child(4) { animation-delay: 1.4s; }
+    .timeline-node:nth-child(5) { animation-delay: 1.7s; }
+    .timeline-node:nth-child(6) { animation-delay: 2.0s; }
+    
+    .timeline-panel {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    .timeline-node-container:hover .timeline-panel {
+        display: block;
+        opacity: 1;
+        z-index: 10;
+    }
+  </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head>
+<body>
+<!-- BEGIN: Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-surface hairline-b">
+<div class="w-full mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="font-heading font-bold text-xl tracking-tight uppercase">IRIS</span>
+<span class="hidden sm:inline-block w-px h-3 bg-grid"></span>
+<span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-widest opacity-60">PAIMANA / MoSPI</span>
+</div>
+<div class="hidden md:flex gap-12 text-[10px] font-mono uppercase tracking-widest font-medium">
+<a class="hover:opacity-60 transition-opacity" href="#projects">01. Projects</a>
+<a class="hover:opacity-60 transition-opacity" href="#analytics">02. Analytics</a>
+<a class="hover:opacity-60 transition-opacity" href="#intelligence">03. Intelligence</a>
+</div>
+<div>
+<a class="bg-brand text-white px-6 py-2 text-xs font-mono hover:bg-brand-800 transition-colors uppercase tracking-widest rounded-sm" href="#">
+    Enter IRIS
+</a>
+</div>
+</div>
+</nav>
+<!-- END: Navigation -->
+<!-- BEGIN: Main Header / Hero -->
+<header class="pt-48 pb-32 px-6 w-full mx-auto hairline-b">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<div class="lg:col-span-2 text-[10px] font-mono uppercase tracking-widest space-y-4 pt-4 sticky top-40">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-mint rounded-sm"></div>
+<span class="">SYSTEM STATUS / ONLINE</span>
+</div>
+<div class="opacity-60">PAIMANA / MoSPI</div>
+<div class="opacity-60">INFRASTRUCTURE INTELLIGENCE</div>
+<div class="opacity-60">PREDICTIVE MONITORING</div>
+<div class="opacity-60">DECISION SUPPORT</div>
+</div>
+<div class="lg:col-span-10">
+<h1 class="font-heading text-6xl md:text-8xl lg:text-[112px] font-bold leading-[0.9] tracking-tighter mb-12 uppercase max-w-6xl">
+          From Infrastructure Monitoring<br/>To Intelligence.
+        </h1>
+<div class="grid grid-cols-1 gap-16 items-start mt-24">
+<div>
+<p class="text-xl md:text-2xl max-w-lg mb-12 opacity-80 leading-relaxed font-sans">
+            IRIS turns longitudinal infrastructure project data into predictive intelligence — helping decision-makers identify cost escalation, schedule delays, and emerging implementation risks before they become critical.
+            </p>
+<div class="flex flex-wrap gap-4 font-mono text-sm">
+<a class="bg-brand text-white px-8 py-4 hover:bg-brand-800 transition-colors uppercase tracking-widest flex items-center justify-center gap-2 group w-full sm:w-auto rounded-sm" href="#">
+                Explore Projects
+                <span class="group-hover:translate-x-1 transition-transform">→</span>
+</a>
+<a class="border border-brand px-8 py-4 hover:bg-brand/5 transition-colors uppercase tracking-widest flex items-center justify-center w-full sm:w-auto rounded-sm" href="#">
+                About IRIS
+            </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- END: Main Header / Hero -->
+<!-- BEGIN: The Problem -->
+<section class="hairline-b section-padding relative overflow-hidden bg-white/50 backdrop-blur-sm" id="problem">
+<div class="w-full mx-auto px-6">
+<div class="mb-24">
+<h2 class="font-heading text-5xl md:text-7xl font-bold tracking-tight uppercase max-w-5xl leading-[0.9]">
+          Infrastructure projects don't change in a single moment.
+        </h2>
+</div>
+<!-- Technical Timeline Interactive -->
+<div class="border border-grid bg-surface">
+<div class="p-4 border-b border-grid text-xs font-mono uppercase tracking-widest flex justify-between bg-white/80">
+<span class="">Longitudinal Observation Timeline</span>
+<span class="opacity-60">2024-01 / 2024-06</span>
+</div>
+<div class="p-8 sm:p-16 overflow-x-auto bg-white flex justify-start sm:justify-center relative min-h-[300px] items-center">
+<div class="relative w-[800px] min-w-[800px] h-32 flex items-center">
+<!-- Baseline -->
+<div class="absolute left-0 right-0 h-px bg-grid timeline-line w-full"></div>
+<!-- Nodes Container -->
+<div class="absolute w-full flex justify-between px-4">
+<!-- Node 1 -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-surface border border-grid rounded-full flex items-center justify-center group-hover:border-brand transition-colors z-10 relative">
+<div class="w-1.5 h-1.5 bg-grid rounded-full group-hover:bg-brand transition-colors"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20">2024-01</div>
+<!-- Panel -->
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white border border-brand p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-grid pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">JAN 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Baseline Established</div>
+</div>
+<div class="flex items-center gap-2 text-mint">
+<div class="w-1.5 h-1.5 bg-mint rounded-full"></div>
+<span>ON TRACK</span>
+</div>
+</div>
+</div>
+<!-- Node 2 -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-surface border border-grid rounded-full flex items-center justify-center group-hover:border-brand transition-colors z-10 relative">
+<div class="w-1.5 h-1.5 bg-grid rounded-full group-hover:bg-brand transition-colors"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20">2024-02</div>
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white border border-brand p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-grid pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">FEB 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Initial Progress 14%</div>
+</div>
+<div class="flex items-center gap-2 text-mint">
+<div class="w-1.5 h-1.5 bg-mint rounded-full"></div>
+<span>ON TRACK</span>
+</div>
+</div>
+</div>
+<!-- Node 3: Delay -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-gold/20 border border-gold rounded-full flex items-center justify-center group-hover:border-brand transition-colors z-10 relative">
+<div class="w-1.5 h-1.5 bg-gold rounded-full group-hover:bg-brand transition-colors"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20 text-gold font-bold">2024-03</div>
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white border border-gold p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-grid pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">MAR 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Schedule Revision</div>
+</div>
+<div class="flex items-center gap-2 text-gold">
+<div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+<span>DELAY DETECTED</span>
+</div>
+</div>
+</div>
+<!-- Node 4 -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-surface border border-grid rounded-full flex items-center justify-center group-hover:border-brand transition-colors z-10 relative">
+<div class="w-1.5 h-1.5 bg-grid rounded-full group-hover:bg-brand transition-colors"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20">2024-04</div>
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white border border-brand p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-grid pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">APR 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Progress 32%</div>
+</div>
+<div class="flex items-center gap-2 text-mint">
+<div class="w-1.5 h-1.5 bg-mint rounded-full"></div>
+<span>STABLE</span>
+</div>
+</div>
+</div>
+<!-- Node 5: Overrun -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-coral/20 border border-coral rounded-full flex items-center justify-center group-hover:border-brand transition-colors z-10 relative">
+<div class="w-1.5 h-1.5 bg-coral rounded-full group-hover:bg-brand transition-colors"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20 text-coral font-bold">2024-05</div>
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white border border-coral p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-grid pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">MAY 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Expenditure Spike</div>
+</div>
+<div class="flex items-center gap-2 text-coral">
+<div class="w-1.5 h-1.5 bg-coral rounded-full"></div>
+<span>COST OVERRUN</span>
+</div>
+</div>
+</div>
+<!-- Node 6: Latest -->
+<div class="timeline-node-container relative group cursor-pointer timeline-node">
+<div class="w-4 h-4 bg-brand/20 border border-brand rounded-full flex items-center justify-center z-10 relative">
+<div class="w-2 h-2 bg-brand rounded-full animate-pulse"></div>
+</div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-center w-20 text-brand font-bold">2024-06</div>
+<div class="timeline-panel absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-brand text-white border border-brand p-3 shadow-lg w-48 text-[10px] font-mono">
+<div class="flex justify-between border-b border-white/20 pb-2 mb-2">
+<span class="opacity-60">REPORT MONTH</span>
+<span class="font-bold">JUN 24</span>
+</div>
+<div class="mb-2">
+<div class="opacity-60 mb-1">OBSERVATION</div>
+<div>Latest Status Check</div>
+</div>
+<div class="flex items-center gap-2 text-white">
+<div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+<span>ACTIVE MONITORING</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: The Problem -->
+<!-- BEGIN: Capabilities -->
+<section class="hairline-b section-padding" id="capabilities">
+<div class="w-full mx-auto px-6">
+<div class="flex items-center gap-4 mb-16">
+<div class="w-2 h-2 bg-mint rounded-sm"></div>
+<h2 class="font-heading text-5xl font-bold tracking-tight uppercase leading-[0.9]">Monitor What Changes</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-grid border border-grid">
+<!-- Capability Blocks -->
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors border-b md:border-b-0 border-grid">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 01 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Project Discovery</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Search and inspect infrastructure projects across the monitored portfolio.</p>
+</div>
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors border-b md:border-b-0 border-grid">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 02 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Project History</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Trace how each project evolves across reporting periods.</p>
+</div>
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors border-b md:border-b-0 border-grid">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 03 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Cost Intelligence</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Track cost changes and identify patterns associated with escalation.</p>
+</div>
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors border-b md:border-b-0 border-grid">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 04 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Schedule Intelligence</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Analyse completion timelines and emerging schedule risks.</p>
+</div>
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors border-b md:border-b-0 border-grid">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 05 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Risk &amp; Early Warning</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Surface projects requiring attention before risks become critical.</p>
+</div>
+<div class="bg-surface/90 backdrop-blur p-10 hover:bg-white transition-colors">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ 06 ]</div>
+<h3 class="font-heading text-3xl font-bold mb-4 uppercase tracking-tight">Portfolio Intelligence</h3>
+<p class="opacity-80 font-sans leading-relaxed text-lg">Compare projects, sectors, agencies, and infrastructure portfolios.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Capabilities -->
+<!-- BEGIN: Data Foundation -->
+<section class="hairline-b section-padding bg-white/50 backdrop-blur-sm" id="data">
+<div class="w-full mx-auto px-6">
+<div class="text-center mb-24">
+<h2 class="font-heading text-5xl md:text-6xl font-bold tracking-tight uppercase leading-[0.9]">Every Project Has A History.</h2>
+</div>
+<div class="max-w-5xl mx-auto">
+<div class="flex flex-col md:flex-row items-center justify-center gap-8 font-mono text-sm uppercase">
+<div class="border border-grid bg-white p-8 text-center w-56 shadow-sm rounded-sm">
+<div class="text-[10px] opacity-50 mb-3">IDENTIFIER</div>
+<div class="font-bold text-xl">PROJECT CODE</div>
+</div>
+<div class="text-3xl opacity-30 font-mono">+</div>
+<div class="border border-grid bg-white p-8 text-center w-56 shadow-sm rounded-sm">
+<div class="text-[10px] opacity-50 mb-3">TEMPORAL</div>
+<div class="font-bold text-xl">REPORT MONTH</div>
+</div>
+<div class="text-3xl opacity-30 font-mono">=</div>
+<div class="border border-brand bg-brand/5 p-8 text-center w-56 shadow-sm rounded-sm">
+<div class="text-[10px] text-brand/60 mb-3">OUTPUT</div>
+<div class="font-bold text-xl text-brand">OBSERVATION</div>
+</div>
+</div>
+<div class="mt-24 border border-grid bg-white p-10 overflow-hidden rounded-sm">
+<div class="text-xs font-mono opacity-50 mb-10 border-b border-grid pb-3">DATA LINEAGE FLOW</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-sm">
+<div class="flex-1 border border-grid p-5 text-center bg-surface rounded-sm">OBSERVATION N</div>
+<div class="text-brand">→</div>
+<div class="flex-1 border border-grid p-5 text-center bg-surface rounded-sm">OBSERVATION N+1</div>
+<div class="text-brand">→</div>
+<div class="flex-1 border border-grid p-5 text-center bg-surface rounded-sm">OBSERVATION N+2</div>
+<div class="text-brand font-bold px-4 text-lg">=&gt;</div>
+<div class="flex-1 border-2 border-brand bg-brand text-white p-5 text-center font-bold tracking-widest shadow-lg rounded-sm">LONGITUDINAL HISTORY</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Data Foundation -->
+<!-- BEGIN: Predictive Intelligence -->
+<section class="hairline-b section-padding" id="predictive">
+<div class="w-full mx-auto px-6">
+<div class="mb-20">
+<h2 class="font-heading text-5xl md:text-7xl font-bold tracking-tight uppercase max-w-5xl leading-[0.9]">
+          See the risk before it becomes the outcome.
+        </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-grid border border-grid">
+<div class="bg-surface p-10 hover:bg-white transition-colors">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ PI-01 ]</div>
+<h3 class="font-heading text-2xl font-bold mb-4 uppercase tracking-tight">Cost Overrun Prediction</h3>
+<div class="h-24 mt-4 border border-grid flex items-center justify-center text-brand opacity-50 bg-white rounded-sm overflow-hidden">
+<div class="w-full h-full p-4 flex flex-col justify-end gap-1">
+<div class="w-full h-1/4 bg-brand/10 rounded-sm"></div>
+<div class="w-full h-2/4 bg-brand/30 rounded-sm"></div>
+<div class="w-full h-3/4 bg-coral/50 rounded-sm"></div>
+</div>
+</div>
+</div>
+<div class="bg-surface p-10 hover:bg-white transition-colors">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ PI-02 ]</div>
+<h3 class="font-heading text-2xl font-bold mb-4 uppercase tracking-tight">Schedule Delay Prediction</h3>
+<div class="h-24 mt-4 border border-grid flex items-center justify-center text-brand opacity-50 bg-white rounded-sm overflow-hidden">
+<div class="flex gap-2 items-end h-full p-4 w-full">
+<div class="w-1/3 h-1/2 bg-brand/20 rounded-sm"></div>
+<div class="w-1/3 h-full bg-brand/40 rounded-sm"></div>
+<div class="w-1/3 h-3/4 bg-coral/50 rounded-sm"></div>
+</div>
+</div>
+</div>
+<div class="bg-surface p-10 hover:bg-white transition-colors">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ PI-03 ]</div>
+<h3 class="font-heading text-2xl font-bold mb-4 uppercase tracking-tight">Project Risk Scoring</h3>
+<div class="h-24 mt-4 border border-grid flex items-center justify-center text-brand opacity-50 bg-white rounded-sm">
+<div class="w-16 h-16 rounded-full border-4 border-coral border-t-brand flex items-center justify-center font-mono text-xs">84</div>
+</div>
+</div>
+<div class="bg-surface p-10 hover:bg-white transition-colors">
+<div class="text-xs font-mono opacity-60 mb-8 border-b border-grid pb-4">[ PI-04 ]</div>
+<h3 class="font-heading text-2xl font-bold mb-4 uppercase tracking-tight">Early Warning Signals</h3>
+<div class="h-24 mt-4 border border-grid flex items-center justify-center text-brand opacity-50 bg-white gap-2 p-4 flex-col rounded-sm">
+<div class="w-full h-2 bg-coral/20 rounded-sm"></div>
+<div class="w-full h-2 bg-coral/40 rounded-sm"></div>
+<div class="w-full h-2 bg-coral/60 rounded-sm"></div>
+<div class="w-full h-2 bg-coral rounded-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Predictive Intelligence -->
+<!-- BEGIN: Evolution & Future -->
+<section class="hairline-b section-padding bg-surface/50 backdrop-blur-sm">
+<div class="w-full mx-auto px-6">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+<div class="lg:col-span-4 flex flex-col justify-start pt-4">
+<h2 class="font-heading text-5xl font-bold tracking-tight uppercase mb-12 leading-[0.9]">Evolution of Intelligence</h2>
+<p class="font-sans text-lg opacity-80 mb-16 leading-relaxed">The IRIS architecture is designed to progressively build upon its source-faithful data foundation, moving from basic reporting to advanced predictive analytics.</p>
+<div class="space-y-8 font-mono text-xs uppercase">
+<div class="border border-mint p-5 bg-mint/5 relative rounded-sm">
+<div class="absolute -left-2 -top-2 w-4 h-4 bg-mint flex items-center justify-center text-brand font-bold text-[8px] rounded-sm">1</div>
+<div class="text-mint font-bold mb-2">PHASE 01 / ACTIVE</div>
+<div class="font-bold text-base">Source Data Foundation</div>
+</div>
+<div class="border border-mint p-5 bg-mint/5 relative rounded-sm">
+<div class="absolute -left-2 -top-2 w-4 h-4 bg-mint flex items-center justify-center text-brand font-bold text-[8px] rounded-sm">2</div>
+<div class="text-mint font-bold mb-2">PHASE 02 / ACTIVE</div>
+<div class="font-bold text-base">Longitudinal Processing</div>
+</div>
+<div class="border border-mint p-5 bg-mint/5 relative rounded-sm">
+<div class="absolute -left-2 -top-2 w-4 h-4 bg-mint flex items-center justify-center text-brand font-bold text-[8px] rounded-sm">3</div>
+<div class="text-mint font-bold mb-2">PHASE 03 / ACTIVE</div>
+<div class="font-bold text-base">Decision Support</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8">
+<div class="border border-grid bg-white h-full flex flex-col rounded-sm">
+<div class="p-12 flex-1 flex flex-col justify-center">
+<h3 class="font-heading text-4xl font-bold mb-8 uppercase tracking-tight">From Projects To Portfolios</h3>
+<div class="flex flex-wrap gap-4 font-mono text-sm mb-12">
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">SECTOR</span>
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">STATE</span>
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">MINISTRY</span>
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">AGENCY</span>
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">PROJECT</span>
+<span class="border border-grid px-4 py-2 bg-surface rounded-sm">TIME</span>
+</div>
+<div class="mt-8 border-t border-grid pt-12">
+<h3 class="font-heading text-4xl font-bold mb-6 uppercase tracking-tight">Ask The Infrastructure Portfolio.</h3>
+<p class="font-sans opacity-80 mb-8 text-lg">IRIS Intelligence provides an analytical layer over data, enabling natural language querying of complex infrastructure portfolios.</p>
+<div class="border border-grid bg-surface p-6 font-mono text-xs rounded-sm">
+<div class="flex items-center gap-2 mb-4 opacity-50">
+<span class="w-2 h-2 bg-brand rounded-full"></span>
+<span class="">SYSTEM READY</span>
+</div>
+<div class="opacity-70 mb-2 leading-relaxed">&gt; Which road projects in Maharashtra have a cost overrun exceeding 10%?</div>
+<div class="flex gap-1 items-center mt-4">
+<span class="w-1.5 h-4 bg-mint animate-pulse"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Evolution & Future -->
+<!-- BEGIN: Auditability -->
+<section class="hairline-b section-padding bg-white/80 backdrop-blur-sm relative z-10">
+<div class="w-full mx-auto px-6">
+<h2 class="font-heading text-5xl font-bold tracking-tight uppercase mb-20 text-center leading-[0.9]">Built for Auditability.</h2>
+<div class="max-w-4xl mx-auto border border-grid bg-white divide-y divide-grid font-mono text-sm uppercase rounded-sm shadow-sm">
+<div class="flex flex-col sm:flex-row items-start sm:items-center p-8 hover:bg-surface transition-colors">
+<div class="w-48 text-xs opacity-50 mb-2 sm:mb-0">01</div>
+<div class="flex-1 font-bold text-base">SOURCE-FAITHFUL EXTRACTION</div>
+<div class="mt-2 sm:mt-0 text-brand text-2xl font-bold">✓</div>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center p-8 hover:bg-surface transition-colors">
+<div class="w-48 text-xs opacity-50 mb-2 sm:mb-0">02</div>
+<div class="flex-1 font-bold text-base">DATASET LINEAGE</div>
+<div class="mt-2 sm:mt-0 text-brand text-2xl font-bold">✓</div>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center p-8 hover:bg-surface transition-colors">
+<div class="w-48 text-xs opacity-50 mb-2 sm:mb-0">03</div>
+<div class="flex-1 font-bold text-base">LONGITUDINAL OBSERVATION RECORDS</div>
+<div class="mt-2 sm:mt-0 text-brand text-2xl font-bold">✓</div>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center p-8 hover:bg-surface transition-colors">
+<div class="w-48 text-xs opacity-50 mb-2 sm:mb-0">04</div>
+<div class="flex-1 font-bold text-base">REPORT-MONTH PROVENANCE</div>
+<div class="mt-2 sm:mt-0 text-brand text-2xl font-bold">✓</div>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center p-8 hover:bg-surface transition-colors">
+<div class="w-48 text-xs opacity-50 mb-2 sm:mb-0">05</div>
+<div class="flex-1 font-bold text-base">TRACEABLE PROJECT HISTORY</div>
+<div class="mt-2 sm:mt-0 text-brand text-2xl font-bold">✓</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Auditability -->
+<!-- BEGIN: Footer CTA -->
+<section class="py-40 bg-brand text-white text-center relative z-10">
+<div class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida/AEtjO1X_GmguFXfb5FcuWZBPWC1EcztuFRq-h3KhOax-8RnYBiUQTPB7K35ahAg1bHu2YbVn55xqXEdS-capYSN9ozR4eLse5hRTdd5aNUgPgXHD0G7qQIRLhdOHCmAfRvMyOEz6QA2z3REbbmYkZTphN4ernN1RGelPZ81PBrS6LFTCU4uqcJEYr008WUoEhS0WhuSUzogvLyLR5qa_YBDfmPqv-TJZikjesUiWYEM5i5Ls60GAHipmi825NUU')] opacity-5 mix-blend-overlay"></div>
+<div class="max-w-5xl mx-auto px-6 relative z-10">
+<h2 class="font-heading text-5xl md:text-7xl font-bold tracking-tight uppercase mb-16 leading-[0.9]">
+        EXPLORE THE INFRASTRUCTURE PORTFOLIO.
+      </h2>
+<div class="flex flex-col sm:flex-row justify-center gap-6 font-mono text-sm">
+<a class="bg-white text-brand px-12 py-6 hover:bg-surface-dim transition-colors uppercase tracking-widest font-bold text-base rounded-sm" href="#">
+          ENTER IRIS
+        </a>
+<a class="border border-white/30 px-12 py-6 hover:bg-white/10 transition-colors uppercase tracking-widest text-base rounded-sm" href="#">
+          EXPLORE PROJECTS
+        </a>
+</div>
+</div>
+</section>
+<!-- END: Footer CTA -->
+<!-- BEGIN: Institutional Footer -->
+<footer class="py-8 text-[10px] font-mono uppercase tracking-widest bg-surface border-t border-grid relative z-20">
+<div class="w-full mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-4 font-bold">
+<span class="">IRIS</span>
+<span class="w-px h-3 bg-grid"></span>
+<span class="opacity-60">PAIMANA / MoSPI</span>
+</div>
+<div class="flex flex-wrap justify-center gap-6 md:gap-12 opacity-60">
+<a class="hover:opacity-100 transition-opacity hover:text-brand" href="#">Documentation</a>
+<a class="hover:opacity-100 transition-opacity hover:text-brand" href="#projects">Projects</a>
+<a class="hover:opacity-100 transition-opacity hover:text-brand" href="#analytics">Analytics</a>
+<a class="hover:opacity-100 transition-opacity hover:text-brand" href="#intelligence">Intelligence</a>
+</div>
+<div class="flex gap-6 opacity-40">
+<a class="hover:opacity-100 transition-opacity" href="#">System Status</a>
+<a class="hover:opacity-100 transition-opacity" href="#">Terms</a>
+</div>
+</div>
+</footer>
+<!-- END: Institutional Footer -->
+</body></html>

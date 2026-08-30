@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>IRIS | PROJECTS | DISCOVERY</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1a3c2b",
+                        "inverse-surface": "#2f312f",
+                        "on-secondary-container": "#656462",
+                        "secondary": "#5f5e5c",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface": "#faf9f6",
+                        "primary": "#022617",
+                        "surface-dim": "#dadad7",
+                        "on-secondary-fixed-variant": "#474745",
+                        "surface-container": "#eeeeeb",
+                        "surface-container-highest": "#e2e3df",
+                        "surface-container-low": "#f4f4f0",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#454746",
+                        "on-background": "#1a1c1a",
+                        "surface-container-high": "#e8e8e5",
+                        "outline-variant": "#c1c8c1",
+                        "outline": "#727973",
+                        "on-primary-fixed-variant": "#2c4e3b",
+                        "surface-bright": "#faf9f6",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#343635",
+                        "on-primary-container": "#82a790",
+                        "tertiary-fixed": "#e2e3e1",
+                        "surface-tint": "#436652",
+                        "secondary-fixed-dim": "#c8c6c3",
+                        "tertiary": "#1f2120",
+                        "primary-fixed": "#c5ecd3",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#1a1c1b",
+                        "on-surface-variant": "#414843",
+                        "on-surface": "#1a1c1a",
+                        "tertiary-fixed-dim": "#c6c7c5",
+                        "background": "#faf9f6",
+                        "primary-fixed-dim": "#a9cfb7",
+                        "inverse-on-surface": "#f1f1ee",
+                        "secondary-container": "#e4e2df",
+                        "secondary-fixed": "#e4e2df",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#9e9f9d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e2e3df",
+                        "on-primary-fixed": "#002112",
+                        "inverse-primary": "#a9cfb7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "2px",
+                        "xl": "2px",
+                        "full": "0px"
+                    },
+                    "spacing": {
+                        "margin": "24px",
+                        "grid_opacity": "0.1",
+                        "unit": "4px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "label-mono-sm": ["JetBrains Mono"],
+                        "headline-xl": ["Space Grotesk"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-xl-mobile": ["Space Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-mono-sm": ["10px", { "lineHeight": "1.4", "letterSpacing": "0.12em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-mono": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-xl-mobile": ["36px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    },
+                    backgroundImage: {
+                        'grid-pattern': `linear-gradient(to right, #3A3A381A 1px, transparent 1px), linear-gradient(to bottom, #3A3A381A 1px, transparent 1px)`
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #faf9f6;
+            background-image: linear-gradient(to right, rgba(58, 58, 56, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(58, 58, 56, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hairline {
+            border-width: 1px;
+            border-color: #e2e3df; /* outline-variant */
+        }
+        .hairline-b { border-bottom-width: 1px; border-bottom-color: #e2e3df; }
+        .hairline-t { border-top-width: 1px; border-top-color: #e2e3df; }
+        .hairline-l { border-left-width: 1px; border-left-color: #e2e3df; }
+        .hairline-r { border-right-width: 1px; border-right-color: #e2e3df; }
+        
+        .status-coral { color: #ba1a1a; }
+        .status-forest { color: #022617; }
+        .status-amber { color: #935C00; }
+        .status-slate { color: #414843; }
+
+        .hover-shift:hover {
+            background-color: #f4f4f0; /* surface-container-low */
+        }
+    </style>
+</head>
+<body class="text-on-surface min-h-screen flex flex-col font-body-md antialiased">
+<!-- TopNavBar -->
+<header class="bg-surface w-full h-16 border-b border-outline-variant flex justify-between items-center w-full px-margin transition-all duration-200 ease-in-out shrink-0">
+<div class="flex items-center gap-6">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tighter">IRIS</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant hidden md:block">PAIMANA / INFRASTRUCTURE INTELLIGENCE</div>
+</div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="h-full flex items-center text-primary border-b-2 border-primary pb-1 font-label-mono text-label-mono transition-all duration-200 ease-in-out" href="#">01. PROJECTS</a>
+<a class="h-full flex items-center text-on-secondary-container hover:text-primary hover:bg-surface-container font-label-mono text-label-mono transition-all duration-200 ease-in-out px-2" href="#">02. ANALYTICS</a>
+<a class="h-full flex items-center text-on-secondary-container hover:text-primary hover:bg-surface-container font-label-mono text-label-mono transition-all duration-200 ease-in-out px-2" href="#">03. INTELLIGENCE</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant hidden lg:flex flex-col items-end mr-4">
+<span class="">DATA: 2023-01 → 2026-07</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 bg-primary inline-block"></span> SYSTEM STATUS / ONLINE</span>
+</div>
+<button class="text-on-secondary-container hover:text-primary transition-colors hover:bg-surface-container p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+<button class="text-on-secondary-container hover:text-primary transition-colors hover:bg-surface-container p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col p-margin gap-margin max-w-[1600px] mx-auto w-full">
+<!-- Page Intro -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 hairline-b pb-margin">
+<div class="flex flex-col gap-4 max-w-2xl">
+<div class="font-label-mono text-label-mono text-on-surface-variant">IRIS / PROJECTS / DISCOVERY</div>
+<h1 class="font-headline-xl text-headline-xl text-primary md:hidden">PROJECTS. FIND THE SIGNAL.</h1>
+<h1 class="font-headline-xl text-headline-xl text-primary hidden md:block">PROJECTS. FIND THE SIGNAL.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Search and examine infrastructure projects across the monitored portfolio, reporting history, sectors, agencies, and states.</p>
+</div>
+<div class="flex flex-col gap-1 text-right font-label-mono-sm text-label-mono-sm text-on-surface-variant bg-surface-container-low p-4 hairline">
+<div class="">4,738 UNIQUE PROJECTS</div>
+<div class="">64,608 OBSERVATIONS</div>
+<div class="">2023-01 → 2026-07</div>
+</div>
+</section>
+<!-- Project Search & Filters -->
+<section class="flex flex-col gap-unit">
+<div class="font-label-mono text-label-mono text-primary mb-2">PROJECT SEARCH</div>
+<div class="flex flex-col lg:flex-row gap-4">
+<div class="flex-grow relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface hairline focus:outline-none focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed font-body-md text-body-md transition-colors placeholder:text-on-surface-variant/50" placeholder="Search project name, project code, agency, sector..." type="text">
+</div>
+</div>
+<div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-surface-container-low p-3 hairline mt-4">
+<div class="flex flex-wrap gap-2 items-center">
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant mr-2">FILTERS:</span>
+<!-- Filter Selects -->
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary">
+<option>SECTOR</option>
+</select>
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary">
+<option>AGENCY</option>
+</select>
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary">
+<option>STATE</option>
+</select>
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary hidden sm:block">
+<option>IDENTIFIER REGIME</option>
+</select>
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary hidden md:block">
+<option>REPORT PERIOD</option>
+</select>
+<select class="bg-surface hairline py-1 px-2 pr-8 font-label-mono-sm text-label-mono-sm text-on-surface focus:outline-none focus:border-primary">
+<option>PROJECT STATUS</option>
+</select>
+<button class="font-label-mono-sm text-label-mono-sm text-on-surface-variant hover:text-primary underline ml-2 transition-colors">CLEAR FILTERS</button>
+</div>
+
+</div>
+</section>
+<!-- Project Portfolio Results -->
+<section class="flex flex-col mt-6 flex-grow">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">PROJECT PORTFOLIO</h2>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant mt-1">4,738 MATCHING PROJECTS</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto hairline bg-surface">
+<table class="w-full text-left border-collapse min-w-[1200px]">
+<thead>
+<tr class="bg-surface-container-low font-label-mono-sm text-label-mono-sm text-on-surface-variant hairline-b">
+<th class="p-3 font-normal">PROJECT</th>
+<th class="p-3 font-normal">PROJECT CODE</th>
+<th class="p-3 font-normal">SECTOR</th>
+<th class="p-3 font-normal">AGENCY</th>
+<th class="p-3 font-normal">STATE</th>
+<th class="p-3 font-normal">LATEST REPORT</th>
+<th class="p-3 font-normal">STATUS</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<!-- Row 1 -->
+<tr class="hairline-b hover-shift cursor-pointer group transition-colors">
+<td class="p-3 font-medium">Urban Transit Expansion Phase III</td>
+<td class="p-3 font-label-mono text-label-mono text-on-surface-variant">PRJ-2023-UTX</td>
+<td class="p-3">Transport</td>
+<td class="p-3">Metropolitan Auth</td>
+<td class="p-3">NY</td>
+<td class="p-3 font-label-mono text-label-mono">2024-Q2</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary inline-block"></span>
+<span class="font-label-mono-sm text-label-mono-sm">ON TRACK</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-auto opacity-0 group-hover:opacity-100 transition-opacity" style="font-size: 16px;">arrow_forward</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hairline-b hover-shift cursor-pointer group transition-colors">
+<td class="p-3 font-medium">Northern Grid Modernization</td>
+<td class="p-3 font-label-mono text-label-mono text-on-surface-variant">PRJ-2022-NGM</td>
+<td class="p-3">Energy</td>
+<td class="p-3">Dept of Energy</td>
+<td class="p-3">WA</td>
+<td class="p-3 font-label-mono text-label-mono">2024-Q1</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-[#935C00] inline-block"></span>
+<span class="font-label-mono-sm text-label-mono-sm">MONITOR</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-auto opacity-0 group-hover:opacity-100 transition-opacity" style="font-size: 16px;">arrow_forward</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hairline-b hover-shift cursor-pointer group transition-colors">
+<td class="p-3 font-medium">Coastal Defense Infrastructure</td>
+<td class="p-3 font-label-mono text-label-mono text-on-surface-variant">PRJ-2021-CDI</td>
+<td class="p-3">Defense</td>
+<td class="p-3">Army Corps</td>
+<td class="p-3">FL</td>
+<td class="p-3 font-label-mono text-label-mono">2023-Q4</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-[#ba1a1a] inline-block"></span>
+<span class="font-label-mono-sm text-label-mono-sm text-[#ba1a1a]">HIGH ATTENTION</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-auto opacity-0 group-hover:opacity-100 transition-opacity" style="font-size: 16px;">arrow_forward</span>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover-shift cursor-pointer group transition-colors">
+<td class="p-3 font-medium">Central Water Treatment Upgrade</td>
+<td class="p-3 font-label-mono text-label-mono text-on-surface-variant">PRJ-2024-CWT</td>
+<td class="p-3">Water</td>
+<td class="p-3">EPA</td>
+<td class="p-3">MI</td>
+<td class="p-3 font-label-mono text-label-mono">2024-Q2</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary inline-block"></span>
+<span class="font-label-mono-sm text-label-mono-sm">ON TRACK</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-auto opacity-0 group-hover:opacity-100 transition-opacity" style="font-size: 16px;">arrow_forward</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex flex-col sm:flex-row justify-between items-center mt-4 bg-surface p-2 hairline font-label-mono-sm text-label-mono-sm text-on-surface-variant gap-4">
+<div class="">SHOWING 1–25 OF 4,738 PROJECTS</div>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 hover:bg-surface-container transition-colors disabled:opacity-50">PREVIOUS</button>
+<div class="flex items-center gap-1 px-2">
+<button class="w-6 h-6 flex items-center justify-center bg-primary text-on-primary">01</button>
+<button class="w-6 h-6 flex items-center justify-center hover:bg-surface-container transition-colors">02</button>
+<button class="w-6 h-6 flex items-center justify-center hover:bg-surface-container transition-colors">03</button>
+<span class="w-6 h-6 flex items-center justify-center">...</span>
+<button class="w-6 h-6 flex items-center justify-center hover:bg-surface-container transition-colors">474</button>
+</div>
+<button class="px-2 py-1 hover:bg-surface-container transition-colors">NEXT</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Data Provenance Strip -->
+<footer class="bg-surface-container-highest hairline-t w-full mt-auto">
+<div class="max-w-[1600px] mx-auto px-margin py-3 flex flex-wrap justify-between items-center font-label-mono-sm text-label-mono-sm text-on-surface-variant gap-4">
+<div class="flex flex-wrap gap-4 md:gap-8">
+<span class="">SOURCE: PAIMANA MONITORING DATA</span>
+<span class="">OBSERVATIONS: 64,608</span>
+<span class="">PROJECTS: 4,738</span>
+<span class="">MONITORED PERIOD: 2023-01 → 2026-07</span>
+</div>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" style="font-size: 14px; font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="">DATA INTEGRITY: VERIFIED</span>
+</div>
+</div>
+</footer>
+
+
+</body></html>

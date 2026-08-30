@@ -1,0 +1,347 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>IRIS | Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed": "#e4e2df",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#656462",
+                        "surface-bright": "#faf9f6",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#414843",
+                        "on-surface": "#1a1c1a",
+                        "primary-fixed": "#c5ecd3",
+                        "surface-variant": "#e2e3df",
+                        "background": "#faf9f6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#9e9f9d",
+                        "primary": "#022617",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1a",
+                        "surface-dim": "#dadad7",
+                        "outline": "#727973",
+                        "primary-container": "#1a3c2b",
+                        "on-primary-container": "#82a790",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f4f4f0",
+                        "on-tertiary-fixed": "#1a1c1b",
+                        "tertiary-fixed": "#e2e3e1",
+                        "surface-container-high": "#e8e8e5",
+                        "surface": "#faf9f6",
+                        "tertiary-fixed-dim": "#c6c7c5",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "surface-container-highest": "#e2e3df",
+                        "on-primary-fixed-variant": "#2c4e3b",
+                        "secondary-fixed-dim": "#c8c6c3",
+                        "tertiary": "#1f2120",
+                        "inverse-surface": "#2f312f",
+                        "on-tertiary-fixed-variant": "#454746",
+                        "secondary": "#5f5e5c",
+                        "tertiary-container": "#343635",
+                        "surface-container": "#eeeeeb",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#e4e2df",
+                        "on-primary-fixed": "#002112",
+                        "inverse-primary": "#a9cfb7",
+                        "inverse-on-surface": "#f1f1ee",
+                        "outline-variant": "#c1c8c1",
+                        "surface-tint": "#436652",
+                        "primary-fixed-dim": "#a9cfb7",
+                        "on-secondary-fixed-variant": "#474745",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "2px",
+                        "lg": "2px",
+                        "xl": "2px",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gutter": "16px",
+                        "grid_opacity": "0.1",
+                        "margin": "24px",
+                        "unit": "4px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Space Grotesk"],
+                        "headline-xl-mobile": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-mono-sm": ["JetBrains Mono"],
+                        "headline-xl": ["Space Grotesk"]
+                    },
+                    fontSize: {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-xl-mobile": ["36px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-mono-sm": ["10px", { "lineHeight": "1.4", "letterSpacing": "0.12em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .grid-background {
+            background-image: linear-gradient(to right, rgba(58, 58, 56, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(58, 58, 56, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background grid-background min-h-screen flex flex-col font-body-md text-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-margin py-4 max-w-full bg-background dark:bg-background border-b border-outline/20 top-0 z-40 fixed">
+<div class="flex items-center gap-8">
+<div class="font-headline-md text-headline-md font-bold tracking-tighter text-primary dark:text-on-background">
+                IRIS / PAIMANA
+            </div>
+<nav class="hidden md:flex gap-6">
+<a class="text-secondary dark:text-on-secondary-container font-label-mono text-label-mono hover:text-primary dark:hover:text-on-background transition-colors duration-200" href="#">01. PROJECTS</a>
+<a class="text-secondary dark:text-on-secondary-container font-label-mono text-label-mono hover:text-primary dark:hover:text-on-background transition-colors duration-200" href="#">02. ANALYTICS</a>
+<a class="text-primary dark:text-on-background border-b-2 border-primary dark:border-on-background pb-1 font-label-mono text-label-mono opacity-80 transition-opacity hover:text-primary dark:hover:text-on-background transition-colors duration-200" href="#">03. INTELLIGENCE</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-4 font-label-mono text-label-mono text-secondary">
+<span class="">DATA: 2023-01 → 2026-07</span>
+<span class="w-px h-4 bg-outline/20"></span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-[#9EFFBF] rounded-none"></span>
+<span class="">SYSTEM STATUS / ONLINE</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-primary">
+<button class="hover:opacity-70 transition-opacity"><span class="material-symbols-outlined">database</span></button>
+<button class="hover:opacity-70 transition-opacity"><span class="material-symbols-outlined">settings</span></button>
+<button class="hover:opacity-70 transition-opacity"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 pb-32 px-margin max-w-[1440px] mx-auto w-full flex flex-col gap-12">
+<!-- Intro -->
+<section class="flex flex-col gap-6">
+<div class="font-label-mono text-label-mono text-secondary uppercase tracking-widest">
+                IRIS / INTELLIGENCE / EARLY WARNING
+            </div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end border-b border-outline/20 pb-8">
+<div class="lg:col-span-8 flex flex-col gap-4">
+<h1 class="font-headline-xl text-headline-xl uppercase text-primary">
+                        SEE THE RISK BEFORE IT BECOMES THE OUTCOME.
+                    </h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-2xl">
+                        Early-warning intelligence for schedule extension risk, cost escalation, and project trajectory changes.
+                    </p>
+</div>
+<div class="lg:col-span-4 flex flex-col gap-2 font-label-mono text-label-mono p-4 border border-outline/20 bg-surface-container-low/50">
+<div class="flex justify-between border-b border-outline/10 pb-1">
+<span class="text-secondary">MODEL STATUS</span>
+<span class="text-primary font-bold">VALIDATED BASELINE</span>
+</div>
+<div class="flex justify-between border-b border-outline/10 pb-1">
+<span class="text-secondary">HORIZON</span>
+<span class="text-primary">H=3 MONTHS</span>
+</div>
+<div class="flex justify-between border-b border-outline/10 pb-1">
+<span class="text-secondary">EVALUATION</span>
+<span class="text-primary">WALK-FORWARD</span>
+</div>
+<div class="flex justify-between border-b border-outline/10 pb-1">
+<span class="text-secondary">REGIME</span>
+<span class="text-primary">LEGACY / MODERN</span>
+</div>
+<div class="flex justify-between pt-1">
+<span class="text-secondary">MODEL OUTPUT</span>
+<span class="text-[#FF8C69]">NOT YET CONNECTED</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 01: Portfolio Risk Overview -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">01. PORTFOLIO RISK OVERVIEW</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Module 1 -->
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-grid-background opacity-20 transition-opacity group-hover:opacity-40"></div>
+<h3 class="font-headline-md text-headline-md text-primary">SCHEDULE EXTENSION</h3>
+<div class="flex flex-col gap-1 mt-auto font-label-mono text-label-mono">
+<div class="flex justify-between text-secondary">
+<span class="">OUTPUT:</span>
+<span class="">—</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="">STATUS:</span>
+<span class="">NOT YET CONNECTED</span>
+</div>
+</div>
+</div>
+<!-- Module 2 -->
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-grid-background opacity-20 transition-opacity group-hover:opacity-40"></div>
+<h3 class="font-headline-md text-headline-md text-primary">COST ESCALATION</h3>
+<div class="flex flex-col gap-1 mt-auto font-label-mono text-label-mono">
+<div class="flex justify-between text-secondary">
+<span class="">OUTPUT:</span>
+<span class="">—</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="">STATUS:</span>
+<span class="">NOT YET CONNECTED</span>
+</div>
+</div>
+</div>
+<!-- Module 3 -->
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-grid-background opacity-20 transition-opacity group-hover:opacity-40"></div>
+<h3 class="font-headline-md text-headline-md text-primary">PROJECT TRAJECTORY</h3>
+<div class="flex flex-col gap-1 mt-auto font-label-mono text-label-mono">
+<div class="flex justify-between text-secondary">
+<span class="">OUTPUT:</span>
+<span class="">—</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="">STATUS:</span>
+<span class="">NOT YET CONNECTED</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 02: EARLY WARNING SIGNALS -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">02. PROJECTS REQUIRING ATTENTION</h2>
+<div class="border border-outline/20 bg-surface overflow-x-auto">
+<table class="w-full text-left font-label-mono text-label-mono">
+<thead class="border-b border-outline/20 text-secondary"><tr><th class="p-4 font-normal">PROJECT</th><th class="p-4 font-normal border-l border-outline/20">SIGNAL</th><th class="p-4 font-normal border-l border-outline/20">HORIZON</th><th class="p-4 font-normal border-l border-outline/20">ACTION</th></tr></thead>
+<tbody class="text-primary divide-y divide-outline/20"><tr class="hover:bg-surface-container-low/50 transition-colors"><td class="p-4">—</td><td class="p-4 border-l border-outline/20 text-[#FF8C69]">NOT CONNECTED</td><td class="p-4 border-l border-outline/20">—</td><td class="p-4 border-l border-outline/20"><button class="text-secondary hover:text-primary underline decoration-1 underline-offset-2">INSPECT</button></td></tr><tr class="hover:bg-surface-container-low/50 transition-colors"><td class="p-4">—</td><td class="p-4 border-l border-outline/20 text-[#FF8C69]">NOT CONNECTED</td><td class="p-4 border-l border-outline/20">—</td><td class="p-4 border-l border-outline/20"><button class="text-secondary hover:text-primary underline decoration-1 underline-offset-2">INSPECT</button></td></tr></tbody>
+</table>
+</div>
+</section>
+<!-- SECTION 03: MODEL OUTPUT DISTRIBUTION -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">03. MODEL OUTPUT DISTRIBUTION</h2>
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-6 min-h-[400px]">
+<div class="flex flex-col gap-1"><h3 class="font-headline-md text-headline-md text-primary">SCHEDULE EXTENSION RISK</h3><div class="flex justify-between font-label-mono text-label-mono-sm text-secondary mt-2"><span class="">LOW PROBABILITY</span><span class="">HIGH PROBABILITY</span></div></div>
+<div class="flex-grow border border-outline/10 relative flex items-center justify-center">
+<!-- Grid Lines -->
+<div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(114,121,115,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(114,121,115,0.1)_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
+<div class="z-10 font-label-mono text-label-mono text-[#FF8C69] bg-surface px-4 py-2 border border-outline/20 shadow-sm">
+                MODEL OUTPUTS NOT YET CONNECTED
+            </div>
+</div>
+</div>
+</section>
+<!-- SECTION 04: REGIME INTELLIGENCE -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">04. REGIME INTELLIGENCE</h2>
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-6"><div class="flex justify-between items-center border-b border-outline/10 pb-4"><h3 class="font-headline-md text-headline-md text-primary">LEGACY | MODERN PERFORMANCE</h3><span class="font-label-mono text-label-mono text-secondary">WALK-FORWARD AP COMPARISON</span></div><div class="grid grid-cols-2 gap-12"><div class="flex flex-col gap-2"><span class="font-label-mono text-label-mono text-secondary">LEGACY REGIME</span><span class="font-headline-md text-headline-md text-secondary">0.3397</span></div><div class="flex flex-col gap-2 border-l border-outline/20 pl-12"><span class="font-label-mono text-label-mono text-secondary">MODERN REGIME</span><span class="font-headline-md text-headline-md text-primary">0.7587</span></div></div></div>
+</section>
+<!-- SECTION 05: MODEL GOVERNANCE & 06: WHAT THE MODEL KNOWS -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Section 05: Governance -->
+<section class="lg:col-span-5 flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">05. MODEL GOVERNANCE</h2>
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-4 font-label-mono text-label-mono text-sm"><div class="grid grid-cols-3 border-b border-outline/10 pb-2"><span class="text-secondary col-span-1">TARGET</span><span class="text-primary col-span-2 text-right">H=3 SCHEDULE EXTENSION</span></div><div class="grid grid-cols-3 border-b border-outline/10 pb-2"><span class="text-secondary col-span-1">VALIDATION</span><span class="text-primary col-span-2 text-right">WALK-FORWARD</span></div><div class="grid grid-cols-3 border-b border-outline/10 pb-2"><span class="text-secondary col-span-1">EMBARGO</span><span class="text-primary col-span-2 text-right">T + 3 &lt; E</span></div><div class="grid grid-cols-3 pt-2"><span class="text-secondary col-span-1">LIVE OUTPUT</span><span class="text-[#FF8C69] col-span-2 text-right">NOT CONNECTED</span></div></div>
+</section>
+<!-- Section 06: What the model knows -->
+<section class="lg:col-span-7 flex flex-col gap-4">
+<h2 class="font-label-mono text-label-mono text-secondary uppercase tracking-widest border-l-2 border-primary pl-2">06. WHAT THE MODEL KNOWS</h2>
+<div class="border border-outline/20 bg-surface p-6 flex flex-col gap-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+<!-- Feature 1 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">PROJECT TRAJECTORY</h4>
+<p class="font-body-md text-sm text-secondary">Historical patterns of milestone completion, delays, and pacing against baseline schedule.</p>
+</div>
+<!-- Feature 2 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">STATIC PROJECT ATTRIBUTES</h4>
+<p class="font-body-md text-sm text-secondary">Inherent complexity, region, contractor history, project type, and initial budget scale.</p>
+</div>
+<!-- Feature 3 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">SCHEDULE HISTORY</h4>
+<p class="font-body-md text-sm text-secondary">Frequency of schedule revisions, variance from initial baseline, and critical path stability.</p>
+</div>
+<!-- Feature 4 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">EXPENDITURE HISTORY</h4>
+<p class="font-body-md text-sm text-secondary">Burn rate consistency, cost overruns to date, and funding allocation efficiency.</p>
+</div>
+<!-- Feature 5 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">PROGRESS HISTORY</h4>
+<p class="font-body-md text-sm text-secondary">Physical completion rates vs planned completion, EVM metrics (SPI, CPI).</p>
+</div>
+<!-- Feature 6 -->
+<div class="flex flex-col gap-2">
+<h4 class="font-label-mono text-label-mono font-bold text-primary border-b border-outline/10 pb-1">REPORTING CONTINUITY</h4>
+<p class="font-body-md text-sm text-secondary">Data quality signals derived from missing reports, inconsistent data entries, or sudden structural changes.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- SECTION 07: MODEL STATUS / AUDIT TRAIL -->
+<section class="mt-8 bg-[#1A3C2B] text-white p-8 w-[calc(100%+48px)] -ml-margin max-w-none">
+<div class="max-w-[1440px] mx-auto w-full flex flex-col gap-6">
+<h2 class="font-label-mono text-label-mono text-white/70 uppercase tracking-widest border-l-2 border-white/50 pl-2">07. MODEL STATUS / AUDIT TRAIL</h2>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 font-label-mono text-label-mono text-sm">
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">TARGET DEFINITION</span>
+<span class="text-[#9EFFBF]">VERIFIED</span>
+</div>
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">LABELS</span>
+<span class="text-[#9EFFBF]">GENERATED</span>
+</div>
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">WALK-FORWARD EVAL</span>
+<span class="text-[#9EFFBF]">COMPLETE</span>
+</div>
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">LOGISTIC BENCHMARK</span>
+<span class="text-[#9EFFBF]">TRAINED</span>
+</div>
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">NONLINEAR CHALLENGER</span>
+<span class="text-[#9EFFBF]">TRAINED</span>
+</div>
+<div class="flex flex-col gap-2 border-t border-white/20 pt-4">
+<span class="text-white/60">LIVE PREDICTIONS</span>
+<span class="text-[#FF8C69]">NOT YET CONNECTED</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full flex justify-between items-center px-margin py-2 z-50 bg-surface-container-low dark:bg-surface-container-low border-t border-outline/10 text-secondary dark:text-on-secondary-container font-label-mono text-label-mono-sm">
+<div class="font-bold text-primary">
+            IRIS INFRASTRUCTURE INTELLIGENCE • DATA PROVENANCE: SECURE LAYER 4
+        </div>
+<div class="flex gap-6">
+<a class="hover:underline decoration-1 text-on-secondary-container dark:text-on-tertiary-container" href="#">SYSTEM STATUS: OPTIMAL</a>
+<a class="hover:underline decoration-1 text-on-secondary-container dark:text-on-tertiary-container" href="#">V2.4.0-STABLE</a>
+</div>
+</footer>
+
+
+</body></html>

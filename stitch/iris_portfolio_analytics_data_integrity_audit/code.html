@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IRIS // ANALYTICS</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #F7F7F5;
+            background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1X1WK5dhW7jlr_ewj-al4k0cGtWq-i4C_1ciPcb9DdVcENQO37Ff8pFD80zOrcJXy8QO1hsezosrOuIN2T_KDNatFC4vYDIB80oIDrRGeeclWyrQth11PWbSy6eQIBCwcKmqsuzK22EMVsjvDKr6hktzeauN33ruKSF9GPAD4rq3HsI3sQVaGWb8gpAC1hyHzAyXo8gqvXWmsGr8RxTwg0TSh2PPGXoHZGLhgcu9gploLFrZp8B204LhY4');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#727973",
+                        "tertiary-fixed-dim": "#c6c7c5",
+                        "inverse-on-surface": "#f1f1ee",
+                        "on-tertiary-fixed-variant": "#454746",
+                        "secondary-container": "#e4e2df",
+                        "on-surface": "#1a1c1a",
+                        "surface-container-high": "#e8e8e5",
+                        "tertiary-fixed": "#e2e3e1",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e3df",
+                        "outline-variant": "#c1c8c1",
+                        "on-surface-variant": "#414843",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf9f6",
+                        "surface-variant": "#e2e3df",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "inverse-surface": "#2f312f",
+                        "surface-tint": "#436652",
+                        "secondary-fixed-dim": "#c8c6c3",
+                        "on-primary-fixed": "#002112",
+                        "surface-container-low": "#f4f4f0",
+                        "primary-container": "#1a3c2b",
+                        "surface-dim": "#dadad7",
+                        "background": "#faf9f6",
+                        "inverse-primary": "#a9cfb7",
+                        "secondary-fixed": "#e4e2df",
+                        "on-primary-fixed-variant": "#2c4e3b",
+                        "primary-fixed": "#c5ecd3",
+                        "surface-container": "#eeeeeb",
+                        "primary": "#022617",
+                        "on-secondary-fixed-variant": "#474745",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#9e9f9d",
+                        "tertiary": "#1f2120",
+                        "secondary": "#5f5e5c",
+                        "primary-fixed-dim": "#a9cfb7",
+                        "tertiary-container": "#343635",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#656462",
+                        "on-background": "#1a1c1a",
+                        "on-error-container": "#93000a",
+                        "surface": "#faf9f6",
+                        "on-tertiary-fixed": "#1a1c1b",
+                        "on-primary-container": "#82a790",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "2px",
+                        "lg": "2px",
+                        "xl": "2px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "grid_opacity": "0.1",
+                        "gutter": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-xl": ["Space Grotesk"],
+                        "label-mono-sm": ["JetBrains Mono"],
+                        "headline-xl-mobile": ["Space Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-mono": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-mono-sm": ["10px", { "lineHeight": "1.4", "letterSpacing": "0.12em", "fontWeight": "500" }],
+                        "headline-xl-mobile": ["36px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface border-b border-outline/20 w-full top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-lg text-headline-lg tracking-tighter text-primary dark:text-primary-fixed">IRIS</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant dark:text-on-surface-variant font-label-mono text-label-mono hover:bg-surface-container-low transition-colors duration-150 py-2" href="#">01. PROJECTS</a>
+<a class="text-primary dark:text-primary-fixed border-b border-primary dark:border-primary-fixed font-label-mono text-label-mono hover:bg-surface-container-low transition-colors duration-150 py-2" href="#">02. ANALYTICS</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-label-mono text-label-mono hover:bg-surface-container-low transition-colors duration-150 py-2" href="#">03. INTELLIGENCE</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-4 mr-4 border-r border-outline/20 pr-4">
+<div class="flex flex-col text-right">
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Data Period</span>
+<span class="font-label-mono text-label-mono">2023-01 -&gt; 2026-07</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary rounded-none"></div>
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Online</span>
+</div>
+</div>
+<button class="text-primary dark:text-primary-fixed hover:bg-surface-container-low p-2 transition-colors duration-150">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<button class="text-primary dark:text-primary-fixed hover:bg-surface-container-low p-2 transition-colors duration-150">
+<span class="material-symbols-outlined">history</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-margin py-8 flex flex-col gap-8">
+<!-- Intro -->
+<header class="flex flex-col gap-4 border-b border-outline/20 pb-8">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase tracking-widest">IRIS / ANALYTICS / PORTFOLIO ANALYSIS</div>
+<h1 class="font-headline-xl text-headline-xl text-primary max-w-4xl uppercase">Understand How the Portfolio Moves.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">Longitudinal analysis of infrastructure activity, expenditure, schedule movement, completion progress, and portfolio composition across the monitored portfolio.</p>
+<div class="flex flex-wrap gap-6 mt-4 pt-4 border-t border-outline/10">
+<div class="flex flex-col">
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">UNIQUE PROJECTS</span>
+<span class="font-label-mono text-label-mono">4,738</span>
+</div>
+<div class="flex flex-col border-l border-outline/20 pl-6">
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">OBSERVATIONS</span>
+<span class="font-label-mono text-label-mono">64,608</span>
+</div>
+<div class="flex flex-col border-l border-outline/20 pl-6">
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">PERIOD</span>
+<span class="font-label-mono text-label-mono">2023-01 -&gt; 2026-07</span>
+</div>
+</div>
+</header>
+<!-- Filters -->
+<div class="flex flex-wrap gap-2 py-2 border-b border-outline/20 mb-4">
+<button class="border border-outline/40 px-3 py-1 font-label-mono-sm text-label-mono-sm uppercase hover:bg-surface-container-low transition-colors">SECTOR <span class="material-symbols-outlined text-[14px] align-middle ml-1">arrow_drop_down</span></button>
+<button class="border border-outline/40 px-3 py-1 font-label-mono-sm text-label-mono-sm uppercase hover:bg-surface-container-low transition-colors">AGENCY <span class="material-symbols-outlined text-[14px] align-middle ml-1">arrow_drop_down</span></button>
+<button class="border border-outline/40 px-3 py-1 font-label-mono-sm text-label-mono-sm uppercase hover:bg-surface-container-low transition-colors">STATE <span class="material-symbols-outlined text-[14px] align-middle ml-1">arrow_drop_down</span></button>
+<button class="border border-outline/40 px-3 py-1 font-label-mono-sm text-label-mono-sm uppercase hover:bg-surface-container-low transition-colors">REPORT PERIOD <span class="material-symbols-outlined text-[14px] align-middle ml-1">arrow_drop_down</span></button>
+<button class="border border-outline/40 px-3 py-1 font-label-mono-sm text-label-mono-sm uppercase hover:bg-surface-container-low transition-colors">PROJECT STATUS <span class="material-symbols-outlined text-[14px] align-middle ml-1">arrow_drop_down</span></button>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- SECTION 01 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">01. Portfolio Activity Over Time</h2>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-3 h-64 border-b md:border-b-0 md:border-r border-outline/20 pr-6 relative">
+<!-- Abstract Line Chart Representation -->
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-outline/40"></div>
+<div class="absolute left-0 bottom-0 h-full w-[1px] bg-outline/40"></div>
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="0,80 10,75 20,70 30,60 40,55 50,40 60,35 70,25 80,20 90,15 100,10" stroke="#1A3C2B" stroke-width="1.5" vector-effect="non-scaling-stroke"></polyline>
+<polygon fill="#1A3C2B" fill-opacity="0.05" points="0,100 0,80 10,75 20,70 30,60 40,55 50,40 60,35 70,25 80,20 90,15 100,10 100,100"></polygon>
+</svg>
+<div class="absolute bottom-[-20px] left-0 font-label-mono-sm text-label-mono-sm text-on-surface-variant">2023-01</div>
+<div class="absolute bottom-[-20px] right-0 font-label-mono-sm text-label-mono-sm text-on-surface-variant">2026-07</div>
+</div>
+<div class="md:col-span-1 flex flex-col gap-4 justify-center">
+<div>
+<div class="font-headline-lg text-headline-lg text-primary">64,608</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase border-b border-outline/10 pb-2">OBSERVATIONS</div>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-primary">4,738</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase border-b border-outline/10 pb-2">PROJECTS</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md">40</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase border-b border-outline/10 pb-2">MONITORED MONTHS</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md">876</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">COMPLETED PROJECTS</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 02 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">02. Where Schedules Move</h2>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<div class="md:col-span-8 flex flex-col gap-4">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Schedule Extensions / Longitudinal Activity</div>
+<div class="h-64 border border-outline/10 relative bg-surface-container-lowest/30">
+<div class="absolute inset-0 flex items-end gap-1 px-2 pb-1">
+<div class="flex-grow bg-primary/20 h-[20%]"></div>
+<div class="flex-grow bg-primary/20 h-[25%]"></div>
+<div class="flex-grow bg-primary/20 h-[35%]"></div>
+<div class="flex-grow bg-primary/20 h-[30%]"></div>
+<div class="flex-grow bg-primary/20 h-[45%]"></div>
+<div class="flex-grow bg-primary/20 h-[55%]"></div>
+<div class="flex-grow bg-primary/20 h-[50%]"></div>
+<div class="flex-grow bg-primary/20 h-[65%]"></div>
+<div class="flex-grow bg-primary/20 h-[75%]"></div>
+<div class="flex-grow bg-primary/20 h-[85%]"></div>
+</div>
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="0,85 10,80 20,70 30,75 40,60 50,50 60,55 70,40 80,30 90,20 100,15" stroke="#022617" stroke-width="1" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+</div>
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm text-on-surface-variant">
+<span>2023-01</span>
+<span>2026-07</span>
+</div>
+</div>
+<div class="md:col-span-4 flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<div class="font-headline-lg text-headline-lg text-primary">7,845</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Schedule Extensions</div>
+<div class="font-label-mono-sm text-label-mono-sm text-secondary italic">REPORTED LONGITUDINAL OBSERVATIONS / FLAGSHIP H=3 TARGET</div>
+</div>
+<div class="flex flex-col gap-3 pt-4 border-t border-outline/10">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Schedule Position</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-24 font-label-mono-sm text-label-mono-sm">AHEAD</div>
+<div class="flex-grow h-2 bg-primary/10"><div class="h-full bg-primary" style="width: 15%"></div></div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-24 font-label-mono-sm text-label-mono-sm">WITHIN</div>
+<div class="flex-grow h-2 bg-primary/10"><div class="h-full bg-primary" style="width: 65%"></div></div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-24 font-label-mono-sm text-label-mono-sm">APPROACHING</div>
+<div class="flex-grow h-2 bg-primary/10"><div class="h-full bg-[#EAB308]" style="width: 12%"></div></div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-24 font-label-mono-sm text-label-mono-sm">PAST</div>
+<div class="flex-grow h-2 bg-primary/10"><div class="h-full bg-[#EF4444]" style="width: 8%"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 03 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">03. Follow the Money</h2>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<div class="md:col-span-9 flex flex-col gap-2">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Expenditure Trajectory ($AUD)</div>
+<div class="h-80 border border-outline/10 relative bg-surface-container-lowest/30">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="0,95 10,92 20,88 30,80 40,70 50,65 60,50 70,45 80,35 90,25 100,20" stroke="#022617" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+<polygon fill="#022617" fill-opacity="0.03" points="0,100 0,95 10,92 20,88 30,80 40,70 50,65 60,50 70,45 80,35 90,25 100,20 100,100"></polygon>
+</svg>
+</div>
+</div>
+<div class="md:col-span-3 flex flex-col gap-6 justify-center">
+<div class="border-l border-outline/20 pl-4">
+<div class="font-headline-md text-headline-md text-primary">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Total Reported Expenditure</div>
+</div>
+<div class="border-l border-outline/20 pl-4">
+<div class="font-headline-md text-headline-md">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Original Cost</div>
+</div>
+<div class="border-l border-outline/20 pl-4">
+<div class="font-headline-md text-headline-md">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Expenditure / Original Cost</div>
+</div>
+<div class="border-l border-outline/20 pl-4">
+<div class="font-headline-md text-headline-md">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Projects with Reported Expenditure</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 04 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">04. Portfolio Composition</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Sector -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center border-b border-outline/10 pb-2">
+<span class="font-label-mono text-label-mono uppercase">Sector</span>
+<button class="font-label-mono-sm text-label-mono-sm text-primary hover:underline">VIEW ALL</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>TRANSPORT</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 42%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>HEALTH</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 18%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>EDUCATION</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 15%"></div></div>
+</div>
+</div>
+</div>
+<!-- Agency -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center border-b border-outline/10 pb-2">
+<span class="font-label-mono text-label-mono uppercase">Agency</span>
+<button class="font-label-mono-sm text-label-mono-sm text-primary hover:underline">VIEW ALL</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>DEPT OF TRANSPORT</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 28%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>HEALTH INFRASTRUCTURE</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 14%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>SCHOOL INFRASTRUCTURE</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 12%"></div></div>
+</div>
+</div>
+</div>
+<!-- State -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center border-b border-outline/10 pb-2">
+<span class="font-label-mono text-label-mono uppercase">State</span>
+<button class="font-label-mono-sm text-label-mono-sm text-primary hover:underline">VIEW ALL</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>NSW</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 38%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>VIC</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 32%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm"><span>QLD</span><span>—</span></div>
+<div class="h-1 bg-primary/10"><div class="h-full bg-primary" style="width: 20%"></div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 05 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">05. Project Progress</h2>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<div class="md:col-span-8 flex flex-col gap-6">
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm uppercase"><span>On Track</span><span>DATA PENDING</span></div>
+<div class="h-4 bg-primary/10"><div class="h-full bg-primary" style="width: 66%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm uppercase"><span>At Risk</span><span>DATA PENDING</span></div>
+<div class="h-4 bg-primary/10"><div class="h-full bg-[#EAB308]" style="width: 26%"></div></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-mono-sm text-label-mono-sm uppercase"><span>Critical</span><span>DATA PENDING</span></div>
+<div class="h-4 bg-primary/10"><div class="h-full bg-[#EF4444]" style="width: 8%"></div></div>
+</div>
+</div>
+</div>
+<div class="md:col-span-4 flex flex-col gap-4 border-l border-outline/20 pl-6">
+<div>
+<div class="font-headline-md text-headline-md">4,738</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Projects with Valid Progress</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Projects without Valid Progress</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Median Reported Progress</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 06 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-surface/80 backdrop-blur-sm p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-outline/20 pb-2">06. Completion Movement</h2>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<div class="md:col-span-8 flex flex-col gap-4">
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Original vs. Latest Reported Completion</div>
+<div class="h-48 border border-outline/10 relative flex items-center px-8">
+<div class="w-full h-[1px] bg-outline/20 absolute"></div>
+<div class="flex justify-between w-full relative">
+<div class="flex flex-col items-center">
+<div class="w-3 h-3 bg-primary rounded-full mb-2"></div>
+<span class="font-label-mono-sm text-label-mono-sm">ORIGINAL</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-3 h-3 bg-[#EF4444] rounded-full mb-2"></div>
+<span class="font-label-mono-sm text-label-mono-sm">LATEST</span>
+</div>
+</div>
+<div class="absolute left-[50%] top-[50%] translate-y-[-50%] font-label-mono text-label-mono text-[#EF4444]">DATA PENDING</div>
+</div>
+</div>
+<div class="md:col-span-4 flex flex-col gap-4">
+<div class="p-3 border border-outline/10">
+<div class="font-label-mono text-label-mono">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">Revised Completion</div>
+</div>
+<div class="p-3 border border-outline/10">
+<div class="font-label-mono text-label-mono">DATA PENDING</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant uppercase">No Reported Revision</div>
+</div>
+<div class="p-3 border border-[#EF4444]/20 bg-[#EF4444]/5">
+<div class="font-label-mono text-label-mono text-[#EF4444]">876</div>
+<div class="font-label-mono-sm text-label-mono-sm text-[#EF4444] uppercase">Reported Extensions</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 07 -->
+<section class="col-span-1 md:col-span-12 border border-outline/20 bg-primary text-on-primary p-6 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md uppercase border-b border-on-primary/20 pb-2">07. Observations / Data Profile</h2>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md">40</span>
+<span class="font-label-mono-sm text-label-mono-sm opacity-70 uppercase">Coded Months</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md">4,738</span>
+<span class="font-label-mono-sm text-label-mono-sm opacity-70 uppercase">Unique Projects</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md">64,608</span>
+<span class="font-label-mono-sm text-label-mono-sm opacity-70 uppercase">Project-Month Obs.</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md">876</span>
+<span class="font-label-mono-sm text-label-mono-sm opacity-70 uppercase">Completed Records</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md">7,845</span>
+<span class="font-label-mono-sm text-label-mono-sm opacity-70 uppercase">Extension Obs.</span>
+</div>
+</div>
+</section></div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-surface border-t border-outline/20 w-full mt-auto">
+<div class="flex justify-between items-center w-full px-margin py-4">
+<span class="font-label-mono text-label-mono text-primary">IRIS INFRASTRUCTURE INTELLIGENCE v4.2 // DATA PROVENANCE: SECURED</span>
+<div class="flex gap-6">
+<a class="font-label-mono-sm text-label-mono-sm uppercase text-secondary dark:text-secondary-fixed hover:text-primary transition-colors" href="#">SYSTEM STATUS: OPTIMAL</a>
+<a class="font-label-mono-sm text-label-mono-sm uppercase text-secondary dark:text-secondary-fixed hover:text-primary transition-colors" href="#">INTEGRITY METADATA</a>
+<a class="font-label-mono-sm text-label-mono-sm uppercase text-secondary dark:text-secondary-fixed hover:text-primary transition-colors" href="#">LEGAL</a>
+</div>
+</div>
+</footer>
+</body></html>
