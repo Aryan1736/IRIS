@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "stitch::react-components": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/stitch-build/skills/react-components/SKILL.md",
+      "computedHash": "a0dbfa0ed6c0425a175ec25460625f7cdabfdb034b09f523f4d06d8cdb09f5b7"
+    }
+  }
+}
