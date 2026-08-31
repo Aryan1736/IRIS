@@ -12,15 +12,15 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
 }) => {
   const sectors = filterOptions?.sectors && filterOptions.sectors.length > 0
     ? filterOptions.sectors.slice(0, 4)
-    : ["ROAD TRANSPORT & HIGHWAYS", "RAILWAYS", "POWER", "PETROLEUM"];
+    : [];
 
   const agencies = filterOptions?.agencies && filterOptions.agencies.length > 0
     ? filterOptions.agencies.slice(0, 4)
-    : ["NHAI", "RVNL", "PGCIL", "NTPC"];
+    : [];
 
   const states = filterOptions?.states && filterOptions.states.length > 0
     ? filterOptions.states.filter((s) => !s.startsWith("Multi-States")).slice(0, 4)
-    : ["MAHARASHTRA", "UTTAR PRADESH", "GUJARAT", "MADHYA PRADESH"];
+    : [];
 
   return (
     <section className="dashboard-section">
@@ -43,6 +43,10 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
             {isLoading ? (
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
                 LOADING SECTORS...
+              </span>
+            ) : sectors.length === 0 ? (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
+                DATA PENDING
               </span>
             ) : (
               sectors.map((sec) => (
@@ -76,6 +80,10 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
                 LOADING AGENCIES...
               </span>
+            ) : agencies.length === 0 ? (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
+                DATA PENDING
+              </span>
             ) : (
               agencies.map((agency) => (
                 <div key={agency} className="progress-distribution-item">
@@ -107,6 +115,10 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
             {isLoading ? (
               <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
                 LOADING STATES...
+              </span>
+            ) : states.length === 0 ? (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
+                DATA PENDING
               </span>
             ) : (
               states.map((state) => (

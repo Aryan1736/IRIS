@@ -32,19 +32,19 @@ export const ProjectsPage: React.FC = () => {
 
   const getMonitoredPeriod = () => {
     if (!systemInfo?.covered_months || systemInfo.covered_months.length === 0) {
-      return "2023-01 → 2026-07";
+      return "DATA PENDING";
     }
     const sorted = [...systemInfo.covered_months].sort();
     return `${sorted[0]} → ${sorted[sorted.length - 1]}`;
   };
 
-  const uniqueProjectsCount = systemInfo?.unique_projects_count
+  const uniqueProjectsCount = systemInfo?.unique_projects_count != null
     ? systemInfo.unique_projects_count.toLocaleString()
-    : "4,738";
+    : "—";
 
-  const observationsCount = systemInfo?.row_count
+  const observationsCount = systemInfo?.row_count != null
     ? systemInfo.row_count.toLocaleString()
-    : "64,608";
+    : "—";
 
   return (
     <div className="bg-blueprint-grid" style={{ minHeight: "calc(100vh - 64px)", display: "flex", flexDirection: "column" }}>
@@ -60,8 +60,8 @@ export const ProjectsPage: React.FC = () => {
           </div>
 
           <div className="projects-metric-panel">
-            <div>{uniqueProjectsCount} UNIQUE PROJECTS</div>
-            <div>{observationsCount} OBSERVATIONS</div>
+            <div>{uniqueProjectsCount !== "—" ? `${uniqueProjectsCount} UNIQUE PROJECTS` : "UNIQUE PROJECTS: DATA PENDING"}</div>
+            <div>{observationsCount !== "—" ? `${observationsCount} OBSERVATIONS` : "OBSERVATIONS: DATA PENDING"}</div>
             <div>{getMonitoredPeriod()}</div>
           </div>
         </section>
@@ -75,7 +75,7 @@ export const ProjectsPage: React.FC = () => {
             <div>
               <h2 className="portfolio-heading">PROJECT PORTFOLIO</h2>
               <div className="portfolio-count">
-                {total > 0 ? `${total.toLocaleString()} MATCHING PROJECTS` : `${uniqueProjectsCount} MATCHING PROJECTS`}
+                {total > 0 ? `${total.toLocaleString()} MATCHING PROJECTS` : "0 MATCHING PROJECTS"}
               </div>
             </div>
           </div>
