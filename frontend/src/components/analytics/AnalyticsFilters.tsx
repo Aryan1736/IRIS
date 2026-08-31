@@ -38,6 +38,8 @@ export const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
       {/* Sector Filter */}
       <div className="analytics-filter-select-wrapper">
         <select
+          id="analytics-sector-filter"
+          name="sector"
           aria-label="Filter by Sector"
           className="analytics-filter-select"
           value={filters.sector}
@@ -56,6 +58,8 @@ export const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
       {/* Agency Filter */}
       <div className="analytics-filter-select-wrapper">
         <select
+          id="analytics-agency-filter"
+          name="agency"
           aria-label="Filter by Agency"
           className="analytics-filter-select"
           value={filters.agency}
@@ -74,6 +78,8 @@ export const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
       {/* State Filter */}
       <div className="analytics-filter-select-wrapper">
         <select
+          id="analytics-state-filter"
+          name="state"
           aria-label="Filter by State"
           className="analytics-filter-select"
           value={filters.state}
@@ -92,6 +98,8 @@ export const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
       {/* Ministry Filter */}
       <div className="analytics-filter-select-wrapper">
         <select
+          id="analytics-ministry-filter"
+          name="ministry"
           aria-label="Filter by Ministry"
           className="analytics-filter-select"
           value={filters.ministry}
@@ -110,6 +118,8 @@ export const AnalyticsFilters: React.FC<AnalyticsFiltersProps> = ({
       {/* Report Period Filter */}
       <div className="analytics-filter-select-wrapper">
         <select
+          id="analytics-report-month-filter"
+          name="report_month"
           aria-label="Filter by Report Period"
           className="analytics-filter-select"
           value={filters.report_month}

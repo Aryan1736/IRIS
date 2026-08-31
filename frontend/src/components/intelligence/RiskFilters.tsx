@@ -41,6 +41,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Report Month Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-month-filter"
+          name="report_month"
           aria-label="Evaluation Month"
           className="intelligence-filter-select"
           value={filters.report_month}
@@ -58,6 +60,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Regime Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-regime-filter"
+          name="regime"
           aria-label="Regime Filter"
           className="intelligence-filter-select"
           value={filters.regime}
@@ -76,6 +80,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Sector Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-sector-filter"
+          name="sector"
           aria-label="Sector Filter"
           className="intelligence-filter-select"
           value={filters.sector}
@@ -94,6 +100,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Agency Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-agency-filter"
+          name="agency"
           aria-label="Agency Filter"
           className="intelligence-filter-select"
           value={filters.agency}
@@ -112,6 +120,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* State Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-state-filter"
+          name="state"
           aria-label="State Filter"
           className="intelligence-filter-select"
           value={filters.state}
@@ -130,6 +140,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Ministry Filter */}
       <div className="intelligence-filter-select-wrapper">
         <select
+          id="risk-ministry-filter"
+          name="ministry"
           aria-label="Ministry Filter"
           className="intelligence-filter-select"
           value={filters.ministry}
@@ -148,6 +160,8 @@ export const RiskFilters: React.FC<RiskFiltersProps> = ({
       {/* Search Input */}
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
         <input
+          id="risk-search-input"
+          name="search"
           type="text"
           aria-label="Search Risk Projects"
           placeholder="SEARCH PROJECT CODE / NAME..."

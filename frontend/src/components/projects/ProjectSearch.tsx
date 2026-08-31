@@ -55,6 +55,9 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
           <Search size={18} />
         </span>
         <input
+          id="project-search-input"
+          name="search"
+          aria-label="Search projects"
           className="search-input"
           placeholder="Search project name, project code, agency, sector..."
           type="text"
@@ -70,6 +73,9 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
         {/* Sector Select */}
         <div className="filter-select-wrapper">
           <select
+            id="project-sector-select"
+            name="sector"
+            aria-label="Filter by sector"
             className="filter-select"
             value={filters.sector || ""}
             onChange={(e) => handleChange("sector", e.target.value)}
@@ -89,6 +95,9 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
         {/* Agency Select */}
         <div className="filter-select-wrapper">
           <select
+            id="project-agency-select"
+            name="agency"
+            aria-label="Filter by agency"
             className="filter-select"
             value={filters.agency || ""}
             onChange={(e) => handleChange("agency", e.target.value)}
@@ -108,6 +117,9 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
         {/* State Select */}
         <div className="filter-select-wrapper">
           <select
+            id="project-state-select"
+            name="state"
+            aria-label="Filter by state"
             className="filter-select"
             value={filters.state || ""}
             onChange={(e) => handleChange("state", e.target.value)}
@@ -127,6 +139,9 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
         {/* Report Period Select */}
         <div className="filter-select-wrapper">
           <select
+            id="project-report-month-select"
+            name="report_month"
+            aria-label="Filter by report period"
             className="filter-select"
             value={filters.report_month || ""}
             onChange={(e) => handleChange("report_month", e.target.value)}
