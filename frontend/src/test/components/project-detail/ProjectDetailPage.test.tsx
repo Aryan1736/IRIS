@@ -164,7 +164,7 @@ describe("ProjectDetailPage", () => {
     vi.mocked(projectsApi.fetchScheduleExtensions).mockResolvedValue({
       project_code: "705635",
       project_name: "TRIVANDRUM — KANYAKUMARI HIGHWAY",
-      extensions: [
+      timeline: [
         {
           report_month: "2026-07",
           approval_date: "2023-01",
@@ -177,8 +177,8 @@ describe("ProjectDetailPage", () => {
           revised_completion_date_raw: "09/2026",
         },
       ],
-      latest_original_completion: "2026-03",
-      latest_revised_completion: "2026-09",
+      latest_original_completion_date: "2026-03",
+      latest_revised_completion_date: "2026-09",
     });
   });
 
@@ -365,9 +365,9 @@ describe("ProjectDetailPage", () => {
     vi.mocked(projectsApi.fetchScheduleExtensions).mockResolvedValue({
       project_code: "999999",
       project_name: "UNPOPULATED METRIC PROJECT",
-      extensions: [],
-      latest_original_completion: null,
-      latest_revised_completion: null,
+      timeline: [],
+      latest_original_completion_date: null,
+      latest_revised_completion_date: null,
     });
 
     render(

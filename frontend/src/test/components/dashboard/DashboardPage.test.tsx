@@ -28,8 +28,7 @@ describe("DashboardPage", () => {
 
     vi.mocked(systemApi.fetchHealth).mockResolvedValue({
       status: "healthy",
-      app: "IRIS API",
-      database: { connected: true },
+      database: "connected",
       version: "0.1.0",
       environment: "development",
       timestamp: "2026-08-30T12:00:00Z",

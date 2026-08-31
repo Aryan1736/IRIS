@@ -40,6 +40,7 @@ export interface ProjectMonthObservationRead {
   source_row_number: number | null;
   source_serial_number: number | null;
   extraction_method: string | null;
+  created_at?: string | null;
 }
 
 export interface ProjectSummaryItem {
@@ -159,9 +160,12 @@ export interface ScheduleExtensionPoint {
 export interface ProjectScheduleExtensionsResponse {
   project_code: string;
   project_name: string;
-  extensions: ScheduleExtensionPoint[];
-  latest_original_completion: string | null;
-  latest_revised_completion: string | null;
+  timeline: ScheduleExtensionPoint[];
+  latest_original_completion_date: string | null;
+  latest_revised_completion_date: string | null;
+  extensions?: ScheduleExtensionPoint[];
+  latest_original_completion?: string | null;
+  latest_revised_completion?: string | null;
 }
 
 export type SortByFields =

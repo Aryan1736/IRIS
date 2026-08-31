@@ -44,8 +44,7 @@ describe("IRIS Cross-Page Integration & Routing", () => {
 
     vi.mocked(systemApi.fetchHealth).mockResolvedValue({
       status: "healthy",
-      app: "IRIS API",
-      database: { connected: true },
+      database: "connected",
       version: "0.1.0",
       environment: "development",
       timestamp: "2026-08-30T12:00:00Z",
@@ -217,9 +216,9 @@ describe("IRIS Cross-Page Integration & Routing", () => {
     vi.mocked(projectApi.fetchScheduleExtensions).mockResolvedValue({
       project_code: "200101",
       project_name: "Western Dedicated Freight Corridor",
-      extensions: [],
-      latest_original_completion: "2017-03-01",
-      latest_revised_completion: "2026-12-01",
+      timeline: [],
+      latest_original_completion_date: "2017-03-01",
+      latest_revised_completion_date: "2026-12-01",
     });
 
     vi.mocked(riskApi.fetchRiskOptions).mockResolvedValue({

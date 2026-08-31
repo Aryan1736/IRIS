@@ -12,9 +12,9 @@ export const ScheduleMovementSection: React.FC<ScheduleMovementSectionProps> = (
   originalCompletion,
   revisedCompletion,
 }) => {
-  const extensions = scheduleData?.extensions || [];
-  const orig = originalCompletion || scheduleData?.latest_original_completion || "—";
-  const rev = revisedCompletion || scheduleData?.latest_revised_completion || orig;
+  const extensions = scheduleData?.timeline || scheduleData?.extensions || [];
+  const orig = originalCompletion || scheduleData?.latest_original_completion_date || scheduleData?.latest_original_completion || "—";
+  const rev = revisedCompletion || scheduleData?.latest_revised_completion_date || scheduleData?.latest_revised_completion || orig;
 
   // Calculate rough month difference if both are YYYY-MM
   const calculateMonthShift = (origDate: string, revDate: string) => {

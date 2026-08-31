@@ -2,15 +2,10 @@
  * System & Health status types mirroring backend/app/schemas/system.py and health.py
  */
 
-export interface DatabaseStatus {
-  connected: boolean;
-  pool_size?: number;
-  latency_ms?: number;
-}
+export type DatabaseStatus = "connected" | "disconnected" | "error";
 
 export interface HealthResponse {
   status: "healthy" | "unhealthy" | "degraded";
-  app: string;
   database: DatabaseStatus;
   version: string;
   environment: string;
