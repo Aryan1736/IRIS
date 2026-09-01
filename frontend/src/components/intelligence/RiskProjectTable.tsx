@@ -1,17 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import type { ProjectListResponse, RiskRecord } from "@/types/risk.ts";
+import type { ProjectListResponse, RiskRecord, TopRiskProject } from "@/types/risk.ts";
+import { IrisTopRiskRankingChart } from "@/components/common/charts/IrisTopRiskRankingChart.tsx";
+import { useStaggerList } from "@/lib/motion/useMotion.ts";
 
 interface RiskProjectTableProps {
+  topRiskProjects?: TopRiskProject[];
   data?: ProjectListResponse;
   isLoading: boolean;
   page: number;
   pageSize: number;
   onPageChange: (newPage: number) => void;
-  onSelectProject: (project: RiskRecord) => void;
+  onSelectProject: (project: RiskRecord | TopRiskProject) => void;
 }
 
 export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
+  topRiskProjects,
   data,
   isLoading,
   page,
@@ -22,16 +26,49 @@ export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
   const items = data?.items || [];
   const total = data?.total || 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const topList = topRiskProjects || [];
+  const tbodyRef = useStaggerList<HTMLTableSectionElement>(items, "tr");
 
   return (
     <section className="intelligence-section">
       <div className="intelligence-section-header">
-        <h2 className="intelligence-section-title">02. Projects Requiring Attention</h2>
+        <div className="intelligence-section-title-lockup">
+          <h2 className="intelligence-section-title">02. Highest-Risk Projects</h2>
+          <span className="intelligence-section-subtitle">
+            RANKED EVALUATION ({total.toLocaleString()} MONITORED PROJECTS)
+          </span>
+        </div>
         <span className="intelligence-section-subtitle">
-          RANKED EVALUATION ({total.toLocaleString()} MONITORED PROJECTS)
+          SORT: DESCENDING RISK PROBABILITY
         </span>
       </div>
 
+      {/* Top-Risk Visual Ranking Horizontal BarChart */}
+      {topList.length > 0 && (
+        <div className="intelligence-top-risk-ranking-card" style={{ background: "#FFFFFF", border: "1px solid var(--color-border-hairline)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span className="intelligence-section-subtitle" style={{ color: "var(--color-primary-950)", fontWeight: 700 }}>
+              CONCENTRATED RISK ELEVATION RANKING (TOP {topList.length} EVALUATED)
+            </span>
+            <span className="intelligence-section-subtitle">
+              CLICK BAR TO INSPECT PROJECT
+            </span>
+          </div>
+
+          <IrisTopRiskRankingChart
+            projects={topList}
+            onSelectProject={onSelectProject}
+            height={Math.max(220, topList.length * 36)}
+          />
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--color-border-hairline)", paddingTop: "8px", fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+            <span>SCALE: 0% → 100% CALIBRATED PROBABILITY</span>
+            <span>VISUAL HIERARCHY: TOP ELEVATED RANKS HIGHLIGHTED IN CORAL | INSTITUTIONAL EVERGREEN</span>
+          </div>
+        </div>
+      )}
+
+      {/* Ranked Project Table */}
       <div className="intelligence-table-card">
         <table className="intelligence-table" aria-label="Risk Ranked Projects Table">
           <thead>
@@ -46,7 +83,7 @@ export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
               <th style={{ textAlign: "right" }}>ACTION</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody ref={tbodyRef}>
             {isLoading ? (
               <tr>
                 <td colSpan={8} style={{ textAlign: "center", padding: "40px" }}>
@@ -65,6 +102,9 @@ export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
                 const topDriverText = topPos
                   ? `${topPos.display_name || topPos.feature} (+${topPos.contribution.toFixed(2)})`
                   : "—";
+
+                const probPercent = project.risk_probability * 100;
+                const isTopRank = project.risk_rank <= 3;
 
                 return (
                   <tr key={project.project_code}>
@@ -91,14 +131,30 @@ export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
                       </div>
                     </td>
 
-                    {/* Risk Probability */}
+                    {/* Risk Probability with internal visual bar */}
                     <td>
-                      <div className="intelligence-prob-val" style={{ color: "#BA1A1A" }}>
-                        {(project.risk_probability * 100).toFixed(1)}%
+                      <div className="intelligence-prob-cell">
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                          <span
+                            className="intelligence-prob-val"
+                            style={{ color: isTopRank ? "#BA1A1A" : "var(--color-primary-950)" }}
+                          >
+                            {probPercent.toFixed(1)}%
+                          </span>
+                          <span className="intelligence-prob-raw">
+                            RAW: {(project.raw_probability * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="intelligence-prob-bar-track">
+                          <div
+                            className="intelligence-prob-bar-fill"
+                            style={{
+                              width: `${Math.min(100, Math.max(4, probPercent))}%`,
+                              backgroundColor: isTopRank ? "#BA1A1A" : "#1A3C2B",
+                            }}
+                          />
+                        </div>
                       </div>
-                      <span className="intelligence-prob-raw">
-                        RAW: {(project.raw_probability * 100).toFixed(1)}%
-                      </span>
                     </td>
 
                     {/* Percentile */}
@@ -132,7 +188,7 @@ export const RiskProjectTable: React.FC<RiskProjectTableProps> = ({
                     </td>
 
                     {/* Top Driver */}
-                    <td style={{ maxWidth: "220px" }}>
+                    <td style={{ maxWidth: "240px" }}>
                       <span
                         style={{
                           fontSize: "11px",

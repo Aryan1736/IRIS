@@ -5,10 +5,7 @@
 
 .project-detail-container {
   width: 100%;
-  max-width: 1560px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 24px 32px 96px 32px;
+  padding: 24px clamp(20px, 3.5vw, 64px) 96px clamp(20px, 3.5vw, 64px);
   display: flex;
   flex-direction: column;
   gap: 36px;
@@ -545,4 +542,26 @@
 
 .project-detail-bottom-nav a:hover {
   color: var(--color-primary-950);
+}
+
+/* Recharts Industrial Overrides */
+.recharts-default-tooltip {
+  border-radius: 0 !important;
+  border: 1px solid #3a3a38 !important;
+  background-color: #1a1c1a !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none !important;
+  z-index: 100;
+}
+
+.recharts-wrapper {
+  outline: none !important;
+}
+
+.recharts-surface {
+  overflow: visible;
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useScrollReveal } from "@/lib/motion/useMotion.ts";
 
 interface TimelineNodeData {
   month: string;
@@ -8,304 +9,335 @@ interface TimelineNodeData {
   ringColor: string;
   dotColor: string;
   textColor: string;
+  progressPct: string;
+  costDelta: string;
   isSpecial?: boolean;
 }
 
 const TIMELINE_NODES: TimelineNodeData[] = [
   {
     month: "2024-01",
-    reportMonthDisplay: "JAN 24",
-    observation: "Baseline Established",
+    reportMonthDisplay: "JAN 2024",
+    observation: "Baseline Established across 1,800+ Flash Report records",
     status: "ON TRACK",
     ringColor: "rgba(58, 58, 56, 0.25)",
     dotColor: "rgba(58, 58, 56, 0.6)",
     textColor: "var(--color-text-dim)",
+    progressPct: "8.5%",
+    costDelta: "±0.00 Cr",
   },
   {
     month: "2024-02",
-    reportMonthDisplay: "FEB 24",
-    observation: "Initial Progress 14%",
+    reportMonthDisplay: "FEB 2024",
+    observation: "Initial Progress increment reported by implementing agency",
     status: "ON TRACK",
     ringColor: "rgba(58, 58, 56, 0.25)",
     dotColor: "rgba(58, 58, 56, 0.6)",
     textColor: "var(--color-text-dim)",
+    progressPct: "14.2%",
+    costDelta: "+12.40 Cr",
   },
   {
     month: "2024-03",
-    reportMonthDisplay: "MAR 24",
-    observation: "Schedule Revision",
+    reportMonthDisplay: "MAR 2024",
+    observation: "Schedule Revision: completion shifted forward by 8 months",
     status: "DELAY DETECTED",
     ringColor: "var(--color-gold)",
     dotColor: "var(--color-gold)",
     textColor: "var(--color-gold)",
+    progressPct: "18.0%",
+    costDelta: "+84.50 Cr",
     isSpecial: true,
   },
   {
     month: "2024-04",
-    reportMonthDisplay: "APR 24",
-    observation: "Progress 32%",
+    reportMonthDisplay: "APR 2024",
+    observation: "Physical Progress stabilized following revised milestone schedule",
     status: "STABLE",
     ringColor: "rgba(58, 58, 56, 0.25)",
     dotColor: "rgba(58, 58, 56, 0.6)",
     textColor: "var(--color-text-dim)",
+    progressPct: "32.0%",
+    costDelta: "+45.10 Cr",
   },
   {
     month: "2024-05",
-    reportMonthDisplay: "MAY 24",
-    observation: "Expenditure Spike",
+    reportMonthDisplay: "MAY 2024",
+    observation: "Cumulative expenditure surge exceeds physical completion trajectory",
     status: "COST OVERRUN",
-    ringColor: "#FF8A65",
-    dotColor: "#FF8A65",
-    textColor: "#FF8A65",
+    ringColor: "var(--color-error)",
+    dotColor: "var(--color-error)",
+    textColor: "var(--color-error)",
+    progressPct: "41.5%",
+    costDelta: "+310.00 Cr",
     isSpecial: true,
   },
   {
     month: "2024-06",
-    reportMonthDisplay: "JUN 24",
-    observation: "Latest Status Check",
+    reportMonthDisplay: "JUN 2024",
+    observation: "Latest canonical flash report snapshot actively monitored in IRIS",
     status: "ACTIVE MONITORING",
     ringColor: "var(--color-primary-900)",
     dotColor: "var(--color-primary-900)",
     textColor: "var(--color-primary-900)",
+    progressPct: "48.2%",
+    costDelta: "+58.20 Cr",
     isSpecial: true,
   },
 ];
 
 export const TimelineSection: React.FC = () => {
+  const [selectedIndex, setSelectedIndex] = useState<number>(3);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const activeIndex = hoveredIndex !== null ? hoveredIndex : selectedIndex;
+  const activeNode = TIMELINE_NODES[activeIndex] || TIMELINE_NODES[3];
+
+  const sectionRef = useScrollReveal<HTMLElement>({
+    childSelector: ".landing-reveal-item",
+    staggerTime: 50,
+  });
 
   return (
     <section
       id="problem"
-      className="bg-paper-solid hairline-b"
-      style={{
-        paddingTop: "8rem",
-        paddingBottom: "8rem",
-        position: "relative",
-        width: "100%",
-      }}
+      ref={sectionRef}
+      className="landing-section landing-section-paper hairline-b"
     >
       <div className="container-main">
-        <div style={{ marginBottom: "64px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 0.95,
-              textTransform: "uppercase",
-              maxWidth: "1050px",
-              color: "var(--color-primary-900)",
-            }}
-          >
+        {/* Section Header */}
+        <div style={{ marginBottom: "48px" }} className="landing-reveal-item">
+          <div className="landing-section-badge">
+            <span className="landing-section-badge-dot" />
+            <span>[ 01 / LONGITUDINAL TRAJECTORY ]</span>
+          </div>
+
+          <h2 className="landing-section-heading">
             INFRASTRUCTURE PROJECTS
             <br />
-            DON'T CHANGE IN A SINGLE
-            <br />
-            MOMENT.
+            DON'T CHANGE IN A SINGLE MOMENT.
           </h2>
+
+          <p className="landing-section-desc">
+            Infrastructure project health degrades gradually across consecutive flash reports. IRIS
+            maps every monthly observation into a continuous, audit-faithful longitudinal timeline to
+            identify early divergence before failure becomes irreversible.
+          </p>
         </div>
 
-        {/* Timeline Container on crisp white surface matching Image 2 */}
-        <div
-          className="hairline-all"
-          style={{
-            backgroundColor: "#ffffff",
-          }}
-        >
+        {/* Timeline Interactive Shell */}
+        <div className="timeline-card-shell landing-reveal-item">
           {/* Header Bar */}
           <div
-            className="hairline-b"
             style={{
-              padding: "16px 24px",
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--font-size-xs)",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              backgroundColor: "#ffffff",
+              paddingBottom: "18px",
+              borderBottom: "1px solid var(--color-border-hairline)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
             }}
           >
-            <span style={{ color: "var(--color-text-dim)", letterSpacing: "0.15em" }}>
+            <span style={{ color: "var(--color-text-dim)", fontWeight: 600 }}>
               LONGITUDINAL OBSERVATION TIMELINE
             </span>
-            <span style={{ color: "var(--color-text-dim)", letterSpacing: "0.15em" }}>
+            <span style={{ color: "var(--color-primary-900)", fontWeight: 700 }}>
               2024-01 / 2024-06
             </span>
           </div>
 
-          {/* Timeline Graphic Canvas */}
-          <div
-            style={{
-              padding: "96px 48px",
-              backgroundColor: "#ffffff",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "260px",
-              overflowX: "auto",
-              position: "relative",
-            }}
-          >
+          {/* Timeline Scrubber Graphic */}
+          <div className="timeline-track-wrapper">
+            {/* Horizontal Track Lines */}
+            <div className="timeline-horizontal-bar" />
+            <div
+              className="timeline-horizontal-progress"
+              style={{
+                width: `${(activeIndex / (TIMELINE_NODES.length - 1)) * 92}%`,
+              }}
+            />
+
+            {/* Nodes */}
             <div
               style={{
                 position: "relative",
-                width: "820px",
-                minWidth: "820px",
-                height: "64px",
+                zIndex: 3,
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
-              {/* Baseline continuous line */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  height: "1px",
-                  backgroundColor: "rgba(58, 58, 56, 0.15)",
-                  width: "100%",
-                }}
-              />
+              {TIMELINE_NODES.map((node, index) => {
+                const isCurrent = index === activeIndex;
 
-              {/* Concentric Circular Nodes Container */}
-              <div
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  paddingLeft: "16px",
-                  paddingRight: "16px",
-                }}
-              >
-                {TIMELINE_NODES.map((node, index) => {
-                  const isHovered = hoveredIndex === index;
-
-                  return (
+                return (
+                  <div
+                    key={node.month}
+                    className={`timeline-node-item ${isCurrent ? "active" : ""}`}
+                    onClick={() => setSelectedIndex(index)}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    style={{ textAlign: "center" }}
+                  >
                     <div
-                      key={node.month}
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onMouseLeave={() => setHoveredIndex(null)}
+                      className="timeline-node-circle"
                       style={{
-                        position: "relative",
-                        cursor: "pointer",
+                        borderColor: isCurrent ? node.ringColor : "var(--color-border-hairline)",
                       }}
                     >
-                      {/* Concentric Double Circle Node */}
                       <div
+                        className="timeline-node-inner-dot"
                         style={{
-                          width: "18px",
-                          height: "18px",
-                          borderRadius: "50%",
-                          backgroundColor: "#ffffff",
-                          border: `2px solid ${node.ringColor}`,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          position: "relative",
-                          zIndex: 10,
-                          transition: "transform 150ms ease",
-                          transform: isHovered ? "scale(1.25)" : "scale(1)",
+                          backgroundColor: isCurrent ? node.dotColor : "var(--color-text-dim)",
                         }}
-                      >
-                        <div
-                          style={{
-                            width: "6px",
-                            height: "6px",
-                            borderRadius: "50%",
-                            backgroundColor: node.dotColor,
-                          }}
-                        />
-                      </div>
-
-                      {/* Month Label */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "28px",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "11px",
-                          textAlign: "center",
-                          width: "80px",
-                          fontWeight: node.isSpecial ? 600 : 400,
-                          color: node.textColor,
-                          letterSpacing: "0.05em",
-                        }}
-                      >
-                        {node.month}
-                      </div>
-
-                      {/* Hover Tooltip Panel */}
-                      {isHovered && (
-                        <div
-                          className="hairline-all"
-                          style={{
-                            position: "absolute",
-                            bottom: "100%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            marginBottom: "16px",
-                            backgroundColor: "#ffffff",
-                            color: "var(--color-text-main)",
-                            borderColor: node.ringColor,
-                            padding: "12px 16px",
-                            width: "200px",
-                            fontFamily: "var(--font-mono)",
-                            fontSize: "10px",
-                            zIndex: 30,
-                            boxShadow: "none",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              borderBottom: "1px solid var(--color-border-hairline)",
-                              paddingBottom: "6px",
-                              marginBottom: "6px",
-                            }}
-                          >
-                            <span style={{ opacity: 0.6 }}>REPORT MONTH</span>
-                            <span style={{ fontWeight: 700 }}>{node.reportMonthDisplay}</span>
-                          </div>
-
-                          <div style={{ marginBottom: "6px" }}>
-                            <div style={{ opacity: 0.6, marginBottom: "2px" }}>OBSERVATION</div>
-                            <div style={{ fontWeight: 500 }}>{node.observation}</div>
-                          </div>
-
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "6px",
-                              fontWeight: 600,
-                              color: node.textColor,
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: "6px",
-                                height: "6px",
-                                borderRadius: "50%",
-                                backgroundColor: "currentColor",
-                                display: "inline-block",
-                              }}
-                            />
-                            <span>{node.status}</span>
-                          </div>
-                        </div>
-                      )}
+                      />
                     </div>
-                  );
-                })}
+
+                    <div
+                      style={{
+                        marginTop: "12px",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "11px",
+                        fontWeight: isCurrent ? 700 : 400,
+                        color: isCurrent ? "var(--color-primary-900)" : "var(--color-text-dim)",
+                        letterSpacing: "0.05em",
+                        transition: "color 150ms ease",
+                      }}
+                    >
+                      {node.month}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Observation Readout Strip */}
+          <div
+            style={{
+              marginTop: "28px",
+              padding: "24px 28px",
+              backgroundColor: "#faf9f6",
+              border: "1px solid var(--color-border-hairline)",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: "20px",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "10px",
+                  color: "var(--color-text-dim)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  marginBottom: "4px",
+                }}
+              >
+                REPORT MONTH
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "var(--font-size-base)",
+                  fontWeight: 700,
+                  color: "var(--color-primary-900)",
+                }}
+              >
+                {activeNode.reportMonthDisplay}
+              </div>
+            </div>
+
+            <div style={{ gridColumn: "span 2" }}>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "10px",
+                  color: "var(--color-text-dim)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  marginBottom: "4px",
+                }}
+              >
+                AUDITABLE OBSERVATION
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--font-size-sm)",
+                  color: "var(--color-text-main)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {activeNode.observation}
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "10px",
+                  color: "var(--color-text-dim)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  marginBottom: "4px",
+                }}
+              >
+                STATUS SIGNAL
+              </div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: activeNode.textColor,
+                  letterSpacing: "0.08em",
+                }}
+              >
+                <span
+                  style={{
+                    width: "7px",
+                    height: "7px",
+                    borderRadius: "50%",
+                    backgroundColor: "currentColor",
+                    display: "inline-block",
+                  }}
+                />
+                <span>{activeNode.status}</span>
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "10px",
+                  color: "var(--color-text-dim)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  marginBottom: "4px",
+                }}
+              >
+                PROGRESS / DELTA
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: "var(--color-text-main)",
+                }}
+              >
+                {activeNode.progressPct} ({activeNode.costDelta})
               </div>
             </div>
           </div>

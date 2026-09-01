@@ -1,18 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" fill="none">
   <defs>
-    <pattern id="mosaic" x="0" y="0" width="400" height="400" patternUnits="userSpaceOnUse">
-      <!-- Large Square -->
-      <rect x="0" y="0" width="200" height="200" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-      <!-- Horizontal Strip -->
-      <rect x="200" y="0" width="200" height="100" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-      <!-- Small Rects -->
-      <rect x="200" y="100" width="100" height="100" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-      <rect x="300" y="100" width="100" height="100" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-      <!-- Vertical Block -->
-      <rect x="0" y="200" width="100" height="200" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-      <!-- Bottom Rects -->
-      <rect x="100" y="200" width="300" height="200" fill="#FAF9F6" stroke="#3A3A38" stroke-width="0.75" stroke-opacity="0.18" />
-    </pattern>
+    <filter id="soften" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.2" />
+    </filter>
   </defs>
-  <rect width="800" height="800" fill="url(#mosaic)" />
+  <g fill="#F7F7F5" stroke="#3A3A38" stroke-width="0.5" stroke-opacity="0.2" filter="url(#soften)">
+    <!-- Base background rect -->
+    <rect x="0" y="0" width="1200" height="800" fill="#F7F7F5" stroke="none" />
+
+    <!-- Section 1 (y: 0 to 320) -->
+    <rect x="0" y="0" width="500" height="320" />
+    <rect x="500" y="0" width="400" height="120" />
+    <rect x="900" y="0" width="300" height="120" />
+    <rect x="500" y="120" width="160" height="200" />
+    <rect x="660" y="120" width="340" height="200" />
+    <rect x="1000" y="120" width="200" height="90" />
+    <rect x="1000" y="210" width="200" height="110" />
+
+    <!-- Section 2 (y: 320 to 560) -->
+    <rect x="0" y="320" width="180" height="240" />
+    <rect x="180" y="320" width="540" height="240" />
+    <rect x="720" y="320" width="300" height="110" />
+    <rect x="720" y="430" width="140" height="130" />
+    <rect x="860" y="430" width="160" height="130" />
+    <rect x="1020" y="320" width="180" height="240" />
+
+    <!-- Section 3 (y: 560 to 800) -->
+    <rect x="0" y="560" width="380" height="120" />
+    <rect x="0" y="680" width="180" height="120" />
+    <rect x="180" y="680" width="200" height="120" />
+    <rect x="380" y="560" width="460" height="240" />
+    <rect x="840" y="560" width="160" height="240" />
+    <rect x="1000" y="560" width="200" height="110" />
+    <rect x="1000" y="670" width="200" height="130" />
+  </g>
 </svg>

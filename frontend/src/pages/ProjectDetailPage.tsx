@@ -21,11 +21,13 @@ import { Button } from "@/components/ui/Button.tsx";
 import { Card } from "@/components/ui/Card.tsx";
 import { TechnicalLabel } from "@/components/ui/TechnicalLabel.tsx";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner.tsx";
+import { usePageEnter } from "@/lib/motion/useMotion.ts";
 
 export const ProjectDetailPage: React.FC = () => {
   const { projectCode } = useParams<{ projectCode: string }>();
+  const containerRef = usePageEnter<HTMLDivElement>();
 
-  const code = projectCode || "";
+  const code = projectCode ? decodeURIComponent(projectCode) : "";
 
   const {
     data: project,
@@ -110,7 +112,7 @@ export const ProjectDetailPage: React.FC = () => {
   // Handle Initial Loading
   if (isLoading) {
     return (
-      <div className="bg-blueprint-grid" style={{ minHeight: "calc(100vh - 64px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "calc(100vh - 64px)", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
           <LoadingSpinner size="lg" />
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--color-text-dim)", letterSpacing: "0.1em" }}>
@@ -122,8 +124,8 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-blueprint-grid" style={{ minHeight: "calc(100vh - 64px)" }}>
-      <div className="project-detail-container">
+    <div style={{ minHeight: "calc(100vh - 64px)", width: "100%" }}>
+      <div ref={containerRef} className="project-detail-container">
         {/* Breadcrumb */}
         <div className="project-breadcrumb">
           <Link to="/projects">IRIS / PROJECTS</Link>
@@ -151,6 +153,7 @@ export const ProjectDetailPage: React.FC = () => {
         <ExpenditureTrajectorySection
           costData={costRevisions}
           snapshot={snapshot}
+          trajectoryData={trajectory}
         />
 
         {/* Section 04: Project Signals */}

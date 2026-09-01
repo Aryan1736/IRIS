@@ -1,14 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { TypingHeadline } from "./TypingHeadline.tsx";
+import { usePageEnter } from "@/lib/motion/useMotion.ts";
+
+const HERO_HEADLINE_LINES = [
+  "FROM",
+  "INFRASTRUCTURE",
+  "MONITORING",
+  "TO INTELLIGENCE.",
+];
 
 export const HeroSection: React.FC = () => {
+  const heroRef = usePageEnter<HTMLElement>();
+
   return (
     <section
-      className="bg-mosaic-grid hairline-b"
+      ref={heroRef}
+      className="landing-section hairline-b"
       style={{
-        paddingTop: "11rem",
-        paddingBottom: "8rem",
+        paddingTop: "clamp(6.5rem, 10vw, 11rem)",
+        paddingBottom: "clamp(4.5rem, 7vw, 8rem)",
         width: "100%",
+        position: "relative",
       }}
     >
       <div
@@ -16,82 +29,83 @@ export const HeroSection: React.FC = () => {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(12, 1fr)",
-          gap: "48px",
+          gap: "clamp(24px, 4vw, 56px)",
           alignItems: "start",
         }}
       >
-        {/* Left Telemetry Sidebar (2 Columns) */}
+        {/* Left Telemetry Sidebar (3 Columns on Desktop) */}
         <div
           style={{
-            gridColumn: "span 2 / span 2",
-            fontFamily: "var(--font-mono)",
-            fontSize: "10px",
-            textTransform: "uppercase",
-            letterSpacing: "0.15em",
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-            paddingTop: "16px",
+            gridColumn: "span 3 / span 3",
             position: "sticky",
-            top: "140px",
+            top: "120px",
           }}
+          className="landing-reveal-item"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span
+          <div className="hero-telemetry-panel">
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span className="hero-status-beacon" aria-hidden="true" />
+              <span style={{ fontWeight: 700, color: "var(--color-primary-900)" }}>
+                SYSTEM STATUS /<br />ONLINE
+              </span>
+            </div>
+
+            <div
               style={{
-                width: "6px",
-                height: "6px",
-                backgroundColor: "var(--color-mint-subtle)",
-                borderRadius: "var(--radius-none)",
-                display: "inline-block",
+                height: "1px",
+                backgroundColor: "var(--color-border-hairline)",
+                margin: "4px 0",
               }}
             />
-            <span style={{ fontWeight: 600, color: "var(--color-primary-900)" }}>
-              SYSTEM STATUS /<br />ONLINE
-            </span>
+
+            <div style={{ opacity: 0.65, fontSize: "10px" }}>PAIMANA / MoSPI</div>
+            <div style={{ opacity: 0.65, fontSize: "10px" }}>INFRASTRUCTURE INTELLIGENCE</div>
+            <div style={{ opacity: 0.65, fontSize: "10px" }}>PREDICTIVE MONITORING</div>
+            <div style={{ opacity: 0.65, fontSize: "10px" }}>DECISION SUPPORT</div>
+
+            <div
+              style={{
+                height: "1px",
+                backgroundColor: "var(--color-border-hairline)",
+                margin: "4px 0",
+              }}
+            />
+
+            <div
+              style={{
+                fontSize: "9px",
+                color: "var(--color-text-dim)",
+                letterSpacing: "0.18em",
+              }}
+            >
+              EST. 2026 / FLASH REPORTS
+            </div>
           </div>
-          <div style={{ opacity: 0.6 }}>PAIMANA / MoSPI</div>
-          <div style={{ opacity: 0.6 }}>INFRASTRUCTURE INTELLIGENCE</div>
-          <div style={{ opacity: 0.6 }}>PREDICTIVE MONITORING</div>
-          <div style={{ opacity: 0.6 }}>DECISION SUPPORT</div>
         </div>
 
-        {/* Main Headline & Narrative (10 Columns) */}
-        <div style={{ gridColumn: "span 10 / span 10" }}>
+        {/* Main Headline & Narrative (9 Columns) */}
+        <div
+          style={{ gridColumn: "span 9 / span 9" }}
+          className="landing-reveal-item"
+        >
           <h1
             style={{
               fontFamily: "var(--font-heading)",
-              fontSize: "clamp(3.5rem, 8vw, 7.5rem)",
+              fontSize: "clamp(3.25rem, 7.5vw, 7.25rem)",
               fontWeight: 700,
               lineHeight: 0.88,
               letterSpacing: "-0.04em",
-              marginBottom: "56px",
+              marginBottom: "40px",
               textTransform: "uppercase",
               color: "var(--color-primary-900)",
               maxWidth: "1150px",
             }}
           >
-            FROM
-            <br />
-            INFRASTRUCTURE
-            <br />
-            MONITORING
-            <br />
-            TO INTELLIGENCE.
+            <TypingHeadline lines={HERO_HEADLINE_LINES} speedMs={50} />
           </h1>
 
-          <div style={{ marginTop: "48px" }}>
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "clamp(1.125rem, 1.4vw, 1.4rem)",
-                maxWidth: "620px",
-                marginBottom: "48px",
-                opacity: 0.85,
-                lineHeight: 1.6,
-                color: "var(--color-text-main)",
-              }}
-            >
+          <div style={{ marginTop: "36px" }}>
+            <p className="landing-section-desc" style={{ marginBottom: "40px" }}>
               IRIS turns longitudinal infrastructure project data into predictive intelligence — helping
               decision-makers identify cost escalation, schedule delays, and emerging implementation risks before
               they become critical.
@@ -106,46 +120,12 @@ export const HeroSection: React.FC = () => {
                 fontSize: "var(--font-size-xs)",
               }}
             >
-              <Link
-                to="/projects"
-                style={{
-                  backgroundColor: "var(--color-primary-900)",
-                  color: "#ffffff",
-                  padding: "16px 32px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  borderRadius: "var(--radius-none)",
-                  fontWeight: 600,
-                  transition: "background-color 150ms ease",
-                }}
-              >
+              <Link to="/projects" className="hero-cta-button-primary">
                 <span>EXPLORE PROJECTS</span>
                 <span>→</span>
               </Link>
 
-              <a
-                href="#capabilities"
-                style={{
-                  border: "1px solid var(--color-primary-900)",
-                  color: "var(--color-primary-900)",
-                  backgroundColor: "transparent",
-                  padding: "16px 32px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "var(--radius-none)",
-                  fontWeight: 600,
-                  transition: "background-color 150ms ease",
-                }}
-              >
+              <a href="#capabilities" className="hero-cta-button-secondary">
                 ABOUT IRIS
               </a>
             </div>

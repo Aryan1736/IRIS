@@ -50,9 +50,14 @@ const RoutePlaceholder: React.FC<{ title: string; screenRef: string; description
             {description}
           </p>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <Link to="/dashboard" style={{ textDecoration: "none" }}>
               <Button variant="primary" size="sm">
                 ← RETURN TO OVERVIEW
+              </Button>
+            </Link>
+            <Link to="/projects" style={{ textDecoration: "none" }}>
+              <Button variant="secondary" size="sm">
+                EXPLORE PROJECTS →
               </Button>
             </Link>
           </div>

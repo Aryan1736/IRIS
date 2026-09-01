@@ -14,24 +14,55 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
+        position: "relative",
         minHeight: "100vh",
         backgroundColor: "var(--color-surface)",
+        width: "100%",
+        overflowX: "hidden",
       }}
     >
-      <Header />
-      <main
+      {/* Full-Page Seamless Architectural Mosaic Background */}
+      <div
+        className="global-mosaic-bg"
         style={{
-          flex: 1,
+          position: "fixed",
+          inset: 0,
+          pointerEvents: "none",
+          zIndex: 0,
+          backgroundImage: "url('/mosaic-grid.svg')",
+          backgroundSize: "1200px 800px",
+          backgroundRepeat: "repeat",
+          backgroundColor: "var(--color-surface)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* App Shell Content (Interactive Layer) */}
+      <div
+        className="app-shell"
+        style={{
+          position: "relative",
+          zIndex: 1,
           display: "flex",
           flexDirection: "column",
-          paddingTop: "64px",
+          minHeight: "100vh",
+          width: "100%",
         }}
       >
-        {children}
-      </main>
-      {isLanding && <Footer />}
+        <Header />
+        <main
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            paddingTop: "64px",
+            width: "100%",
+          }}
+        >
+          {children}
+        </main>
+        {isLanding && <Footer />}
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import * as systemApi from "@/api/system.ts";
 import * as projectsApi from "@/api/projects.ts";
+import * as riskApi from "@/api/risk.ts";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
@@ -19,9 +20,15 @@ vi.mock("@/api/system.ts", () => ({
 vi.mock("@/api/projects.ts", () => ({
   fetchProjects: vi.fn(),
   fetchFilterOptions: vi.fn(),
+  fetchMonthlyObservations: vi.fn(),
 }));
 
-describe("DashboardPage", () => {
+vi.mock("@/api/risk.ts", () => ({
+  fetchRiskSummary: vi.fn(),
+  fetchModelInfo: vi.fn(),
+}));
+
+describe("DashboardPage Real Data & Visual Fidelity", () => {
   beforeEach(() => {
     queryClient.clear();
     vi.clearAllMocks();
@@ -40,7 +47,15 @@ describe("DashboardPage", () => {
       row_count: 64608,
       unique_projects_count: 4738,
       canonical_sha256: "test-sha",
+      ingested_at: "2026-08-30T10:00:00Z",
     });
+
+    vi.mocked(projectsApi.fetchMonthlyObservations).mockResolvedValue([
+      { report_month: "2023-01", observations: 1200 },
+      { report_month: "2024-01", observations: 1400 },
+      { report_month: "2025-01", observations: 1600 },
+      { report_month: "2026-07", observations: 2100 },
+    ]);
 
     vi.mocked(projectsApi.fetchProjects).mockResolvedValue({
       items: [
@@ -75,9 +90,54 @@ describe("DashboardPage", () => {
       ministries: [],
       report_months: [],
     });
+
+    vi.mocked(riskApi.fetchModelInfo).mockResolvedValue({
+      serving_artifact_version: "iris_serving_v1_1",
+      target: "target_effective_schedule_ext_3m",
+      horizon_months: 3,
+      status: "READY",
+      models: [],
+    });
+
+    vi.mocked(riskApi.fetchRiskSummary).mockResolvedValue({
+      report_month: "2026-04",
+      regime_filter: null,
+      filters: {},
+      project_count: 1625,
+      score_distribution: {
+        minimum: 0.05,
+        p25: 0.224,
+        median: 0.389,
+        p75: 0.582,
+        p90: 0.710,
+        p95: 0.841,
+        maximum: 0.985,
+        mean: 0.401,
+      },
+      top_risk_projects: [
+        {
+          project_code: "976809",
+          project_name: "Amended BharatNet Program - ARP, NGL, MNP",
+          agency: "BBNL",
+          ministry: "Ministry of Communications",
+          sector: "Telecommunication",
+          state: "Arunachal Pradesh",
+          regime: "MODERN",
+          model_id: "tree_regime_modern",
+          raw_probability: 0.88,
+          risk_probability: 0.894,
+          calibration_active: true,
+          risk_rank: 1,
+          risk_percentile: 99.9,
+          population_size: 1625,
+        },
+      ],
+      regimes: [],
+      sector_summary: [],
+    });
   });
 
-  it("renders dashboard page intro, metrics, and all 6 sections with genuine data", async () => {
+  it("renders dashboard page intro, metrics, and all 6 sections with genuine backend data", async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
@@ -98,46 +158,68 @@ describe("DashboardPage", () => {
       expect(screen.getAllByText("2023-01 → 2026-07").length).toBeGreaterThanOrEqual(1);
     });
 
-    // Section 01: Portfolio Movement
+    // Section 01: Real Activity & Real Risk Quantiles
     expect(screen.getByText("PROJECT ACTIVITY OVER TIME.")).toBeInTheDocument();
     expect(screen.getByText("LONGITUDINAL OBSERVATION TIMELINE")).toBeInTheDocument();
-    expect(screen.getByText("DEMO CLASSIFICATION — BACKEND PENDING")).toBeInTheDocument();
+    expect(screen.getByText("H=3 SCHEDULE EXTENSION RISK")).toBeInTheDocument();
 
-    // Section 02: Schedule Intelligence
-    expect(screen.getByText("WHERE SCHEDULES MOVE.")).toBeInTheDocument();
-    expect(screen.getByText("SCHEDULE EXTENSIONS")).toBeInTheDocument();
-
-    // Section 03: Cost Intelligence
-    expect(screen.getByText("FOLLOW THE MONEY.")).toBeInTheDocument();
-    expect(screen.getByText("EXPENDITURE TRAJECTORY")).toBeInTheDocument();
-
-    // Section 04: Early Warning
-    expect(screen.getByText("SEE THE RISK BEFORE IT BECOMES THE OUTCOME.")).toBeInTheDocument();
-    expect(screen.getByText("MODEL CONNECTIVITY: PENDING")).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText("NH-66 FOUR LANING")).toBeInTheDocument();
-      expect(screen.getByText("PRJ-8821")).toBeInTheDocument();
+      expect(screen.getByText("22.4%")).toBeInTheDocument(); // P25
+      expect(screen.getByText("38.9%")).toBeInTheDocument(); // Median
+      expect(screen.getByText("58.2%")).toBeInTheDocument(); // P75
+      expect(screen.getByText("84.1%")).toBeInTheDocument(); // P95
     });
 
-    // Section 05: Portfolio Composition
+    // Regression: Ensure 82%, 12%, 6% synthetic demo values are GONE
+    expect(screen.queryByText("82%")).not.toBeInTheDocument();
+    expect(screen.queryByText("12%")).not.toBeInTheDocument();
+    expect(screen.queryByText("6%")).not.toBeInTheDocument();
+
+    // Section 02: Schedule Intelligence (Honest Data Pending)
+    expect(screen.getByText("WHERE SCHEDULES MOVE.")).toBeInTheDocument();
+
+    // Section 03: Cost Intelligence (Honest Data Pending)
+    expect(screen.getByText("FOLLOW THE MONEY.")).toBeInTheDocument();
+
+    // Section 04: Early Warning with Real Evaluated Risk Project
+    expect(screen.getByText("SEE THE RISK BEFORE IT BECOMES THE OUTCOME.")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Amended BharatNet Program - ARP, NGL, MNP")).toBeInTheDocument();
+      expect(screen.getByText("976809")).toBeInTheDocument();
+      expect(screen.getByText("89.4%")).toBeInTheDocument();
+    });
+
+    // Section 05: Portfolio Composition with Taxonomy Note
     expect(screen.getByText("FROM PROJECTS TO PORTFOLIOS.")).toBeInTheDocument();
+    expect(screen.getByText(/TAXONOMY AUDIT NOTE/i)).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getAllByText("ROADS").length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText("NHAI").length).toBeGreaterThanOrEqual(1);
     });
 
     // Section 06: Data and Model Status
-    expect(screen.getByText("H=3 LOGISTIC BASELINE VALIDATED")).toBeInTheDocument();
-    expect(screen.getByText("NOT YET CONNECTED")).toBeInTheDocument();
+    expect(screen.getByText("LIVE SERVING READY")).toBeInTheDocument();
   });
 
   it("handles empty project list gracefully without falling back to mock projects", async () => {
-    vi.mocked(projectsApi.fetchProjects).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      page_size: 5,
-      total_pages: 0,
+    vi.mocked(riskApi.fetchRiskSummary).mockResolvedValue({
+      report_month: "2026-04",
+      regime_filter: null,
+      filters: {},
+      project_count: 0,
+      score_distribution: {
+        minimum: 0,
+        p25: 0,
+        median: 0,
+        p75: 0,
+        p90: 0,
+        p95: 0,
+        maximum: 0,
+        mean: 0,
+      },
+      top_risk_projects: [],
+      regimes: [],
+      sector_summary: [],
     });
 
     render(
@@ -149,7 +231,7 @@ describe("DashboardPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("NO MONITORED PROJECTS RETURNED FROM BACKEND")).toBeInTheDocument();
+      expect(screen.getByText("NO MONITORED PROJECTS RETURNED FROM SERVING LAYER")).toBeInTheDocument();
     });
   });
 

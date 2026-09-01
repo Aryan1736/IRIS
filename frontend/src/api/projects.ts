@@ -15,6 +15,18 @@ import type {
   QuickSearchResult,
 } from "@/types/project.ts";
 
+export interface MonthlyObservationPoint {
+  report_month: string;
+  observations: number;
+}
+
+export interface MonthlyObservationFilters {
+  sector?: string;
+  agency?: string;
+  state?: string;
+  ministry?: string;
+}
+
 /**
  * List projects with pagination, sorting, and multi-field filtering.
  */
@@ -41,6 +53,41 @@ export async function fetchProjects(params: ProjectListQueryParams = {}): Promis
  */
 export async function fetchFilterOptions(): Promise<FilterOptionsResponse> {
   return apiClient<FilterOptionsResponse>(`${API_BASE_URL}/projects/filters/options`);
+}
+
+/**
+ * Fetch observation counts across multiple months, with optional taxonomy filtering.
+ */
+export async function fetchMonthlyObservations(
+  months: string[],
+  filters?: MonthlyObservationFilters
+): Promise<MonthlyObservationPoint[]> {
+  if (!months || months.length === 0) return [];
+  const results = await Promise.all(
+    months.map(async (month) => {
+      try {
+        const res = await fetchProjects({
+          report_month: month,
+          sector: filters?.sector || undefined,
+          agency: filters?.agency || undefined,
+          state: filters?.state || undefined,
+          ministry: filters?.ministry || undefined,
+          page: 1,
+          page_size: 1,
+        });
+        return {
+          report_month: month,
+          observations: res.total ?? 0,
+        };
+      } catch {
+        return {
+          report_month: month,
+          observations: 0,
+        };
+      }
+    })
+  );
+  return results.sort((a, b) => a.report_month.localeCompare(b.report_month));
 }
 
 /**

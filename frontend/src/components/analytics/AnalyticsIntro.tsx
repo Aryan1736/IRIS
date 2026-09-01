@@ -16,13 +16,13 @@ export const AnalyticsIntro: React.FC<AnalyticsIntroProps> = ({ datasetInfo }) =
 
   const months = datasetInfo?.covered_months || [];
   const period = months.length > 0
-    ? `${months[0]} -> ${months[months.length - 1]}`
+    ? `${months[0]} → ${months[months.length - 1]}`
     : "—";
 
   return (
     <header className="analytics-intro-header">
       <div className="analytics-breadcrumb">IRIS / ANALYTICS / PORTFOLIO ANALYSIS</div>
-      <h1 className="analytics-main-title">Understand How the Portfolio Moves.</h1>
+      <h1 className="analytics-main-title">UNDERSTAND HOW THE PORTFOLIO MOVES.</h1>
       <p className="analytics-subtitle">
         Longitudinal analysis of infrastructure activity, expenditure, schedule movement, completion progress, and portfolio composition across the monitored portfolio.
       </p>

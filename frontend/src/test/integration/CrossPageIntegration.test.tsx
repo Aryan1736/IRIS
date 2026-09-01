@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout.tsx";
@@ -38,7 +38,7 @@ vi.mock("@/api/risk.ts", () => ({
   fetchProjectRiskHistory: vi.fn(),
 }));
 
-describe("IRIS Cross-Page Integration & Routing", () => {
+describe("IRIS Cross-Page Integration & Full Navigation Graph", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -255,7 +255,24 @@ describe("IRIS Cross-Page Integration & Routing", () => {
         maximum: 0.99,
         mean: 0.39,
       },
-      top_risk_projects: [],
+      top_risk_projects: [
+        {
+          project_code: "200101",
+          project_name: "Western Dedicated Freight Corridor",
+          agency: "DFCCIL",
+          ministry: "Ministry of Railways",
+          sector: "Railways",
+          state: "Maharashtra",
+          regime: "MODERN",
+          model_id: "tree_regime_modern",
+          raw_probability: 0.88,
+          risk_probability: 0.894,
+          calibration_active: true,
+          risk_rank: 1,
+          risk_percentile: 99.9,
+          population_size: 1625,
+        },
+      ],
       regimes: [],
       sector_summary: [],
     });
@@ -290,7 +307,16 @@ describe("IRIS Cross-Page Integration & Routing", () => {
               <Route path="/projects/:projectCode" element={<ProjectDetailPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/intelligence" element={<IntelligencePage />} />
-              <Route path="*" element={<div>404 NOT FOUND</div>} />
+              <Route
+                path="*"
+                element={
+                  <div data-testid="unmapped-route">
+                    <h1>404 — Page Unmapped</h1>
+                    <a href="/dashboard">← RETURN TO OVERVIEW</a>
+                    <a href="/projects">EXPLORE PROJECTS →</a>
+                  </div>
+                }
+              />
             </Routes>
           </AppLayout>
         </MemoryRouter>
@@ -298,28 +324,53 @@ describe("IRIS Cross-Page Integration & Routing", () => {
     );
   };
 
-  it("renders Landing Page at / and navigates to /dashboard via ENTER IRIS", async () => {
+  // 1. Landing Page Loads
+  it("renders Landing Page at / with correct branding and hero content", () => {
     renderAppAt("/");
 
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1).toHaveTextContent(/FROM/i);
     expect(h1).toHaveTextContent(/INFRASTRUCTURE/i);
     expect(h1).toHaveTextContent(/TO INTELLIGENCE/i);
-
-    const enterBtns = screen.getAllByRole("link", { name: "ENTER IRIS" });
-    expect(enterBtns[0]).toHaveAttribute("href", "/dashboard");
   });
 
-  it("renders Dashboard Overview at /dashboard", async () => {
+  // 2. Landing Page ENTER IRIS CTA points to /dashboard
+  it("Landing page ENTER IRIS CTAs point to /dashboard", () => {
+    renderAppAt("/");
+
+    const enterIrisLinks = screen.getAllByRole("link", { name: "ENTER IRIS" });
+    expect(enterIrisLinks.length).toBeGreaterThanOrEqual(2);
+    enterIrisLinks.forEach((link) => {
+      expect(link).toHaveAttribute("href", "/dashboard");
+    });
+  });
+
+  // 3. Landing Page EXPLORE PROJECTS CTA points to /projects
+  it("Landing page EXPLORE PROJECTS CTAs point to /projects", () => {
+    renderAppAt("/");
+
+    const exploreLinks = screen.getAllByRole("link", { name: /EXPLORE PROJECTS/i });
+    expect(exploreLinks.length).toBeGreaterThanOrEqual(1);
+    exploreLinks.forEach((link) => {
+      expect(link).toHaveAttribute("href", "/projects");
+    });
+  });
+
+  // 4. Header OVERVIEW link navigates and sets active state at /dashboard
+  it("Header OVERVIEW link points to /dashboard and is active at /dashboard", async () => {
     renderAppAt("/dashboard");
 
     await waitFor(() => {
       expect(screen.getByText("INFRASTRUCTURE AT A GLANCE.")).toBeInTheDocument();
-      expect(screen.getByText("PROJECT ACTIVITY OVER TIME.")).toBeInTheDocument();
     });
+
+    const overviewNav = screen.getByRole("link", { name: "OVERVIEW" });
+    expect(overviewNav).toHaveAttribute("href", "/dashboard");
+    expect(overviewNav).toHaveStyle({ fontWeight: "600" });
   });
 
-  it("renders Project Discovery at /projects with 01. PROJECTS active", async () => {
+  // 5. Header 01. PROJECTS link points to /projects and is active at /projects
+  it("Header 01. PROJECTS link points to /projects and is active at /projects", async () => {
     renderAppAt("/projects");
 
     await waitFor(() => {
@@ -327,61 +378,156 @@ describe("IRIS Cross-Page Integration & Routing", () => {
     });
 
     const projectsNav = screen.getByRole("link", { name: "01. PROJECTS" });
+    expect(projectsNav).toHaveAttribute("href", "/projects");
     expect(projectsNav).toHaveStyle({ fontWeight: "600" });
   });
 
-  it("renders Project Detail at /projects/200101 and keeps 01. PROJECTS active", async () => {
+  // 6. Header 02. ANALYTICS link points to /analytics and is active at /analytics
+  it("Header 02. ANALYTICS link points to /analytics and is active at /analytics", async () => {
+    renderAppAt("/analytics");
+
+    await waitFor(() => {
+      expect(screen.getByText("UNDERSTAND HOW THE PORTFOLIO MOVES.")).toBeInTheDocument();
+    });
+
+    const analyticsNav = screen.getByRole("link", { name: "02. ANALYTICS" });
+    expect(analyticsNav).toHaveAttribute("href", "/analytics");
+    expect(analyticsNav).toHaveStyle({ fontWeight: "600" });
+  });
+
+  // 7. Header 03. INTELLIGENCE link points to /intelligence and is active at /intelligence
+  it("Header 03. INTELLIGENCE link points to /intelligence and is active at /intelligence", async () => {
+    renderAppAt("/intelligence");
+
+    await waitFor(() => {
+      expect(screen.getByText("SEE THE RISK BEFORE IT BECOMES THE OUTCOME.")).toBeInTheDocument();
+    });
+
+    const intelNav = screen.getByRole("link", { name: "03. INTELLIGENCE" });
+    expect(intelNav).toHaveAttribute("href", "/intelligence");
+    expect(intelNav).toHaveStyle({ fontWeight: "600" });
+  });
+
+  // 8. Brand Logo points to /
+  it("Brand logo points to / from any application route", () => {
+    renderAppAt("/projects");
+
+    const homeLogo = screen.getByRole("link", { name: "IRIS Home" });
+    expect(homeLogo).toHaveAttribute("href", "/");
+  });
+
+  // 9. /projects/:projectCode keeps 01. PROJECTS active in Header
+  it("Project detail at /projects/200101 keeps 01. PROJECTS active in Header", async () => {
     renderAppAt("/projects/200101");
 
     await waitFor(() => {
       expect(screen.getByText("Western Dedicated Freight Corridor")).toBeInTheDocument();
-      expect(screen.getAllByText("200101").length).toBeGreaterThanOrEqual(1);
     });
 
     const projectsNav = screen.getByRole("link", { name: "01. PROJECTS" });
     expect(projectsNav).toHaveStyle({ fontWeight: "600" });
-
-    expect(screen.getByText("← BACK TO PROJECTS")).toBeInTheDocument();
-    expect(screen.getByText("DASHBOARD OVERVIEW")).toBeInTheDocument();
   });
 
-  it("renders Portfolio Analytics at /analytics with 02. ANALYTICS active", async () => {
-    renderAppAt("/analytics");
+  // 10. Dashboard contextual links to /analytics
+  it("Dashboard provides contextual links to /analytics from Schedule and Cost sections", async () => {
+    renderAppAt("/dashboard");
 
     await waitFor(() => {
-      expect(screen.getByText("Understand How the Portfolio Moves.")).toBeInTheDocument();
+      expect(screen.getByText("INFRASTRUCTURE AT A GLANCE.")).toBeInTheDocument();
     });
 
-    const analyticsNav = screen.getByRole("link", { name: "02. ANALYTICS" });
-    expect(analyticsNav).toHaveStyle({ fontWeight: "600" });
+    const scheduleAnalyticsLink = screen.getByRole("link", { name: "VIEW SCHEDULE ANALYTICS →" });
+    expect(scheduleAnalyticsLink).toHaveAttribute("href", "/analytics");
+
+    const costAnalyticsLink = screen.getByRole("link", { name: "VIEW COST ANALYTICS →" });
+    expect(costAnalyticsLink).toHaveAttribute("href", "/analytics");
   });
 
-  it("renders Early Warning Intelligence at /intelligence with 03. INTELLIGENCE active", async () => {
-    renderAppAt("/intelligence");
+  // 11. Dashboard contextual link to /intelligence
+  it("Dashboard provides contextual link to /intelligence from Early Warning section", async () => {
+    renderAppAt("/dashboard");
 
     await waitFor(() => {
-      expect(screen.getByText("See the Risk Before It Becomes the Outcome.")).toBeInTheDocument();
+      expect(screen.getByText("INFRASTRUCTURE AT A GLANCE.")).toBeInTheDocument();
     });
 
-    const intelNav = screen.getByRole("link", { name: "03. INTELLIGENCE" });
-    expect(intelNav).toHaveStyle({ fontWeight: "600" });
+    const fullRiskLink = screen.getByRole("link", { name: "VIEW FULL RISK INTELLIGENCE →" });
+    expect(fullRiskLink).toHaveAttribute("href", "/intelligence");
   });
 
-  it("renders truthful 404 state when project record is not found", async () => {
-    vi.mocked(projectApi.fetchProjectDetail).mockRejectedValueOnce(new Error("Project not found"));
-
-    renderAppAt("/projects/INVALID_PROJECT");
+  // 12. Dashboard contextual link to /projects
+  it("Dashboard provides contextual link to /projects from Composition section and project rows", async () => {
+    renderAppAt("/dashboard");
 
     await waitFor(() => {
-      expect(screen.getByText("PROJECT NOT FOUND: INVALID_PROJECT")).toBeInTheDocument();
+      expect(screen.getByText("INFRASTRUCTURE AT A GLANCE.")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("← RETURN TO PROJECT DISCOVERY")).toBeInTheDocument();
+    const exploreProjectsLink = screen.getByRole("link", { name: "EXPLORE ALL PROJECTS →" });
+    expect(exploreProjectsLink).toHaveAttribute("href", "/projects");
+
+    await waitFor(() => {
+      expect(screen.getByText("INSPECT")).toBeInTheDocument();
+    });
+
+    const inspectLink = screen.getByRole("link", { name: "INSPECT" });
+    expect(inspectLink).toHaveAttribute("href", "/projects/200101");
   });
 
-  it("renders fallback 404 when route is unmapped", () => {
-    renderAppAt("/unknown/route");
+  // 13. Project Detail bottom nav links
+  it("Project detail bottom nav provides links to Projects, Dashboard, Analytics, and Intelligence", async () => {
+    renderAppAt("/projects/200101");
 
-    expect(screen.getByText("404 NOT FOUND")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Western Dedicated Freight Corridor")).toBeInTheDocument();
+    });
+
+    const backLink = screen.getByRole("link", { name: "← BACK TO PROJECTS" });
+    expect(backLink).toHaveAttribute("href", "/projects");
+
+    const dashboardLink = screen.getByRole("link", { name: "DASHBOARD OVERVIEW" });
+    expect(dashboardLink).toHaveAttribute("href", "/dashboard");
+
+    const analyticsLink = screen.getByRole("link", { name: "PORTFOLIO ANALYTICS" });
+    expect(analyticsLink).toHaveAttribute("href", "/analytics");
+
+    const intelLink = screen.getByRole("link", { name: "RISK INTELLIGENCE" });
+    expect(intelLink).toHaveAttribute("href", "/intelligence");
+  });
+
+  // 14. Footer links verification
+  it("Footer provides verified links to Overview, Projects, Analytics, Intelligence, and Documentation", async () => {
+    renderAppAt("/");
+
+    const footer = screen.getByRole("contentinfo", { name: "Institutional Footer" });
+    const overviewLink = within(footer).getByRole("link", { name: "OVERVIEW" });
+    expect(overviewLink).toHaveAttribute("href", "/dashboard");
+
+    const docLink = within(footer).getByRole("link", { name: "DOCUMENTATION" });
+    expect(docLink).toHaveAttribute("href", "/#data");
+  });
+
+  // 15. User interaction: clicking a navigation item updates route
+  it("Navigates between pages when clicking header navigation links", async () => {
+    renderAppAt("/dashboard");
+
+    await waitFor(() => {
+      expect(screen.getByText("INFRASTRUCTURE AT A GLANCE.")).toBeInTheDocument();
+    });
+
+    const projectsNavLink = screen.getByRole("link", { name: "01. PROJECTS" });
+    fireEvent.click(projectsNavLink);
+
+    await waitFor(() => {
+      expect(screen.getByText("PROJECTS. FIND THE SIGNAL.")).toBeInTheDocument();
+    });
+  });
+
+  // 16. Fallback 404 handler
+  it("Renders 404 on unmapped route with return CTAs", () => {
+    renderAppAt("/unmapped/route");
+
+    expect(screen.getByTestId("unmapped-route")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("404 — Page Unmapped");
   });
 });

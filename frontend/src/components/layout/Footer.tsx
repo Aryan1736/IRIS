@@ -5,12 +5,14 @@ export const Footer: React.FC = () => {
   return (
     <footer
       className="hairline-t"
+      aria-label="Institutional Footer"
       style={{
         backgroundColor: "var(--color-surface)",
         paddingTop: "24px",
         paddingBottom: "24px",
         position: "relative",
         zIndex: 10,
+        width: "100%",
       }}
     >
       <div
@@ -20,16 +22,24 @@ export const Footer: React.FC = () => {
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: "24px",
-          paddingLeft: "var(--space-6)",
-          paddingRight: "var(--space-6)",
+          paddingLeft: "clamp(20px, 3.5vw, 64px)",
+          paddingRight: "clamp(20px, 3.5vw, 64px)",
           width: "100%",
-          maxWidth: "var(--max-width-content)",
-          marginLeft: "auto",
-          marginRight: "auto",
+          boxSizing: "border-box",
         }}
       >
         {/* Left: Brand Lockup */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <Link
+          to="/"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+          aria-label="IRIS Home"
+        >
           <span
             style={{
               fontFamily: "var(--font-heading)",
@@ -61,30 +71,32 @@ export const Footer: React.FC = () => {
           >
             PAIMANA / MoSPI
           </span>
-        </div>
+        </Link>
 
         {/* Center: Institutional Links */}
-        <div
+        <nav
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "36px",
+            gap: "32px",
             fontFamily: "var(--font-mono)",
             fontSize: "10px",
             letterSpacing: "0.15em",
             textTransform: "uppercase",
+            flexWrap: "wrap",
           }}
+          aria-label="Footer Navigation"
         >
-          <a
-            href="#data"
+          <Link
+            to="/dashboard"
             style={{
               color: "var(--color-text-dim)",
               textDecoration: "none",
               transition: "color 150ms ease",
             }}
           >
-            DOCUMENTATION
-          </a>
+            OVERVIEW
+          </Link>
           <Link
             to="/projects"
             style={{
@@ -115,7 +127,17 @@ export const Footer: React.FC = () => {
           >
             INTELLIGENCE
           </Link>
-        </div>
+          <Link
+            to="/#data"
+            style={{
+              color: "var(--color-text-dim)",
+              textDecoration: "none",
+              transition: "color 150ms ease",
+            }}
+          >
+            DOCUMENTATION
+          </Link>
+        </nav>
 
         {/* Right: Operational Status & Legal */}
         <div

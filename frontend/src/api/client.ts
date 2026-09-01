@@ -8,8 +8,9 @@ export interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | null | undefined>;
 }
 
-export const API_BASE_URL = "/api/v1";
-export const RISK_BASE_URL = "/risk";
+const rawBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+export const API_BASE_URL = `${rawBase}/api/v1`;
+export const RISK_BASE_URL = `${rawBase}/risk`;
 
 /**
  * Builds a query string omitting null and undefined values.

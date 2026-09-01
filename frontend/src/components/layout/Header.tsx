@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { fetchHealth, fetchDatasetInfo } from "@/api/system.ts";
 import { Settings, Bell } from "lucide-react";
+import { safeAnimate, stagger, prefersReducedMotion } from "@/lib/motion/anime.ts";
 
 export const Header: React.FC = () => {
   const location = useLocation();
   const [isBackendHealthy, setIsBackendHealthy] = useState<boolean | null>(null);
   const [dateRange, setDateRange] = useState<string>("2023-01 → 2026-07");
   const isLanding = location.pathname === "/";
+  const headerInnerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (headerInnerRef.current && !prefersReducedMotion()) {
+      safeAnimate(Array.from(headerInnerRef.current.children), {
+        opacity: [0, 1],
+        translateY: [4, 0],
+        delay: stagger(40) as unknown as number,
+        duration: 260,
+        ease: "outQuad",
+      });
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -36,6 +50,7 @@ export const Header: React.FC = () => {
   }, []);
 
   const navItems = [
+    { label: "OVERVIEW", path: "/dashboard" },
     { label: "01. PROJECTS", path: "/projects" },
     { label: "02. ANALYTICS", path: "/analytics" },
     { label: "03. INTELLIGENCE", path: "/intelligence" },
@@ -55,17 +70,17 @@ export const Header: React.FC = () => {
       }}
     >
       <div
+        ref={headerInnerRef}
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           height: "100%",
-          paddingLeft: "32px",
-          paddingRight: "32px",
+          paddingLeft: "clamp(20px, 3.5vw, 64px)",
+          paddingRight: "clamp(20px, 3.5vw, 64px)",
           width: "100%",
-          maxWidth: "1560px",
-          marginLeft: "auto",
-          marginRight: "auto",
+          boxSizing: "border-box",
+          gap: "16px",
         }}
       >
         {/* Brand Lockup */}
@@ -74,10 +89,12 @@ export const Header: React.FC = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "16px",
+            gap: "14px",
             textDecoration: "none",
             color: "inherit",
+            flexShrink: 0,
           }}
+          aria-label="IRIS Home"
         >
           <span
             style={{
@@ -119,14 +136,24 @@ export const Header: React.FC = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "36px",
+            gap: "28px",
             height: "100%",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            scrollbarWidth: "none",
           }}
+          aria-label="Main Navigation"
         >
           {navItems.map((item) => {
-            const isActive = item.path === "/projects"
-              ? location.pathname.startsWith("/projects")
-              : location.pathname === item.path;
+            const isActive =
+              item.path === "/projects"
+                ? location.pathname.startsWith("/projects")
+                : item.path === "/analytics"
+                ? location.pathname.startsWith("/analytics")
+                : item.path === "/intelligence"
+                ? location.pathname.startsWith("/intelligence")
+                : location.pathname === item.path;
+
             return (
               <Link
                 key={item.path}
@@ -145,6 +172,7 @@ export const Header: React.FC = () => {
                   borderBottom: isActive ? "2px solid var(--color-primary-950)" : "2px solid transparent",
                   boxSizing: "border-box",
                   paddingTop: "2px",
+                  flexShrink: 0,
                   transition: "color 150ms ease, border-color 150ms ease",
                 }}
               >
@@ -156,7 +184,7 @@ export const Header: React.FC = () => {
 
         {/* Right CTA Button or Operational Telemetry */}
         {isLanding ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
             {isBackendHealthy !== null && (
               <div
                 style={{
@@ -205,7 +233,7 @@ export const Header: React.FC = () => {
             </Link>
           </div>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px", flexShrink: 0 }}>
             <div
               style={{
                 display: "flex",

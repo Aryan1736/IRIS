@@ -1,10 +1,35 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const CostIntelligenceSection: React.FC = () => {
   return (
     <section className="dashboard-section">
-      <div className="dashboard-section-header">
+      <div
+        className="dashboard-section-header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: "12px",
+        }}
+      >
         <h2 className="dashboard-section-title">FOLLOW THE MONEY.</h2>
+        <Link
+          to="/analytics"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "var(--color-primary-950)",
+            textDecoration: "none",
+            fontWeight: 600,
+            transition: "opacity 150ms ease",
+          }}
+        >
+          VIEW COST ANALYTICS →
+        </Link>
       </div>
 
       <div className="dashboard-grid-1-2">
@@ -12,24 +37,52 @@ export const CostIntelligenceSection: React.FC = () => {
         <div className="dashboard-card-white">
           <div className="card-header-lockup">
             <span className="card-label">EXPENDITURE TRAJECTORY</span>
+            <span className="card-tag-pending">DATA PENDING</span>
           </div>
 
-          <div style={{ height: "240px", width: "100%", position: "relative", borderLeft: "1px solid var(--color-border-hairline)", borderBottom: "1px solid var(--color-border-hairline)" }}>
-            <svg
-              style={{ width: "100%", height: "100%" }}
-              preserveAspectRatio="none"
-              viewBox="0 0 100 100"
+          <div
+            style={{
+              height: "200px",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              border: "1px dashed var(--color-border-hairline)",
+              margin: "16px 0 8px 0",
+              padding: "16px",
+              textAlign: "center",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "var(--color-coral)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
             >
-              <path
-                d="M0,90 Q25,85 50,60 T100,20"
-                fill="none"
-                stroke="var(--color-primary-950)"
-                strokeWidth="2"
-              />
-            </svg>
-            <div style={{ position: "absolute", bottom: "8px", right: "12px", fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-dim)", textTransform: "uppercase" }}>
-              AGGREGATE EXPENDITURE EVOLUTION
-            </div>
+              DATA PENDING
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "10px",
+                color: "var(--color-text-dim)",
+                textTransform: "uppercase",
+                maxWidth: "420px",
+                lineHeight: 1.4,
+              }}
+            >
+              PORTFOLIO-WIDE EXPENDITURE TRAJECTORY REQUIRES BACKEND AGGREGATION PIPELINE. PROJECT-LEVEL EXPENDITURE EVOLUTION AVAILABLE VIA PROJECT DETAIL.
+            </span>
+          </div>
+
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-dim)", textTransform: "uppercase", textAlign: "right" }}>
+            AGGREGATE EXPENDITURE EVOLUTION
           </div>
         </div>
 
@@ -37,9 +90,10 @@ export const CostIntelligenceSection: React.FC = () => {
         <div className="dashboard-card-paper">
           <div className="card-header-lockup">
             <span className="card-label">COST REVISION SIGNAL</span>
+            <span className="card-tag-pending">DATA PENDING</span>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "12px" }}>
             <div style={{ fontFamily: "var(--font-heading)", fontSize: "24px", fontWeight: 700, color: "var(--color-coral)" }}>
               DATA PENDING
             </div>
@@ -48,22 +102,22 @@ export const CostIntelligenceSection: React.FC = () => {
             </span>
           </div>
 
-          <div style={{ marginTop: "auto" }}>
+          <div style={{ marginTop: "auto", paddingTop: "16px" }}>
             <div
               style={{
                 padding: "16px",
-                border: "1px solid rgba(186, 26, 26, 0.25)",
-                backgroundColor: "var(--color-risk-high-bg)",
+                border: "1px solid var(--color-border-hairline)",
+                backgroundColor: "var(--color-surface)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "6px",
               }}
             >
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 600, color: "var(--color-coral)", textTransform: "uppercase" }}>
-                ATTENTION REQUIRED
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 600, color: "var(--color-text-main)", textTransform: "uppercase" }}>
+                BASELINE OBSERVATION NOTE
               </span>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-variant)", margin: 0, lineHeight: 1.4 }}>
-                — projects show cumulative expenditure exceeding original cost baseline.
+                Cumulative expenditure vs original cost ratio is evaluated on individual project records.
               </p>
             </div>
           </div>

@@ -18,21 +18,13 @@ export const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ datasetInf
       </div>
 
       <div className="analytics-grid-2col">
-        {/* Left: Progress Classification Breakdown */}
-        <div className="analytics-position-list">
-          <div className="analytics-position-item">
-            <span className="analytics-position-name">On Track</span>
-            <span className="analytics-data-pending-badge">DATA PENDING</span>
-          </div>
-
-          <div className="analytics-position-item">
-            <span className="analytics-position-name">At Risk</span>
-            <span className="analytics-data-pending-badge">DATA PENDING</span>
-          </div>
-
-          <div className="analytics-position-item">
-            <span className="analytics-position-name">Critical</span>
-            <span className="analytics-data-pending-badge">DATA PENDING</span>
+        {/* Left: Progress Tracking Note */}
+        <div className="analytics-canvas-box">
+          <div className="analytics-canvas-empty">
+            <div className="analytics-data-pending-badge">DATA PENDING</div>
+            <div className="analytics-canvas-empty-label">
+              PORTFOLIO PHYSICAL PROGRESS AGGREGATION REQUIRES BACKEND PIPELINE. RECORD-LEVEL REPORTED PHYSICAL PROGRESS AVAILABLE IN PROJECT DIRECTORY.
+            </div>
           </div>
         </div>
 

@@ -23,7 +23,8 @@ describe("IRIS Frontend App Shell", () => {
     expect(within(header).getByText("PAIMANA / MoSPI")).toBeInTheDocument();
 
     // Scope navigation inside header
-    const nav = within(header).getByRole("navigation");
+    const nav = within(header).getByRole("navigation", { name: "Main Navigation" });
+    expect(within(nav).getByRole("link", { name: "OVERVIEW" })).toBeInTheDocument();
     expect(within(nav).getByRole("link", { name: "01. PROJECTS" })).toBeInTheDocument();
     expect(within(nav).getByRole("link", { name: "02. ANALYTICS" })).toBeInTheDocument();
     expect(within(nav).getByRole("link", { name: "03. INTELLIGENCE" })).toBeInTheDocument();

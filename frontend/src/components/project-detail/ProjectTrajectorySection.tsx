@@ -1,5 +1,6 @@
 import React from "react";
 import type { ProjectTrajectoryResponse } from "@/types/project.ts";
+import { ProjectTrajectoryChart } from "./ProjectTrajectoryChart.tsx";
 
 interface ProjectTrajectorySectionProps {
   trajectoryData?: ProjectTrajectoryResponse;
@@ -10,24 +11,6 @@ export const ProjectTrajectorySection: React.FC<ProjectTrajectorySectionProps> =
 }) => {
   const points = trajectoryData?.trajectory || [];
   const hasData = points.length > 0;
-
-  const firstMonth = points[0]?.report_month || "—";
-  const lastMonth = points[points.length - 1]?.report_month || "—";
-
-  // Build authentic SVG path points for physical progress
-  const validProgressPoints: { x: number; y: number; val: number; month: string }[] = [];
-
-  points.forEach((p, idx) => {
-    if (p.physical_progress !== null && p.physical_progress !== undefined) {
-      const x = points.length > 1 ? (idx / (points.length - 1)) * 100 : 50;
-      const y = 90 - (Math.min(Math.max(p.physical_progress, 0), 100) / 100) * 80;
-      validProgressPoints.push({ x, y, val: p.physical_progress, month: p.report_month });
-    }
-  });
-
-  const progressPathD = validProgressPoints.length > 1
-    ? `M ${validProgressPoints.map((pt) => `${pt.x},${pt.y}`).join(" L ")}`
-    : "";
 
   return (
     <section className="project-detail-section">
@@ -42,88 +25,21 @@ export const ProjectTrajectorySection: React.FC<ProjectTrajectorySectionProps> =
       </div>
 
       <div className="trajectory-canvas-box">
-        {/* Subtle 40px grid overlay */}
+        {/* Subtle grid pattern */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            opacity: 0.08,
+            opacity: 0.05,
             backgroundImage:
               "linear-gradient(to right, #727973 1px, transparent 1px), linear-gradient(to bottom, #727973 1px, transparent 1px)",
             backgroundSize: "40px 40px",
+            pointerEvents: "none",
           }}
         />
 
-        {/* Authentic Time series visualization */}
-        {validProgressPoints.length > 0 ? (
-          <svg
-            style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}
-            preserveAspectRatio="none"
-            viewBox="0 0 100 100"
-          >
-            {/* Progress line */}
-            {progressPathD && (
-              <path
-                d={progressPathD}
-                fill="none"
-                stroke="var(--color-primary-950)"
-                strokeWidth="1.5"
-              />
-            )}
-            {/* Data Point Markers */}
-            {validProgressPoints.map((pt, i) => (
-              <circle
-                key={`dot-${i}`}
-                cx={pt.x}
-                cy={pt.y}
-                r="1.8"
-                fill="var(--color-surface)"
-                stroke="var(--color-primary-950)"
-                strokeWidth="1"
-              />
-            ))}
-          </svg>
-        ) : (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "var(--font-mono)",
-              fontSize: "11px",
-              color: "var(--color-text-dim)",
-            }}
-          >
-            NO LONGITUDINAL PROGRESS OBSERVATIONS REPORTED
-          </div>
-        )}
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: "8px",
-            left: "16px",
-            fontFamily: "var(--font-mono)",
-            fontSize: "11px",
-            color: "var(--color-text-dim)",
-          }}
-        >
-          {firstMonth}
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: "8px",
-            right: "16px",
-            fontFamily: "var(--font-mono)",
-            fontSize: "11px",
-            color: "var(--color-text-dim)",
-          }}
-        >
-          {lastMonth}
-        </div>
+        {/* Interactive Data-Driven Longitudinal Chart */}
+        <ProjectTrajectoryChart observations={points} />
       </div>
 
       {/* Bottom observation cadence markers */}

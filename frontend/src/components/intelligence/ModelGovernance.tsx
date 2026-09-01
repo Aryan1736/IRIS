@@ -11,9 +11,14 @@ export const ModelGovernance: React.FC<ModelGovernanceProps> = ({ modelInfo }) =
   return (
     <section className="intelligence-section">
       <div className="intelligence-section-header">
-        <h2 className="intelligence-section-title">05. Model Governance</h2>
+        <div className="intelligence-section-title-lockup">
+          <h2 className="intelligence-section-title">08. Model Governance</h2>
+          <span className="intelligence-section-subtitle">
+            AUDITABLE SERVING CONTRACT & VALIDATION POLICIES
+          </span>
+        </div>
         <span className="intelligence-section-subtitle">
-          AUDITABLE SERVING CONTRACT & VALIDATION POLICIES
+          SERVING CONTRACT SPECIFICATION
         </span>
       </div>
 

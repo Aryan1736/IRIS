@@ -5,6 +5,7 @@
 @import "./styles/project-detail.css";
 @import "./styles/analytics.css";
 @import "./styles/intelligence.css";
+@import "./styles/landing.css";
 
 /* Base Reset & Box Sizing */
 *, *::before, *::after {
@@ -32,14 +33,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Background Systems: Section-contained Local Grid */
-.bg-mosaic-grid {
-  background-color: var(--color-surface);
+/* Global Seamless Architectural Mosaic Background */
+.global-mosaic-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
   background-image: url('/mosaic-grid.svg');
-  background-size: 800px 800px;
+  background-size: 1200px 800px;
   background-repeat: repeat;
-  /* Local scrolling attachment - NOT floating across sections */
-  background-attachment: scroll;
+  background-color: var(--color-surface);
+}
+
+/* Screen Reader Only Utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .bg-paper-solid {
@@ -53,23 +69,19 @@ body {
 .hairline-r { border-right: 1px solid var(--color-border-hairline); }
 .hairline-all { border: 1px solid var(--color-border-hairline); }
 
-/* Layout Containers */
+/* Layout Containers — Full-Width Institutional Terminal Canvas */
 .container-main {
   width: 100%;
-  max-width: var(--max-width-content);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-6);
-  padding-right: var(--space-6);
+  padding-left: clamp(20px, 3.5vw, 64px);
+  padding-right: clamp(20px, 3.5vw, 64px);
+  box-sizing: border-box;
 }
 
 .container-editorial {
   width: 100%;
-  max-width: var(--max-width-editorial);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-6);
-  padding-right: var(--space-6);
+  padding-left: clamp(20px, 3.5vw, 64px);
+  padding-right: clamp(20px, 3.5vw, 64px);
+  box-sizing: border-box;
 }
 
 /* Precision Badges & Tags (2px radius for chips) */
@@ -141,4 +153,36 @@ body {
 ::selection {
   background: var(--color-primary-200);
   color: var(--color-primary-950);
+}
+
+/* Institutional Terminal Typing Caret */
+.iris-typing-headline {
+  display: inline;
+  position: relative;
+}
+
+.iris-typing-cursor {
+  display: inline-block;
+  width: clamp(2px, 0.035em, 4px);
+  height: 0.85em;
+  background-color: currentColor;
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  animation: iris-caret-blink 550ms step-end infinite;
+}
+
+@keyframes iris-caret-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iris-typing-cursor {
+    animation: none;
+    opacity: 1;
+  }
 }

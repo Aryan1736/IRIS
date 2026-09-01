@@ -5,14 +5,12 @@
 
 .intelligence-container {
   width: 100%;
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 32px 32px 64px 32px;
+  padding: 32px clamp(20px, 3.5vw, 64px) 64px clamp(20px, 3.5vw, 64px);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 36px;
   flex: 1;
+  box-sizing: border-box;
 }
 
 /* Intro Section */
@@ -181,16 +179,26 @@
 .intelligence-section-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid var(--color-border-hairline);
+  padding-bottom: 8px;
+}
+
+.intelligence-section-title-lockup {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 
 .intelligence-section-title {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-primary-950);
   border-left: 2px solid var(--color-primary-950);
   padding-left: 8px;
   margin: 0;
@@ -204,59 +212,166 @@
   text-transform: uppercase;
 }
 
-/* Section 01: Portfolio Risk Overview Cards */
-.intelligence-overview-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+/* Section 01: Portfolio Risk Overview Visualization */
+.intelligence-risk-overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-@media (min-width: 768px) {
-  .intelligence-overview-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.intelligence-overview-card {
+.intelligence-risk-band-card {
   background: var(--color-surface-paper);
   border: 1px solid var(--color-border-hairline);
   padding: 24px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-  position: relative;
+  gap: 20px;
+}
+
+.intelligence-risk-band-canvas {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px 20px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.intelligence-risk-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .intelligence-risk-kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.intelligence-risk-kpi-cell {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.intelligence-risk-kpi-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.intelligence-risk-kpi-val {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary-950);
+  line-height: 1.1;
+}
+
+.intelligence-risk-kpi-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* Top-Risk Bar Ranking */
+.intelligence-top-risk-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.intelligence-top-risk-item {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline);
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 36px 1fr 180px 120px 80px;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  transition: background-color 150ms ease;
+}
+
+.intelligence-top-risk-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 900px) {
+  .intelligence-top-risk-item {
+    grid-template-columns: 30px 1fr 90px;
+    gap: 8px;
+  }
+}
+
+.intelligence-top-risk-rank {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--color-primary-950);
+}
+
+.intelligence-top-risk-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   overflow: hidden;
 }
 
-.intelligence-overview-card-title {
-  font-family: var(--font-heading);
-  font-size: 18px;
+.intelligence-top-risk-code {
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
   color: var(--color-primary-950);
-  margin: 0;
+  text-decoration: none;
 }
 
-.intelligence-overview-card-body {
+.intelligence-top-risk-code:hover {
+  text-decoration: underline;
+}
+
+.intelligence-top-risk-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intelligence-top-risk-bar-track {
+  width: 100%;
+  height: 12px;
+  background: #E2E3DF;
+  position: relative;
+}
+
+.intelligence-top-risk-bar-fill {
+  height: 100%;
+  background: #BA1A1A;
+  transition: width 300ms ease;
+}
+
+.intelligence-top-risk-prob {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
+  align-items: flex-end;
 }
 
-.intelligence-overview-metric-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--color-text-secondary);
+.intelligence-top-risk-prob-val {
+  font-weight: 700;
+  font-size: 14px;
+  color: #BA1A1A;
 }
 
-.intelligence-overview-metric-val {
-  font-weight: 600;
-  color: var(--color-primary-950);
+.intelligence-top-risk-prob-raw {
+  font-size: 10px;
+  color: var(--color-text-muted);
 }
 
 /* Section 02: Ranked Projects Table */
@@ -268,7 +383,7 @@
 
 .intelligence-table {
   width: 100%;
-  min-width: 880px;
+  min-width: 960px;
   border-collapse: collapse;
   text-align: left;
   font-family: var(--font-mono);
@@ -327,10 +442,17 @@
   font-family: var(--font-sans);
   font-size: 13px;
   color: var(--color-text-secondary);
-  max-width: 280px;
+  max-width: 260px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.intelligence-prob-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
 }
 
 .intelligence-prob-val {
@@ -342,6 +464,17 @@
   font-size: 10px;
   color: var(--color-text-muted);
   display: block;
+}
+
+.intelligence-prob-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #E2E3DF;
+}
+
+.intelligence-prob-bar-fill {
+  height: 100%;
+  background: #BA1A1A;
 }
 
 .intelligence-badge-regime {
@@ -475,22 +608,87 @@
   background: #FFFFFF;
   border: 1px solid var(--color-border-hairline);
   padding: 20px;
-  min-height: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 8px;
 }
 
-/* Section 04: Regime & Sector Risk */
+/* Section 04: Sector Risk Horizontal Bar Chart */
+.intelligence-sector-card {
+  background: var(--color-surface-paper);
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intelligence-sector-bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.intelligence-sector-bar-row {
+  display: grid;
+  grid-template-columns: 220px 90px 1fr 140px;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .intelligence-sector-bar-row {
+    grid-template-columns: 1fr 80px;
+    gap: 8px;
+  }
+}
+
+.intelligence-sector-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-primary-950);
+}
+
+.intelligence-sector-count {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.intelligence-sector-track {
+  height: 14px;
+  background: #E2E3DF;
+  position: relative;
+}
+
+.intelligence-sector-fill {
+  height: 100%;
+  transition: width 300ms ease;
+}
+
+.intelligence-sector-metrics {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Section 05: Regime & Sector Risk */
 .intelligence-regime-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .intelligence-regime-grid {
-    grid-template-columns: 5fr 7fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -503,7 +701,58 @@
   gap: 16px;
 }
 
-/* Section 05 & 06: Model Governance & What The Model Knows */
+/* Section 06: Risk Driver Intelligence (Diverging diagram) */
+.intelligence-driver-card {
+  background: var(--color-surface-paper);
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.intelligence-driver-diagram {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intelligence-driver-axis-header {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.intelligence-driver-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .intelligence-driver-guide-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.intelligence-driver-guide-box {
+  background: #FAF9F6;
+  border: 1px solid var(--color-border-hairline);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Section 08 & 09: Model Governance & What The Model Knows */
 .intelligence-gov-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -588,7 +837,7 @@
   margin: 0;
 }
 
-/* Section 07: Dark Green Status Strip */
+/* Section 10: Dark Green Status Strip */
 .intelligence-audit-banner {
   background: #1A3C2B;
   color: #FFFFFF;
@@ -673,7 +922,7 @@
 .intelligence-drawer {
   background: #FAF9F6;
   width: 100%;
-  max-width: 680px;
+  max-width: 720px;
   height: 100%;
   overflow-y: auto;
   border-left: 1px solid var(--color-border-hairline);
@@ -708,7 +957,7 @@
 
 .intelligence-contrib-bar-row {
   display: grid;
-  grid-template-columns: 180px 1fr 70px;
+  grid-template-columns: 200px 1fr 70px;
   align-items: center;
   gap: 12px;
   font-family: var(--font-mono);

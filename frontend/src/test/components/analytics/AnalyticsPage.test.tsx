@@ -18,9 +18,10 @@ vi.mock("@/api/system.ts", () => ({
 vi.mock("@/api/projects.ts", () => ({
   fetchProjects: vi.fn(),
   fetchFilterOptions: vi.fn(),
+  fetchMonthlyObservations: vi.fn(),
 }));
 
-describe("AnalyticsPage", () => {
+describe("AnalyticsPage Real Data & Visual Fidelity", () => {
   beforeEach(() => {
     queryClient.clear();
     vi.clearAllMocks();
@@ -33,6 +34,13 @@ describe("AnalyticsPage", () => {
       canonical_sha256: "test-sha",
       dataset_version: "v4.2",
     });
+
+    vi.mocked(projectsApi.fetchMonthlyObservations).mockResolvedValue([
+      { report_month: "2023-01", observations: 1200 },
+      { report_month: "2024-01", observations: 1400 },
+      { report_month: "2025-01", observations: 1600 },
+      { report_month: "2026-07", observations: 2100 },
+    ]);
 
     vi.mocked(projectsApi.fetchFilterOptions).mockResolvedValue({
       sectors: ["TRANSPORT", "HEALTH", "POWER"],
@@ -56,52 +64,63 @@ describe("AnalyticsPage", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Understand How the Portfolio Moves.")).toBeInTheDocument();
+      expect(screen.getByText("UNDERSTAND HOW THE PORTFOLIO MOVES.")).toBeInTheDocument();
     });
 
     expect(screen.getByText("IRIS / ANALYTICS / PORTFOLIO ANALYSIS")).toBeInTheDocument();
     expect(screen.getAllByText("4,738").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("64,608").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("2023-01 -> 2026-07")).toBeInTheDocument();
+    expect(screen.getByText("2023-01 → 2026-07")).toBeInTheDocument();
   });
 
-  it("renders all 7 analytics sections with honest DATA PENDING badges for un-aggregated metrics", async () => {
+  it("renders all 7 analytics sections with honest DATA PENDING badges and real monthly chart", async () => {
     renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText("01. Portfolio Activity Over Time")).toBeInTheDocument();
     });
 
-    // Section 01
+    // Section 01: Real Activity
     expect(screen.getByText("01. Portfolio Activity Over Time")).toBeInTheDocument();
-    expect(screen.getByText("DATA COVERAGE & MONITORED PERIOD")).toBeInTheDocument();
+    expect(screen.getByText("LONGITUDINAL OBSERVATIONS & COVERAGE")).toBeInTheDocument();
     expect(screen.getByText("MONITORED MONTHS")).toBeInTheDocument();
+    expect(screen.getAllByText("CADENCE START: 2023-01").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("LATEST CADENCE: 2026-07").length).toBeGreaterThanOrEqual(1);
 
-    // Section 02
+    // Regression: Ensure demo values are GONE
+    expect(screen.queryByText("82%")).not.toBeInTheDocument();
+    expect(screen.queryByText("12%")).not.toBeInTheDocument();
+    expect(screen.queryByText("6%")).not.toBeInTheDocument();
+
+    // Section 02: Where Schedules Move (Data Pending)
     expect(screen.getByText("02. Where Schedules Move")).toBeInTheDocument();
     expect(screen.getByText("AHEAD")).toBeInTheDocument();
     expect(screen.getByText("WITHIN")).toBeInTheDocument();
+    expect(screen.getByText("APPROACHING")).toBeInTheDocument();
+    expect(screen.getByText("PAST")).toBeInTheDocument();
 
-    // Section 03
+    // Section 03: Follow the Money (Data Pending)
     expect(screen.getByText("03. Follow the Money")).toBeInTheDocument();
     expect(screen.getByText("Total Reported Expenditure")).toBeInTheDocument();
 
-    // Section 04
+    // Section 04: Portfolio Composition
     expect(screen.getByText("04. Portfolio Composition")).toBeInTheDocument();
     expect(screen.getByText("DISTINCT MONITORED TAXONOMIES")).toBeInTheDocument();
     expect(screen.getAllByText("TRANSPORT").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("NHAI").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("MAHARASHTRA").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/TAXONOMY AUDIT NOTE/i)).toBeInTheDocument();
 
-    // Section 05
+    // Section 05: Project Progress
     expect(screen.getByText("05. Project Progress")).toBeInTheDocument();
-    expect(screen.getByText("On Track")).toBeInTheDocument();
+    expect(screen.getByText("PHYSICAL PROGRESS TRACKING (DATA PENDING)")).toBeInTheDocument();
+    expect(screen.queryByText("On Track")).not.toBeInTheDocument();
 
-    // Section 06
+    // Section 06: Completion Movement
     expect(screen.getByText("06. Completion Movement")).toBeInTheDocument();
     expect(screen.getByText("Revised Completion")).toBeInTheDocument();
 
-    // Section 07
+    // Section 07: Data Profile
     expect(screen.getByText("07. Observations / Data Profile")).toBeInTheDocument();
     expect(screen.getByText("Coded Months")).toBeInTheDocument();
   });
@@ -146,7 +165,7 @@ describe("AnalyticsPage", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Understand How the Portfolio Moves.")).toBeInTheDocument();
+      expect(screen.getByText("UNDERSTAND HOW THE PORTFOLIO MOVES.")).toBeInTheDocument();
     });
 
     expect(screen.getAllByText("—").length).toBeGreaterThanOrEqual(1);

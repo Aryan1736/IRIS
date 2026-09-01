@@ -1,36 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchFilterOptions } from "@/api/projects.ts";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, X } from "lucide-react";
+import type { FilterOptionsResponse } from "@/types/project.ts";
 
 export interface Filters {
   search?: string;
   sector?: string;
   agency?: string;
   state?: string;
+  ministry?: string;
   report_month?: string;
 }
 
 interface ProjectSearchProps {
   filters: Filters;
   onFilterChange: (filters: Filters) => void;
+  options?: FilterOptionsResponse;
 }
 
-export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterChange }) => {
-  const { data: options } = useQuery({
+export const ProjectSearch: React.FC<ProjectSearchProps> = ({
+  filters,
+  onFilterChange,
+  options: externalOptions,
+}) => {
+  const { data: fetchedOptions } = useQuery({
     queryKey: ["filterOptions"],
     queryFn: fetchFilterOptions,
+    enabled: !externalOptions,
   });
 
-  const [searchInput, setSearchInput] = useState(filters.search || "");
+  const options = externalOptions || fetchedOptions;
 
-  // Debounce search input
+  const [searchInput, setSearchInput] = useState(filters.search || "");
+  const filtersRef = React.useRef(filters);
+  filtersRef.current = filters;
+
+  // Sync external search filter changes to local input
+  useEffect(() => {
+    setSearchInput(filters.search || "");
+  }, [filters.search]);
+
+  // Debounce search input changes
   useEffect(() => {
     const timer = setTimeout(() => {
-      onFilterChange({ ...filters, search: searchInput || undefined });
+      if ((searchInput || undefined) !== filtersRef.current.search) {
+        onFilterChange({ ...filtersRef.current, search: searchInput || undefined });
+      }
     }, 400);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, onFilterChange]);
 
   const handleChange = (key: keyof Filters, value: string) => {
     onFilterChange({ ...filters, [key]: value || undefined });
@@ -41,12 +60,26 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
     onFilterChange({});
   };
 
+  const handleClearField = (key: keyof Filters) => {
+    if (key === "search") {
+      setSearchInput("");
+    }
+    const updated = { ...filters };
+    delete updated[key];
+    onFilterChange(updated);
+  };
+
   const hasActiveFilters = Boolean(
-    filters.sector || filters.agency || filters.state || filters.report_month || filters.search
+    filters.sector ||
+    filters.agency ||
+    filters.state ||
+    filters.ministry ||
+    filters.report_month ||
+    filters.search
   );
 
   return (
-    <section className="search-section">
+    <section className="search-section" aria-label="Project Search and Filters">
       <div className="search-section-label">PROJECT SEARCH</div>
 
       {/* Main Search Input */}
@@ -59,15 +92,28 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
           name="search"
           aria-label="Search projects"
           className="search-input"
-          placeholder="Search project name, project code, agency, sector..."
+          placeholder="SEARCH PROJECT NAME, CODE, AGENCY, SECTOR..."
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
+        {searchInput && (
+          <button
+            type="button"
+            className="search-clear-input-btn"
+            onClick={() => {
+              setSearchInput("");
+              onFilterChange({ ...filters, search: undefined });
+            }}
+            aria-label="Clear search input"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
-      {/* Filters Bar */}
-      <div className="filters-bar">
+      {/* Filters Command Strip */}
+      <div className="filters-bar" role="toolbar" aria-label="Project Taxonomy Filters">
         <span className="filters-label">FILTERS:</span>
 
         {/* Sector Select */}
@@ -80,7 +126,7 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
             value={filters.sector || ""}
             onChange={(e) => handleChange("sector", e.target.value)}
           >
-            <option value="">SECTOR</option>
+            <option value="">SECTOR (ALL)</option>
             {options?.sectors?.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -102,7 +148,7 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
             value={filters.agency || ""}
             onChange={(e) => handleChange("agency", e.target.value)}
           >
-            <option value="">AGENCY</option>
+            <option value="">AGENCY (ALL)</option>
             {options?.agencies?.map((a) => (
               <option key={a} value={a}>
                 {a}
@@ -124,10 +170,32 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
             value={filters.state || ""}
             onChange={(e) => handleChange("state", e.target.value)}
           >
-            <option value="">STATE</option>
+            <option value="">STATE / REGION (ALL)</option>
             {options?.states?.map((st) => (
               <option key={st} value={st}>
                 {st}
+              </option>
+            ))}
+          </select>
+          <span className="filter-select-arrow">
+            <ChevronDown size={13} />
+          </span>
+        </div>
+
+        {/* Ministry Select */}
+        <div className="filter-select-wrapper">
+          <select
+            id="project-ministry-select"
+            name="ministry"
+            aria-label="Filter by ministry"
+            className="filter-select"
+            value={filters.ministry || ""}
+            onChange={(e) => handleChange("ministry", e.target.value)}
+          >
+            <option value="">MINISTRY (ALL)</option>
+            {options?.ministries?.map((m) => (
+              <option key={m} value={m}>
+                {m}
               </option>
             ))}
           </select>
@@ -146,7 +214,7 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
             value={filters.report_month || ""}
             onChange={(e) => handleChange("report_month", e.target.value)}
           >
-            <option value="">REPORT PERIOD</option>
+            <option value="">REPORT PERIOD (ALL)</option>
             {options?.report_months?.map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -169,6 +237,91 @@ export const ProjectSearch: React.FC<ProjectSearchProps> = ({ filters, onFilterC
           </button>
         )}
       </div>
+
+      {/* Active Filter Tags Row */}
+      {hasActiveFilters && (
+        <div className="active-filters-row" aria-label="Active Filter Tags">
+          <span className="active-filters-title">ACTIVE CRITERIA:</span>
+          {filters.search && (
+            <span className="active-filter-tag">
+              SEARCH: <strong>"{filters.search}"</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("search")}
+                aria-label="Remove search filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {filters.sector && (
+            <span className="active-filter-tag">
+              SECTOR: <strong>{filters.sector}</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("sector")}
+                aria-label="Remove sector filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {filters.agency && (
+            <span className="active-filter-tag">
+              AGENCY: <strong>{filters.agency}</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("agency")}
+                aria-label="Remove agency filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {filters.state && (
+            <span className="active-filter-tag">
+              STATE: <strong>{filters.state}</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("state")}
+                aria-label="Remove state filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {filters.ministry && (
+            <span className="active-filter-tag">
+              MINISTRY: <strong>{filters.ministry}</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("ministry")}
+                aria-label="Remove ministry filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {filters.report_month && (
+            <span className="active-filter-tag">
+              CYCLE: <strong>{filters.report_month}</strong>
+              <button
+                type="button"
+                onClick={() => handleClearField("report_month")}
+                aria-label="Remove report month filter"
+                className="active-filter-remove"
+              >
+                ×
+              </button>
+            </span>
+          )}
+        </div>
+      )}
     </section>
   );
 };

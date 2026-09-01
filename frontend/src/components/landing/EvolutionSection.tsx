@@ -1,63 +1,50 @@
 import React from "react";
+import { useScrollReveal } from "@/lib/motion/useMotion.ts";
 
 export const EvolutionSection: React.FC = () => {
   const metadataTaxonomy = ["SECTOR", "STATE", "MINISTRY", "AGENCY", "PROJECT", "TIME"];
 
+  const sectionRef = useScrollReveal<HTMLElement>({
+    childSelector: ".landing-reveal-item",
+    staggerTime: 50,
+  });
+
   return (
     <section
       id="intelligence"
-      className="bg-paper-solid hairline-b"
-      style={{
-        paddingTop: "8rem",
-        paddingBottom: "8rem",
-        position: "relative",
-        width: "100%",
-      }}
+      ref={sectionRef}
+      className="landing-section landing-section-paper hairline-b"
     >
       <div className="container-main">
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "56px",
+            gap: "clamp(24px, 4vw, 56px)",
             alignItems: "start",
           }}
         >
-          {/* Left Column (4 Columns): Evolution Phases matching Image 6 */}
+          {/* Left Column (4 Columns on Desktop): Evolution Phases */}
           <div
             style={{
               gridColumn: "span 4 / span 4",
               display: "flex",
               flexDirection: "column",
             }}
+            className="landing-reveal-item"
           >
-            <h2
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "clamp(2rem, 3.5vw, 3.25rem)",
-                fontWeight: 700,
-                letterSpacing: "-0.03em",
-                lineHeight: 0.95,
-                textTransform: "uppercase",
-                marginBottom: "32px",
-                color: "var(--color-primary-900)",
-              }}
-            >
+            <div className="landing-section-badge">
+              <span className="landing-section-badge-dot" />
+              <span>[ 05 / EVOLUTION OF INTELLIGENCE ]</span>
+            </div>
+
+            <h2 className="landing-section-heading">
               EVOLUTION OF
               <br />
               INTELLIGENCE
             </h2>
 
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "var(--font-size-base)",
-                lineHeight: 1.6,
-                opacity: 0.85,
-                marginBottom: "48px",
-                color: "var(--color-text-main)",
-              }}
-            >
+            <p className="landing-section-desc" style={{ marginBottom: "40px" }}>
               The IRIS architecture is designed to progressively build upon its source-faithful data
               foundation, moving from basic reporting to advanced predictive analytics.
             </p>
@@ -66,7 +53,7 @@ export const EvolutionSection: React.FC = () => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "28px",
+                gap: "20px",
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--font-size-xs)",
                 textTransform: "uppercase",
@@ -75,32 +62,33 @@ export const EvolutionSection: React.FC = () => {
               {/* Phase 01 */}
               <div
                 style={{
-                  border: "1px solid #A4CBB8",
+                  border: "1px solid var(--color-primary-400)",
                   backgroundColor: "#ffffff",
-                  padding: "24px",
+                  padding: "24px 20px",
                   position: "relative",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    left: "-6px",
-                    top: "-6px",
-                    width: "14px",
-                    height: "14px",
-                    backgroundColor: "#A4CBB8",
+                    left: "-7px",
+                    top: "-7px",
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: "var(--color-primary-600)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#ffffff",
                     fontWeight: 700,
-                    fontSize: "8px",
+                    fontSize: "9px",
                   }}
                 >
                   1
                 </div>
-                <div style={{ color: "#5E9B7D", fontWeight: 600, fontSize: "10px", marginBottom: "8px", letterSpacing: "0.1em" }}>
-                  PHASE 01 / ACTIVE
+                <div style={{ color: "var(--color-primary-700)", fontWeight: 700, fontSize: "10px", marginBottom: "6px", letterSpacing: "0.12em" }}>
+                  PHASE 01 / COMPLETE
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "13px", color: "var(--color-primary-900)", letterSpacing: "0.08em" }}>
                   SOURCE DATA FOUNDATION
@@ -110,31 +98,32 @@ export const EvolutionSection: React.FC = () => {
               {/* Phase 02 */}
               <div
                 style={{
-                  border: "1px solid #A4CBB8",
+                  border: "1px solid var(--color-primary-400)",
                   backgroundColor: "#ffffff",
-                  padding: "24px",
+                  padding: "24px 20px",
                   position: "relative",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    left: "-6px",
-                    top: "-6px",
-                    width: "14px",
-                    height: "14px",
-                    backgroundColor: "#A4CBB8",
+                    left: "-7px",
+                    top: "-7px",
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: "var(--color-primary-600)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#ffffff",
                     fontWeight: 700,
-                    fontSize: "8px",
+                    fontSize: "9px",
                   }}
                 >
                   2
                 </div>
-                <div style={{ color: "#5E9B7D", fontWeight: 600, fontSize: "10px", marginBottom: "8px", letterSpacing: "0.1em" }}>
+                <div style={{ color: "var(--color-primary-700)", fontWeight: 700, fontSize: "10px", marginBottom: "6px", letterSpacing: "0.12em" }}>
                   PHASE 02 / ACTIVE
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "13px", color: "var(--color-primary-900)", letterSpacing: "0.08em" }}>
@@ -145,42 +134,46 @@ export const EvolutionSection: React.FC = () => {
               {/* Phase 03 */}
               <div
                 style={{
-                  border: "1px solid #A4CBB8",
+                  border: "1px solid var(--color-primary-400)",
                   backgroundColor: "#ffffff",
-                  padding: "24px",
+                  padding: "24px 20px",
                   position: "relative",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    left: "-6px",
-                    top: "-6px",
-                    width: "14px",
-                    height: "14px",
-                    backgroundColor: "#A4CBB8",
+                    left: "-7px",
+                    top: "-7px",
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: "var(--color-primary-600)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#ffffff",
                     fontWeight: 700,
-                    fontSize: "8px",
+                    fontSize: "9px",
                   }}
                 >
                   3
                 </div>
-                <div style={{ color: "#5E9B7D", fontWeight: 600, fontSize: "10px", marginBottom: "8px", letterSpacing: "0.1em" }}>
-                  PHASE 03 / ACTIVE
+                <div style={{ color: "var(--color-primary-700)", fontWeight: 700, fontSize: "10px", marginBottom: "6px", letterSpacing: "0.12em" }}>
+                  PHASE 03 / OPERATIONAL
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "13px", color: "var(--color-primary-900)", letterSpacing: "0.08em" }}>
-                  DECISION SUPPORT
+                  DECISION SUPPORT & ML
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column (8 Columns): Taxonomy & Terminal matching Image 6 */}
-          <div style={{ gridColumn: "span 8 / span 8" }}>
+          {/* Right Column (8 Columns): Taxonomy & Terminal */}
+          <div
+            style={{ gridColumn: "span 8 / span 8" }}
+            className="landing-reveal-item"
+          >
             <div
               className="hairline-all"
               style={{
@@ -188,11 +181,12 @@ export const EvolutionSection: React.FC = () => {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.02)",
               }}
             >
               <div
                 style={{
-                  padding: "48px",
+                  padding: "clamp(24px, 4vw, 44px)",
                   display: "flex",
                   flexDirection: "column",
                 }}
@@ -202,7 +196,7 @@ export const EvolutionSection: React.FC = () => {
                     fontFamily: "var(--font-heading)",
                     fontSize: "var(--font-size-2xl)",
                     fontWeight: 700,
-                    marginBottom: "28px",
+                    marginBottom: "24px",
                     textTransform: "uppercase",
                     letterSpacing: "-0.02em",
                     color: "var(--color-primary-900)",
@@ -216,10 +210,10 @@ export const EvolutionSection: React.FC = () => {
                   style={{
                     display: "flex",
                     flexWrap: "wrap",
-                    gap: "12px",
+                    gap: "10px",
                     fontFamily: "var(--font-mono)",
                     fontSize: "11px",
-                    marginBottom: "36px",
+                    marginBottom: "32px",
                   }}
                 >
                   {metadataTaxonomy.map((tag) => (
@@ -231,7 +225,7 @@ export const EvolutionSection: React.FC = () => {
                         backgroundColor: "#FAF9F6",
                         color: "var(--color-text-main)",
                         letterSpacing: "0.12em",
-                        fontWeight: 500,
+                        fontWeight: 600,
                       }}
                     >
                       {tag}
@@ -243,15 +237,15 @@ export const EvolutionSection: React.FC = () => {
                 <div
                   className="hairline-t"
                   style={{
-                    paddingTop: "36px",
+                    paddingTop: "32px",
                   }}
                 >
                   <h3
                     style={{
                       fontFamily: "var(--font-heading)",
-                      fontSize: "var(--font-size-2xl)",
+                      fontSize: "var(--font-size-xl)",
                       fontWeight: 700,
-                      marginBottom: "16px",
+                      marginBottom: "14px",
                       textTransform: "uppercase",
                       letterSpacing: "-0.02em",
                       color: "var(--color-primary-900)",
@@ -265,13 +259,13 @@ export const EvolutionSection: React.FC = () => {
                       fontFamily: "var(--font-sans)",
                       fontSize: "var(--font-size-base)",
                       opacity: 0.85,
-                      marginBottom: "28px",
+                      marginBottom: "24px",
                       color: "var(--color-text-main)",
                       lineHeight: 1.6,
                     }}
                   >
-                    IRIS Intelligence provides an analytical layer over data, enabling natural language querying of
-                    complex infrastructure portfolios.
+                    IRIS Intelligence provides an analytical layer over source data, enabling precise querying
+                    of complex multi-billion rupee infrastructure portfolios.
                   </p>
 
                   {/* Terminal Visual Window */}
@@ -279,7 +273,7 @@ export const EvolutionSection: React.FC = () => {
                     className="hairline-all"
                     style={{
                       backgroundColor: "#FAF9F6",
-                      padding: "28px",
+                      padding: "24px",
                       fontFamily: "var(--font-mono)",
                       fontSize: "var(--font-size-xs)",
                     }}
@@ -289,7 +283,7 @@ export const EvolutionSection: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         gap: "8px",
-                        marginBottom: "16px",
+                        marginBottom: "14px",
                         color: "var(--color-text-dim)",
                       }}
                     >
@@ -298,23 +292,23 @@ export const EvolutionSection: React.FC = () => {
                           width: "6px",
                           height: "6px",
                           borderRadius: "50%",
-                          backgroundColor: "#A4CBB8",
+                          backgroundColor: "#10b981",
                           display: "inline-block",
                         }}
                       />
-                      <span style={{ letterSpacing: "0.15em", fontSize: "10px" }}>SYSTEM READY</span>
+                      <span style={{ letterSpacing: "0.15em", fontSize: "10px", fontWeight: 600 }}>SYSTEM READY</span>
                     </div>
 
                     <div
                       style={{
-                        marginBottom: "12px",
+                        marginBottom: "10px",
                         lineHeight: 1.6,
                         color: "var(--color-text-main)",
                         fontWeight: 500,
                         letterSpacing: "0.02em",
                       }}
                     >
-                      &gt; Which road projects in Maharashtra have a cost overrun exceeding 10%?
+                      &gt; Which road projects in Maharashtra have an expenditure-to-cost divergence exceeding 15%?
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
@@ -322,7 +316,7 @@ export const EvolutionSection: React.FC = () => {
                         style={{
                           width: "8px",
                           height: "14px",
-                          backgroundColor: "#A4CBB8",
+                          backgroundColor: "var(--color-primary-900)",
                           display: "inline-block",
                         }}
                       />

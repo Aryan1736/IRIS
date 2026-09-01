@@ -31,9 +31,14 @@ export const WhatTheModelKnows: React.FC = () => {
   return (
     <section className="intelligence-section">
       <div className="intelligence-section-header">
-        <h2 className="intelligence-section-title">06. What the Model Knows</h2>
+        <div className="intelligence-section-title-lockup">
+          <h2 className="intelligence-section-title">09. What the Model Knows</h2>
+          <span className="intelligence-section-subtitle">
+            FEATURE FAMILIES & LONGITUDINAL SIGNAL ARCHITECTURE
+          </span>
+        </div>
         <span className="intelligence-section-subtitle">
-          FEATURE FAMILIES & LONGITUDINAL SIGNAL ARCHITECTURE
+          6 INPUT FAMILIES
         </span>
       </div>
 

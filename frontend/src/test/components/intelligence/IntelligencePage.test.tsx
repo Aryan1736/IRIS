@@ -57,7 +57,24 @@ const mockSummary: SummaryResponse = {
     maximum: 0.999,
     mean: 0.392,
   },
-  top_risk_projects: [],
+  top_risk_projects: [
+    {
+      project_code: "123456",
+      project_name: "NH-48 Highway Expansion",
+      agency: "NHAI",
+      ministry: "Ministry of Road Transport & Highways",
+      sector: "Roads & Highways",
+      state: "Maharashtra",
+      regime: "MODERN",
+      model_id: "logistic_static_only__unweighted",
+      raw_probability: 0.884,
+      risk_probability: 0.999,
+      calibration_active: true,
+      risk_rank: 1,
+      risk_percentile: 0.999,
+      population_size: 1625,
+    },
+  ],
   regimes: [
     {
       regime: "MODERN",
@@ -151,6 +168,7 @@ describe("IntelligencePage Component", () => {
     vi.spyOn(riskApi, "fetchModelInfo").mockResolvedValue(mockModelInfo);
     vi.spyOn(riskApi, "fetchRiskSummary").mockResolvedValue(mockSummary);
     vi.spyOn(riskApi, "fetchRiskProjects").mockResolvedValue(mockProjects);
+    vi.spyOn(riskApi, "fetchProjectRiskRecord").mockResolvedValue(mockProjects.items[0]);
     vi.spyOn(riskApi, "fetchProjectRiskHistory").mockResolvedValue({
       project_code: "123456",
       regime_filter: null,
@@ -168,47 +186,50 @@ describe("IntelligencePage Component", () => {
       </QueryClientProvider>
     );
 
-  it("renders page intro, headline, and model governance telemetry", async () => {
+  it("renders page intro, uppercase headline, and model governance telemetry", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("● LIVE SERVING ACTIVE")).toBeInTheDocument();
+      expect(screen.getByText("LIVE SERVING ACTIVE")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("See the Risk Before It Becomes the Outcome.")).toBeInTheDocument();
+    expect(screen.getByText("SEE THE RISK BEFORE IT BECOMES THE OUTCOME.")).toBeInTheDocument();
     expect(screen.getByText("IRIS / INTELLIGENCE / EARLY WARNING")).toBeInTheDocument();
     expect(screen.getByText("SERVING READY")).toBeInTheDocument();
     expect(screen.getByText("H=3 MONTHS")).toBeInTheDocument();
     expect(screen.getByText("WALK-FORWARD")).toBeInTheDocument();
+    expect(screen.getByText("2026-04")).toBeInTheDocument();
   });
 
-  it("renders Section 01 overview cards with real metrics and truthful data boundaries", async () => {
+  it("renders Section 01 overview with horizontal quantile band and real KPI metrics", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("01. Portfolio Risk Overview")).toBeInTheDocument();
+      expect(screen.getByText("1,625")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("Schedule Extension")).toBeInTheDocument();
-    expect(screen.getByText("Cost Escalation")).toBeInTheDocument();
-    expect(screen.getByText("Project Trajectory")).toBeInTheDocument();
-    expect(screen.getAllByText("DATA PENDING").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("01. Portfolio Risk Overview")).toBeInTheDocument();
+    expect(screen.getByText("EARLY WARNING RISK PROFILE & EVALUATED POPULATION")).toBeInTheDocument();
+    expect(screen.getAllByText("1,625").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("39.2%").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("40.1%").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("71.9%").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("renders Section 02 ranked projects table with authentic probabilities and inspect trigger", async () => {
+  it("renders Section 02 top risk bars and ranked projects table with authentic probabilities", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("#1")).toBeInTheDocument();
+      expect(screen.getAllByText("#1").length).toBeGreaterThanOrEqual(1);
     });
 
-    expect(screen.getByText("02. Projects Requiring Attention")).toBeInTheDocument();
-    expect(screen.getByText("123456")).toBeInTheDocument();
-    expect(screen.getByText("NH-48 Highway Expansion")).toBeInTheDocument();
+    expect(screen.getByText("02. Highest-Risk Projects")).toBeInTheDocument();
+    expect(screen.getAllByText("123456").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("NH-48 Highway Expansion").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("99.9%").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("RAW: 88.4%")).toBeInTheDocument();
+    expect(screen.getAllByText("RAW: 88.4%").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("CALIBRATION ACTIVE")).toBeInTheDocument();
-    expect(screen.getByText("MODERN")).toBeInTheDocument();
+    expect(screen.getAllByText("MODERN").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders Section 03 score distribution quantiles", async () => {
@@ -223,41 +244,49 @@ describe("IntelligencePage Component", () => {
     expect(screen.getByText("P95 (95TH)")).toBeInTheDocument();
   });
 
-  it("renders Section 04, 05, 06, and 07 governance and audit trail", async () => {
+  it("renders Section 04 Sector Risk, Section 05 Regime, Section 06 Driver Intelligence, Section 08 Governance, Section 09 What the Model Knows, Section 10 Audit Trail", async () => {
     renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText("04. Risk by Sector")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("05. Risk by Regime")).toBeInTheDocument();
+    expect(screen.getByText("06. Risk Driver Intelligence")).toBeInTheDocument();
+    expect(screen.getByText("08. Model Governance")).toBeInTheDocument();
+    expect(screen.getByText("09. What the Model Knows")).toBeInTheDocument();
+    expect(screen.getByText("10. Model Status / Audit Trail")).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText("iris_serving_v1_1")).toBeInTheDocument();
     });
-
-    expect(screen.getByText("04. Regime Intelligence & Sector Risk")).toBeInTheDocument();
-    expect(screen.getByText("05. Model Governance")).toBeInTheDocument();
-    expect(screen.getByText("06. What the Model Knows")).toBeInTheDocument();
-    expect(screen.getByText("07. Model Status / Audit Trail")).toBeInTheDocument();
   });
 
-  it("opens inspection drawer, closes on Escape, and renders contributors in raw margin logit space", async () => {
+  it("opens inspection drawer, closes on Escape, and renders signed contributors", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("INSPECT")).toBeInTheDocument();
+      expect(screen.getAllByText("INSPECT").length).toBeGreaterThanOrEqual(1);
     });
 
-    fireEvent.click(screen.getByText("INSPECT"));
+    fireEvent.click(screen.getAllByText("INSPECT")[0]);
 
     await waitFor(() => {
-      expect(screen.getByText("PROJECT RISK INSPECTION")).toBeInTheDocument();
+      expect(screen.getByText("PROJECT RISK INSPECTION CONSOLE")).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("+0.85")).toBeInTheDocument();
     });
 
     expect(screen.getByText("Signed Feature Drivers (Model Contributions)")).toBeInTheDocument();
-    expect(screen.getByText("+0.85")).toBeInTheDocument();
     expect(screen.getByText("-0.28")).toBeInTheDocument();
     expect(screen.getByText("VIEW FULL PROJECT →")).toBeInTheDocument();
 
     // Verify closing on Escape
     fireEvent.keyDown(window, { key: "Escape" });
     await waitFor(() => {
-      expect(screen.queryByText("PROJECT RISK INSPECTION")).not.toBeInTheDocument();
+      expect(screen.queryByText("PROJECT RISK INSPECTION CONSOLE")).not.toBeInTheDocument();
     });
   });
 
@@ -265,7 +294,7 @@ describe("IntelligencePage Component", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("● LIVE SERVING ACTIVE")).toBeInTheDocument();
+      expect(screen.getByText("LIVE SERVING ACTIVE")).toBeInTheDocument();
     });
 
     const select = screen.getByLabelText("Evaluation Month");

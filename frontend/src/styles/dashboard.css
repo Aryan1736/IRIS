@@ -5,14 +5,12 @@
 
 .dashboard-container {
   width: 100%;
-  max-width: 1560px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 32px 32px 48px 32px;
+  padding: 32px clamp(20px, 3.5vw, 64px) 48px clamp(20px, 3.5vw, 64px);
   display: flex;
   flex-direction: column;
   gap: 36px;
   flex: 1;
+  box-sizing: border-box;
 }
 
 /* Dashboard Intro */
@@ -96,6 +94,7 @@
   grid-template-columns: repeat(2, 1fr);
   background-color: var(--color-surface-container-low);
   border: 1px solid var(--color-border-hairline);
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -163,6 +162,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
 }
 
 .dashboard-section-header {
@@ -197,6 +197,7 @@
   gap: 1px;
   background-color: var(--color-border-hairline);
   border: 1px solid var(--color-border-hairline);
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
@@ -211,6 +212,7 @@
   gap: 1px;
   background-color: var(--color-border-hairline);
   border: 1px solid var(--color-border-hairline);
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -225,6 +227,7 @@
   gap: 1px;
   background-color: var(--color-border-hairline);
   border: 1px solid var(--color-border-hairline);
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -239,6 +242,7 @@
   gap: 1px;
   background-color: var(--color-border-hairline);
   border: 1px solid var(--color-border-hairline);
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
@@ -413,6 +417,8 @@
   background-color: var(--color-surface-container-low);
   border: 1px solid var(--color-border-hairline);
   padding: 14px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .provenance-pills-wrap {

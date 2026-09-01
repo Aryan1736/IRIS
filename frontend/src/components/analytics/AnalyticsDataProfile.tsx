@@ -42,16 +42,46 @@ export const AnalyticsDataProfile: React.FC<AnalyticsDataProfileProps> = ({
         </div>
 
         <div className="analytics-data-profile-cell">
-          <span className="analytics-data-profile-val" style={{ fontSize: "16px", color: "rgba(255, 255, 255, 0.6)" }}>
+          <div
+            style={{
+              display: "inline-block",
+              fontFamily: "var(--font-mono)",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "rgba(255, 255, 255, 0.9)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              padding: "4px 8px",
+              border: "1px dashed rgba(255, 255, 255, 0.3)",
+              width: "fit-content",
+              marginBottom: "4px",
+            }}
+          >
             DATA PENDING
-          </span>
+          </div>
           <span className="analytics-data-profile-label">Completed Records</span>
         </div>
 
         <div className="analytics-data-profile-cell">
-          <span className="analytics-data-profile-val" style={{ fontSize: "16px", color: "rgba(255, 255, 255, 0.6)" }}>
+          <div
+            style={{
+              display: "inline-block",
+              fontFamily: "var(--font-mono)",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "rgba(255, 255, 255, 0.9)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              padding: "4px 8px",
+              border: "1px dashed rgba(255, 255, 255, 0.3)",
+              width: "fit-content",
+              marginBottom: "4px",
+            }}
+          >
             DATA PENDING
-          </span>
+          </div>
           <span className="analytics-data-profile-label">Extension Obs.</span>
         </div>
       </div>

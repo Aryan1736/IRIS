@@ -7,109 +7,72 @@ interface RegimeIntelligenceProps {
 
 export const RegimeIntelligence: React.FC<RegimeIntelligenceProps> = ({ summary }) => {
   const regimes = summary?.regimes || [];
-  const sectorSummary = summary?.sector_summary || [];
 
   return (
     <section className="intelligence-section">
       <div className="intelligence-section-header">
-        <h2 className="intelligence-section-title">04. Regime Intelligence & Sector Risk</h2>
+        <div className="intelligence-section-title-lockup">
+          <h2 className="intelligence-section-title">05. Risk by Regime</h2>
+          <span className="intelligence-section-subtitle">
+            LONGITUDINAL REGIME SPECIFICATION & DUAL-MODEL ARCHITECTURE
+          </span>
+        </div>
         <span className="intelligence-section-subtitle">
-          LONGITUDINAL REGIME SPECIFICATION & SECTOR RISK PROFILES
+          SYSTEM ARCHITECTURE
         </span>
       </div>
 
       <div className="intelligence-regime-grid">
-        {/* Left: Regime Metadata */}
-        <div className="intelligence-regime-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--color-border-hairline)", paddingBottom: "12px" }}>
-            <h3 className="intelligence-overview-card-title">Dual-Regime Architecture</h3>
-            <span className="intelligence-section-subtitle">ACTIVE REGIMES</span>
+        {regimes.length === 0 ? (
+          <div className="intelligence-regime-card">
+            <div style={{ padding: "20px", textAlign: "center", fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+              NO REGIME METADATA RETURNED FOR CURRENT SCOPE.
+            </div>
           </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {regimes.map((reg) => (
-              <div
-                key={reg.regime}
-                style={{
-                  padding: "16px",
-                  background: "#FFFFFF",
-                  border: "1px solid var(--color-border-hairline)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "8px",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "11px",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        ) : (
+          regimes.map((reg) => (
+            <div key={reg.regime} className="intelligence-regime-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--color-border-hairline)", paddingBottom: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <span className="intelligence-badge-regime">{reg.regime} REGIME</span>
-                  <span style={{ fontWeight: 600, color: "#1A3C2B" }}>
+                  <h3 className="intelligence-overview-card-title" style={{ fontSize: "16px" }}>
+                    {reg.regime === "MODERN" ? "Modern Six-Digit Architecture" : "Legacy Multi-Format Architecture"}
+                  </h3>
+                </div>
+                <span className="intelligence-section-subtitle">
+                  {reg.project_count.toLocaleString()} EVALUATED PROJECTS
+                </span>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontFamily: "var(--font-mono)", fontSize: "11px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-text-secondary)" }}>
+                  <span className="intelligence-gov-label">SERVING MODEL ID:</span>
+                  <span style={{ fontWeight: 600, color: "var(--color-primary-950)" }}>{reg.model_id}</span>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-text-secondary)" }}>
+                  <span className="intelligence-gov-label">CALIBRATION METHOD:</span>
+                  <span style={{ fontWeight: 600, color: reg.calibration_active ? "#022617" : "var(--color-text-muted)" }}>
+                    {reg.calibration_active ? "TEMPORAL PLATT SCALING (ACTIVE)" : "UNCALIBRATED RAW LOGITS"}
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-text-secondary)" }}>
+                  <span className="intelligence-gov-label">EVALUATED POPULATION:</span>
+                  <span style={{ fontWeight: 600, color: "var(--color-primary-950)" }}>
                     {reg.project_count.toLocaleString()} PROJECTS
                   </span>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-text-secondary)" }}>
-                  <span>MODEL ID:</span>
-                  <span style={{ fontWeight: 600 }}>{reg.model_id}</span>
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-text-secondary)" }}>
-                  <span>CALIBRATION:</span>
-                  <span style={{ fontWeight: 600, color: reg.calibration_active ? "#022617" : "var(--color-text-muted)" }}>
-                    {reg.calibration_active ? "TEMPORAL PLATT SCALING (ACTIVE)" : "UNCALIBRATED"}
-                  </span>
+                <div style={{ fontSize: "11px", fontFamily: "var(--font-sans)", color: "var(--color-text-secondary)", lineHeight: 1.4, borderTop: "1px solid var(--color-border-hairline)", paddingTop: "8px" }}>
+                  {reg.regime === "MODERN"
+                    ? "Modern regime evaluates 6-digit canonical infrastructure codes (July 2025 – July 2026) using regularized linear and gradient-boosted predictors."
+                    : "Legacy regime evaluates historical multi-format identifier codes (October 2023 – June 2025) with structural triplet parsing and specialized calibration."}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Sector Risk Summary */}
-        <div className="intelligence-regime-card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--color-border-hairline)", paddingBottom: "12px" }}>
-            <h3 className="intelligence-overview-card-title">Sector Risk Summary</h3>
-            <span className="intelligence-section-subtitle">
-              {sectorSummary.length} MONITORED SECTORS
-            </span>
-          </div>
-
-          <div style={{ maxHeight: "320px", overflowY: "auto", border: "1px solid var(--color-border-hairline)" }}>
-            <table className="intelligence-table" aria-label="Sector Risk Summary Table">
-              <thead>
-                <tr>
-                  <th>SECTOR</th>
-                  <th>PROJECTS</th>
-                  <th>MEAN RISK</th>
-                  <th>MAX RISK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sectorSummary.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center", padding: "20px" }}>
-                      —
-                    </td>
-                  </tr>
-                ) : (
-                  sectorSummary.map((sec) => (
-                    <tr key={sec.sector || "UNKNOWN"}>
-                      <td style={{ fontWeight: 600, maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {sec.sector || "—"}
-                      </td>
-                      <td>{sec.project_count.toLocaleString()}</td>
-                      <td style={{ color: "#BA1A1A", fontWeight: 600 }}>
-                        {(sec.mean_risk_probability * 100).toFixed(1)}%
-                      </td>
-                      <td style={{ fontWeight: 600 }}>
-                        {(sec.highest_risk_probability * 100).toFixed(1)}%
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+            </div>
+          ))
+        )}
       </div>
     </section>
   );

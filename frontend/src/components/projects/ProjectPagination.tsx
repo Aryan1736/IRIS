@@ -6,6 +6,7 @@ interface ProjectPaginationProps {
   total: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  entityName?: string;
 }
 
 export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
@@ -14,6 +15,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
   total,
   totalPages,
   onPageChange,
+  entityName = "OBSERVATIONS",
 }) => {
   if (total === 0) return null;
 
@@ -38,9 +40,9 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
   };
 
   return (
-    <div className="pagination-container">
+    <div className="pagination-container" role="navigation" aria-label="Projects pagination">
       <div className="pagination-showing">
-        SHOWING {start.toLocaleString()}–{end.toLocaleString()} OF {total.toLocaleString()} PROJECTS
+        SHOWING {start.toLocaleString()}–{end.toLocaleString()} OF {total.toLocaleString()} {entityName}
       </div>
       <div className="pagination-controls">
         <button
@@ -48,6 +50,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
           className="pagination-nav-btn"
           disabled={page === 1}
           onClick={() => onPageChange(page - 1)}
+          aria-label="Go to previous page"
         >
           PREVIOUS
         </button>
@@ -66,6 +69,8 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
                 type="button"
                 className={`pagination-page-btn ${p === page ? "active" : "inactive"}`}
                 onClick={() => onPageChange(p)}
+                aria-current={p === page ? "page" : undefined}
+                aria-label={`Page ${p}`}
               >
                 {p.toString().padStart(2, "0")}
               </button>
@@ -77,6 +82,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
           className="pagination-nav-btn"
           disabled={page === totalPages || totalPages === 0}
           onClick={() => onPageChange(page + 1)}
+          aria-label="Go to next page"
         >
           NEXT
         </button>

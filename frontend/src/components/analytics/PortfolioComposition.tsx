@@ -33,7 +33,9 @@ export const PortfolioComposition: React.FC<PortfolioCompositionProps> = ({
             ) : (
               sectors.map((sec) => (
                 <div key={sec} className="analytics-category-item">
-                  <span>{sec}</span>
+                  <span style={{ maxWidth: "220px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {sec}
+                  </span>
                   <span className="analytics-category-tag">INDEXED</span>
                 </div>
               ))
@@ -52,9 +54,9 @@ export const PortfolioComposition: React.FC<PortfolioCompositionProps> = ({
             {agencies.length === 0 ? (
               <div className="analytics-category-item">—</div>
             ) : (
-              agencies.slice(0, 15).map((ag) => (
+              agencies.map((ag) => (
                 <div key={ag} className="analytics-category-item">
-                  <span style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ maxWidth: "220px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {ag}
                   </span>
                   <span className="analytics-category-tag">INDEXED</span>
@@ -77,7 +79,9 @@ export const PortfolioComposition: React.FC<PortfolioCompositionProps> = ({
             ) : (
               states.map((st) => (
                 <div key={st} className="analytics-category-item">
-                  <span>{st}</span>
+                  <span style={{ maxWidth: "220px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {st}
+                  </span>
                   <span className="analytics-category-tag">INDEXED</span>
                 </div>
               ))
@@ -86,7 +90,7 @@ export const PortfolioComposition: React.FC<PortfolioCompositionProps> = ({
         </div>
       </div>
 
-      <div style={{ paddingTop: "8px", borderTop: "1px solid rgba(0,0,0,0.06)" }}>
+      <div style={{ paddingTop: "12px", borderTop: "1px solid var(--color-border-hairline)", marginTop: "8px" }}>
         <span className="analytics-metric-subtext">
           TAXONOMY AUDIT NOTE: LISTS DISPLAY DISTINCT AVAILABLE TAXONOMY FILTER OPTIONS FROM CANONICAL RECORDS, NOT PORTFOLIO FREQUENCY DISTRIBUTIONS.
         </span>

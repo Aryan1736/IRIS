@@ -1,5 +1,6 @@
 import React from "react";
 import type { DatasetInfoResponse } from "@/types/system.ts";
+import { useStaggerList } from "@/lib/motion/useMotion.ts";
 
 interface PortfolioMetricsGridProps {
   systemInfo?: DatasetInfoResponse;
@@ -8,6 +9,8 @@ interface PortfolioMetricsGridProps {
 export const PortfolioMetricsGrid: React.FC<PortfolioMetricsGridProps> = ({
   systemInfo,
 }) => {
+  const gridRef = useStaggerList<HTMLElement>(systemInfo, ".metric-cell");
+
   const uniqueProjects = systemInfo?.unique_projects_count
     ? systemInfo.unique_projects_count.toLocaleString()
     : "—";
@@ -27,7 +30,7 @@ export const PortfolioMetricsGrid: React.FC<PortfolioMetricsGridProps> = ({
   };
 
   return (
-    <section className="dashboard-metrics-grid">
+    <section ref={gridRef} className="dashboard-metrics-grid" aria-label="Portfolio Key Metrics">
       <div className="metric-cell">
         <span className="metric-cell-label">01 / ACTIVE PROJECTS</span>
         <span className="metric-cell-value">{uniqueProjects}</span>
@@ -58,9 +61,12 @@ export const PortfolioMetricsGrid: React.FC<PortfolioMetricsGridProps> = ({
 
       <div className="metric-cell">
         <span className="metric-cell-label">06 / DATA COVERAGE</span>
-        <span className="metric-cell-value" style={{ fontSize: "14px", marginTop: "4px", letterSpacing: "0.05em" }}>
+        <span className="metric-cell-value" style={{ fontSize: "16px", letterSpacing: "0.02em" }}>
           {coverageRange()}
         </span>
+        <p className="metric-cell-subtext">
+          Canonical monthly dataset span extracted and verified from MoSPI Flash Reports.
+        </p>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import type { FilterOptionsResponse } from "@/types/project.ts";
 
 interface PortfolioCompositionSectionProps {
@@ -24,9 +25,35 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
 
   return (
     <section className="dashboard-section">
-      <div className="dashboard-section-header">
-        <h2 className="dashboard-section-title">FROM PROJECTS TO PORTFOLIOS.</h2>
-        <span className="dashboard-section-subtitle">ACTIVE MONITORED CATEGORIES</span>
+      <div
+        className="dashboard-section-header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: "12px",
+        }}
+      >
+        <div>
+          <h2 className="dashboard-section-title">FROM PROJECTS TO PORTFOLIOS.</h2>
+          <span className="dashboard-section-subtitle">ACTIVE MONITORED CATEGORIES</span>
+        </div>
+        <Link
+          to="/projects"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "var(--color-primary-950)",
+            textDecoration: "none",
+            fontWeight: 600,
+            transition: "opacity 150ms ease",
+          }}
+        >
+          EXPLORE ALL PROJECTS →
+        </Link>
       </div>
 
       <div className="dashboard-grid-3-col">
@@ -58,7 +85,7 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
                     <span style={{ color: "var(--color-text-dim)", fontSize: "10px" }}>MONITORED</span>
                   </div>
                   <div className="progress-track">
-                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.8 }} />
+                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.85 }} />
                   </div>
                 </div>
               ))
@@ -94,7 +121,7 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
                     <span style={{ color: "var(--color-text-dim)", fontSize: "10px" }}>MONITORED</span>
                   </div>
                   <div className="progress-track">
-                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.8 }} />
+                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.85 }} />
                   </div>
                 </div>
               ))
@@ -130,13 +157,28 @@ export const PortfolioCompositionSection: React.FC<PortfolioCompositionSectionPr
                     <span style={{ color: "var(--color-text-dim)", fontSize: "10px" }}>MONITORED</span>
                   </div>
                   <div className="progress-track">
-                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.8 }} />
+                    <div className="progress-fill-primary" style={{ width: "100%", opacity: 0.85 }} />
                   </div>
                 </div>
               ))
             )}
           </div>
         </div>
+      </div>
+
+      <div style={{ paddingTop: "12px", borderTop: "1px solid var(--color-border-hairline)", marginTop: "16px" }}>
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "10px",
+            color: "var(--color-text-dim)",
+            margin: 0,
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+          }}
+        >
+          TAXONOMY AUDIT NOTE: LISTS DISPLAY DISTINCT AVAILABLE TAXONOMY OPTIONS, NOT PORTFOLIO FREQUENCY DISTRIBUTIONS.
+        </p>
       </div>
     </section>
   );

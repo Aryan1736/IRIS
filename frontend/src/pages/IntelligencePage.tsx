@@ -6,24 +6,26 @@ import {
   fetchRiskProjects,
   fetchRiskSummary,
 } from "@/api/risk.ts";
-import type { RiskRecord } from "@/types/risk.ts";
-import {
-  IntelligenceIntro,
-} from "@/components/intelligence/IntelligenceIntro.tsx";
+import type { RiskRecord, TopRiskProject } from "@/types/risk.ts";
+import { IntelligenceIntro } from "@/components/intelligence/IntelligenceIntro.tsx";
 import {
   RiskFilters,
   type IntelligenceFilterState,
 } from "@/components/intelligence/RiskFilters.tsx";
-import { RiskOverviewCards } from "@/components/intelligence/RiskOverviewCards.tsx";
+import { PortfolioRiskOverview } from "@/components/intelligence/PortfolioRiskOverview.tsx";
 import { RiskProjectTable } from "@/components/intelligence/RiskProjectTable.tsx";
 import { RiskDistribution } from "@/components/intelligence/RiskDistribution.tsx";
+import { SectorRiskChart } from "@/components/intelligence/SectorRiskChart.tsx";
 import { RegimeIntelligence } from "@/components/intelligence/RegimeIntelligence.tsx";
+import { RiskDriverIntelligence } from "@/components/intelligence/RiskDriverIntelligence.tsx";
 import { ModelGovernance } from "@/components/intelligence/ModelGovernance.tsx";
 import { WhatTheModelKnows } from "@/components/intelligence/WhatTheModelKnows.tsx";
 import { IntelligenceAuditTrail } from "@/components/intelligence/IntelligenceAuditTrail.tsx";
 import { RiskDetailDrawer } from "@/components/intelligence/RiskDetailDrawer.tsx";
+import { usePageEnter } from "@/lib/motion/useMotion.ts";
 
 export const IntelligencePage: React.FC = () => {
+  const containerRef = usePageEnter<HTMLDivElement>();
   const [filters, setFilters] = useState<IntelligenceFilterState>({
     report_month: "",
     regime: "",
@@ -35,7 +37,7 @@ export const IntelligencePage: React.FC = () => {
   });
 
   const [page, setPage] = useState(1);
-  const [selectedProject, setSelectedProject] = useState<RiskRecord | null>(null);
+  const [selectedProject, setSelectedProject] = useState<RiskRecord | TopRiskProject | null>(null);
 
   // 1. Fetch Risk Dashboard Options
   const { data: optionsData } = useQuery({
@@ -123,7 +125,7 @@ export const IntelligencePage: React.FC = () => {
   };
 
   return (
-    <div className="intelligence-container">
+    <div ref={containerRef} className="intelligence-container">
       {/* Intro & Telemetry */}
       <IntelligenceIntro
         modelInfo={modelInfoData}
@@ -137,11 +139,12 @@ export const IntelligencePage: React.FC = () => {
         onFilterChange={handleFilterChange}
       />
 
-      {/* Section 01: Portfolio Risk Overview */}
-      <RiskOverviewCards summary={summaryData} />
+      {/* Section 01: Portfolio Risk Overview (Quantile Probability Band + KPI Strip) */}
+      <PortfolioRiskOverview summary={summaryData} />
 
-      {/* Section 02: Ranked Projects Requiring Attention */}
+      {/* Section 02: Highest-Risk Projects (Top Risk Bar Ranking + Redesigned Table) */}
       <RiskProjectTable
+        topRiskProjects={summaryData?.top_risk_projects}
         data={projectsData}
         isLoading={projectsLoading}
         page={page}
@@ -150,25 +153,31 @@ export const IntelligencePage: React.FC = () => {
         onSelectProject={setSelectedProject}
       />
 
-      {/* Section 03: Model Output Distribution */}
+      {/* Section 03: Model Output Distribution (Quantile Summary) */}
       <RiskDistribution
         distribution={summaryData?.score_distribution}
         reportMonth={activeMonth}
       />
 
-      {/* Section 04: Regime Intelligence & Sector Risk */}
+      {/* Section 04: Risk by Sector (Horizontal Bar Chart) */}
+      <SectorRiskChart sectorSummary={summaryData?.sector_summary} />
+
+      {/* Section 05: Risk by Regime (Dual-Regime Architecture) */}
       <RegimeIntelligence summary={summaryData} />
 
-      {/* Section 05 & 06: Model Governance & Feature Architecture */}
+      {/* Section 06: Risk Driver Intelligence (Diverging Signed Margin Architecture) */}
+      <RiskDriverIntelligence />
+
+      {/* Section 08 & 09: Model Governance & Feature Architecture */}
       <div className="intelligence-gov-grid">
         <ModelGovernance modelInfo={modelInfoData} />
         <WhatTheModelKnows />
       </div>
 
-      {/* Section 07: Model Status / Audit Trail */}
+      {/* Section 10: Model Status / Audit Trail */}
       <IntelligenceAuditTrail modelInfo={modelInfoData} />
 
-      {/* Inspection Drawer */}
+      {/* Section 07: Project Inspection Console Drawer */}
       {selectedProject && (
         <RiskDetailDrawer
           record={selectedProject}

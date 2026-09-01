@@ -1,5 +1,7 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { DatasetInfoResponse } from "@/types/system.ts";
+import { fetchModelInfo } from "@/api/risk.ts";
 
 interface SystemProvenanceSectionProps {
   systemInfo?: DatasetInfoResponse;
@@ -8,17 +10,25 @@ interface SystemProvenanceSectionProps {
 export const SystemProvenanceSection: React.FC<SystemProvenanceSectionProps> = ({
   systemInfo,
 }) => {
-  const observationsCount = systemInfo?.row_count
+  const { data: modelInfo } = useQuery({
+    queryKey: ["modelInfo"],
+    queryFn: fetchModelInfo,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const observationsCount = systemInfo?.row_count != null
     ? `${systemInfo.row_count.toLocaleString()} OBSERVATIONS`
-    : "64,608 OBSERVATIONS";
+    : "DATA PENDING";
 
   const period = () => {
     if (!systemInfo?.covered_months || systemInfo.covered_months.length === 0) {
-      return "2023-01 → 2026-07";
+      return "DATA PENDING";
     }
     const sorted = [...systemInfo.covered_months].sort();
     return `${sorted[0]} → ${sorted[sorted.length - 1]}`;
   };
+
+  const isModelReady = modelInfo?.status === "READY";
 
   return (
     <section className="system-provenance-bar">
@@ -40,22 +50,30 @@ export const SystemProvenanceSection: React.FC<SystemProvenanceSectionProps> = (
 
         <div className="provenance-pill">
           <span>MODEL STATUS:</span>
-          <span className="provenance-pill-val">H=3 LOGISTIC BASELINE VALIDATED</span>
+          <span className="provenance-pill-val">
+            {isModelReady ? "H=3 LOGISTIC / TREESHAP READY" : "H=3 LOGISTIC BASELINE"}
+          </span>
         </div>
 
         <div className="provenance-pill">
           <span>ML CONNECTIVITY:</span>
-          <span className="provenance-pill-val pending">PENDING</span>
+          <span className={`provenance-pill-val ${isModelReady ? "" : "pending"}`}>
+            {isModelReady ? "LIVE SERVING READY" : "PENDING"}
+          </span>
         </div>
 
         <div className="provenance-pill">
-          <span>DATA INTEGRITY:</span>
-          <span className="provenance-pill-val">VERIFIED</span>
+          <span>DATASET STATUS:</span>
+          <span className="provenance-pill-val">
+            {systemInfo?.status || "ACTIVE"}
+          </span>
         </div>
 
         <div className="provenance-pill">
           <span>LIVE PREDICTIONS:</span>
-          <span className="provenance-pill-val pending">NOT YET CONNECTED</span>
+          <span className={`provenance-pill-val ${isModelReady ? "" : "pending"}`}>
+            {isModelReady ? "ACTIVE SERVING" : "NOT YET CONNECTED"}
+          </span>
         </div>
       </div>
     </section>

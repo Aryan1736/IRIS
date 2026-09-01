@@ -22,10 +22,10 @@ export const IntelligenceIntro: React.FC<IntelligenceIntroProps> = ({
       <div className="intelligence-intro-grid">
         <div className="intelligence-title-lockup">
           <h1 className="intelligence-main-title">
-            See the Risk Before It Becomes the Outcome.
+            SEE THE RISK BEFORE IT BECOMES THE OUTCOME.
           </h1>
           <p className="intelligence-subtitle">
-            Early-warning intelligence for schedule extension risk, longitudinal delay probability, and TreeSHAP explainability drivers across the monitored portfolio.
+            Early-warning intelligence for schedule extension risk, longitudinal delay probability, and model explainability across the monitored portfolio.
           </p>
         </div>
 
@@ -33,7 +33,7 @@ export const IntelligenceIntro: React.FC<IntelligenceIntroProps> = ({
           <div className="intelligence-telemetry-row">
             <span className="intelligence-telemetry-label">MODEL STATUS</span>
             <span className="intelligence-telemetry-val">
-              {isReady ? "SERVING READY" : "STATUS PENDING"}
+              {isReady ? "SERVING READY" : modelInfo?.status || "STATUS PENDING"}
             </span>
           </div>
 
@@ -62,7 +62,7 @@ export const IntelligenceIntro: React.FC<IntelligenceIntroProps> = ({
           <div className="intelligence-telemetry-row">
             <span className="intelligence-telemetry-label">MODEL OUTPUT</span>
             <span className="intelligence-telemetry-val" style={{ color: isReady ? "#1A3C2B" : "#BA1A1A" }}>
-              {isReady ? "● LIVE SERVING ACTIVE" : "○ NOT CONNECTED"}
+              {isReady ? "LIVE SERVING ACTIVE" : "NOT CONNECTED"}
             </span>
           </div>
         </div>

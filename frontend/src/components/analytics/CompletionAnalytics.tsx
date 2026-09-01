@@ -28,8 +28,8 @@ export const CompletionAnalytics: React.FC<CompletionAnalyticsProps> = ({ datase
           </div>
 
           <div className="analytics-canvas-dates">
-            <span>{startMonth}</span>
-            <span>{endMonth}</span>
+            <span>CADENCE START: {startMonth}</span>
+            <span>LATEST CADENCE: {endMonth}</span>
           </div>
         </div>
 

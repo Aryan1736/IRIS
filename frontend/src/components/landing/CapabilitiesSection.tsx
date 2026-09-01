@@ -1,149 +1,140 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { useScrollReveal } from "@/lib/motion/useMotion.ts";
 
 interface Capability {
   index: string;
   title: string;
   description: string;
+  linkTo: string;
+  tag: string;
 }
 
 const CAPABILITIES: Capability[] = [
   {
     index: "01",
     title: "PROJECT DISCOVERY",
-    description: "Search and inspect infrastructure projects across the monitored portfolio.",
+    description: "Search and filter 1,800+ infrastructure projects across ministries, agencies, states, and sectors.",
+    linkTo: "/projects",
+    tag: "CATALOG",
   },
   {
     index: "02",
     title: "PROJECT HISTORY",
-    description: "Trace how each project evolves across reporting periods.",
+    description: "Trace how each project evolves month-by-month across historical reporting periods with zero invented data.",
+    linkTo: "/projects",
+    tag: "TRAJECTORY",
   },
   {
     index: "03",
     title: "COST INTELLIGENCE",
-    description: "Track cost changes and identify patterns associated with escalation.",
+    description: "Track original vs revised cost variance and quantify cumulative expenditure trends across the entire portfolio.",
+    linkTo: "/analytics",
+    tag: "EXPENDITURE",
   },
   {
     index: "04",
     title: "SCHEDULE INTELLIGENCE",
-    description: "Analyse completion timelines and emerging schedule risks.",
+    description: "Analyse completion timelines, original vs anticipated milestones, and emerging implementation delays.",
+    linkTo: "/analytics",
+    tag: "SCHEDULE",
   },
   {
     index: "05",
     title: "RISK & EARLY WARNING",
-    description: "Surface projects requiring attention before risks become critical.",
+    description: "Surface critical projects requiring immediate attention before budget escalations and schedule slips compound.",
+    linkTo: "/intelligence",
+    tag: "PREDICTIVE",
   },
   {
     index: "06",
     title: "PORTFOLIO INTELLIGENCE",
-    description: "Compare projects, sectors, agencies, and infrastructure portfolios.",
+    description: "Compare sector allocations, implementing agencies, and state-level infrastructure development metrics.",
+    linkTo: "/dashboard",
+    tag: "MACRO",
   },
 ];
 
 export const CapabilitiesSection: React.FC = () => {
+  const sectionRef = useScrollReveal<HTMLElement>({
+    childSelector: ".landing-reveal-item",
+    staggerTime: 45,
+  });
+
   return (
     <section
       id="capabilities"
-      className="bg-mosaic-grid hairline-b"
-      style={{
-        paddingTop: "8rem",
-        paddingBottom: "8rem",
-        width: "100%",
-      }}
+      ref={sectionRef}
+      className="landing-section landing-section-light hairline-b"
     >
       <div className="container-main">
         {/* Section Heading */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginBottom: "64px",
-          }}
-        >
-          <span
-            style={{
-              width: "8px",
-              height: "8px",
-              backgroundColor: "var(--color-mint-subtle)",
-              borderRadius: "var(--radius-none)",
-              display: "inline-block",
-            }}
-          />
-          <h2
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "clamp(2rem, 4vw, 3.25rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 0.95,
-              textTransform: "uppercase",
-              color: "var(--color-primary-900)",
-            }}
-          >
+        <div style={{ marginBottom: "48px" }} className="landing-reveal-item">
+          <div className="landing-section-badge">
+            <span className="landing-section-badge-dot" />
+            <span>[ 02 / CAPABILITIES ]</span>
+          </div>
+
+          <h2 className="landing-section-heading">
             MONITOR WHAT CHANGES
           </h2>
+
+          <p className="landing-section-desc">
+            Six foundational intelligence capabilities built directly on source-faithful monthly
+            flash report data to empower policy and decision makers with institutional clarity.
+          </p>
         </div>
 
-        {/* 6-Grid Capabilities with Hairline Grid Borders matching Image 3 */}
+        {/* 6-Grid Capabilities with Hairline Grid Borders */}
         <div
+          className="landing-grid-container"
           style={{
-            display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1px",
-            backgroundColor: "var(--color-border-hairline)",
-            border: "1px solid var(--color-border-hairline)",
           }}
         >
           {CAPABILITIES.map((cap) => (
-            <div
+            <Link
               key={cap.index}
+              to={cap.linkTo}
+              className="landing-card landing-reveal-item"
               style={{
-                backgroundColor: "#ffffff",
-                padding: "48px 40px",
-                transition: "background-color 150ms ease",
+                textDecoration: "none",
+                color: "inherit",
+                minHeight: "240px",
               }}
             >
-              {/* Card Index & Hairline Divider */}
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "11px",
-                  color: "var(--color-text-dim)",
-                  marginBottom: "28px",
-                  paddingBottom: "14px",
-                  borderBottom: "1px solid var(--color-border-hairline)",
-                  letterSpacing: "0.15em",
-                }}
-              >
-                [ {cap.index} ]
+              {/* Card Header */}
+              <div className="landing-card-header">
+                <span>[ {cap.index} ]</span>
+                <span
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    color: "var(--color-primary-800)",
+                    backgroundColor: "var(--color-primary-50)",
+                    padding: "3px 8px",
+                  }}
+                >
+                  {cap.tag}
+                </span>
               </div>
 
-              <h3
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "var(--font-size-xl)",
-                  fontWeight: 700,
-                  marginBottom: "16px",
-                  textTransform: "uppercase",
-                  letterSpacing: "-0.02em",
-                  color: "var(--color-primary-900)",
-                }}
-              >
+              {/* Card Title & Description */}
+              <h3 className="landing-card-title">
                 {cap.title}
               </h3>
 
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--font-size-base)",
-                  lineHeight: 1.6,
-                  color: "var(--color-text-main)",
-                  opacity: 0.85,
-                }}
-              >
+              <p className="landing-card-body">
                 {cap.description}
               </p>
-            </div>
+
+              {/* Action Arrow */}
+              <div className="landing-card-arrow">
+                <span>EXPLORE</span>
+                <span>→</span>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

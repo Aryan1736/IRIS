@@ -10,7 +10,7 @@ import { CtaSection } from "@/components/landing/CtaSection.tsx";
 
 export const LandingPage: React.FC = () => {
   return (
-    <div style={{ width: "100%", overflowX: "hidden" }}>
+    <div className="landing-page-root">
       <HeroSection />
       <TimelineSection />
       <CapabilitiesSection />

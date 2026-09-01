@@ -1,26 +1,83 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const ScheduleIntelligenceSection: React.FC = () => {
   return (
     <section className="dashboard-section">
-      <div className="dashboard-section-header">
+      <div
+        className="dashboard-section-header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: "12px",
+        }}
+      >
         <h2 className="dashboard-section-title">WHERE SCHEDULES MOVE.</h2>
+        <Link
+          to="/analytics"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "var(--color-primary-950)",
+            textDecoration: "none",
+            fontWeight: 600,
+            transition: "opacity 150ms ease",
+          }}
+        >
+          VIEW SCHEDULE ANALYTICS →
+        </Link>
       </div>
 
       <div className="dashboard-grid-2-col">
-        {/* Left: Schedule Extensions */}
+        {/* Left: Schedule Extensions Card */}
         <div className="dashboard-card-white">
           <div className="card-header-lockup">
             <span className="card-label">SCHEDULE EXTENSIONS</span>
-            <span className="card-tag-pending">CORAL SIGNAL: ACTIVE</span>
+            <span className="card-tag-pending">DATA PENDING</span>
           </div>
 
-          <div style={{ height: "180px", display: "flex", alignItems: "flex-end", gap: "6px", paddingTop: "20px" }}>
-            <div style={{ flex: 1, backgroundColor: "rgba(186, 26, 26, 0.15)", height: "25%" }} />
-            <div style={{ flex: 1, backgroundColor: "rgba(186, 26, 26, 0.25)", height: "40%" }} />
-            <div style={{ flex: 1, backgroundColor: "rgba(186, 26, 26, 0.45)", height: "65%" }} />
-            <div style={{ flex: 1, backgroundColor: "rgba(186, 26, 26, 0.65)", height: "50%" }} />
-            <div style={{ flex: 1, backgroundColor: "var(--color-coral)", height: "85%" }} />
+          <div
+            style={{
+              height: "180px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              border: "1px dashed var(--color-border-hairline)",
+              margin: "16px 0",
+              padding: "16px",
+              textAlign: "center",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "var(--color-coral)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              DATA PENDING
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "10px",
+                color: "var(--color-text-dim)",
+                textTransform: "uppercase",
+                maxWidth: "400px",
+                lineHeight: 1.4,
+              }}
+            >
+              PORTFOLIO-WIDE SCHEDULE EXTENSION AGGREGATION REQUIRES BACKEND PIPELINE. PROJECT-LEVEL SCHEDULE REVISIONS AVAILABLE VIA PROJECT DETAIL.
+            </span>
           </div>
 
           <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-dim)", fontStyle: "italic", margin: 0 }}>
@@ -28,45 +85,56 @@ export const ScheduleIntelligenceSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Right: Demo Schedule Position */}
+        {/* Right: Schedule Position Card */}
         <div className="dashboard-card-white">
           <div className="card-header-lockup">
-            <span className="card-label">DEMO SCHEDULE POSITION</span>
-            <span className="card-tag-pending">DEMO CLASSIFICATION</span>
+            <span className="card-label">SCHEDULE POSITION CLASSIFICATION</span>
+            <span className="card-tag-pending">DATA PENDING</span>
           </div>
 
-          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div className="schedule-position-bar">
-              <div
-                className="schedule-segment"
-                style={{ width: "45%", backgroundColor: "rgba(2, 38, 23, 0.85)", color: "#ffffff" }}
-              >
-                AHEAD
-              </div>
-              <div
-                className="schedule-segment"
-                style={{ width: "30%", backgroundColor: "rgba(2, 38, 23, 0.35)", color: "var(--color-primary-950)" }}
-              >
-                WITHIN
-              </div>
-              <div
-                className="schedule-segment"
-                style={{ width: "15%", backgroundColor: "rgba(186, 26, 26, 0.35)", color: "var(--color-coral)" }}
-              >
-                APPROACH
-              </div>
-              <div
-                className="schedule-segment"
-                style={{ width: "10%", backgroundColor: "var(--color-coral)", color: "#ffffff" }}
-              >
-                PAST
-              </div>
-            </div>
+          <div
+            style={{
+              height: "180px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              border: "1px dashed var(--color-border-hairline)",
+              margin: "16px 0",
+              padding: "16px",
+              textAlign: "center",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "var(--color-coral)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              DATA PENDING
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "10px",
+                color: "var(--color-text-dim)",
+                textTransform: "uppercase",
+                maxWidth: "400px",
+                lineHeight: 1.4,
+              }}
+            >
+              SCHEDULE POSITION AGGREGATION REQUIRES BACKEND DATA
+            </span>
+          </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-dim)", textTransform: "uppercase" }}>
-              <span>ORIGINAL COMPLETION BOUNDARY</span>
-              <span>REVISED COMPLETION BOUNDARY</span>
-            </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-text-dim)", textTransform: "uppercase" }}>
+            <span>ORIGINAL COMPLETION BOUNDARY</span>
+            <span>REVISED COMPLETION BOUNDARY</span>
           </div>
         </div>
       </div>

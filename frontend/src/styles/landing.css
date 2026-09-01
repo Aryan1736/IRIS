@@ -1,0 +1,390 @@
+/**
+ * IRIS Landing Page Stylesheet
+ * Authoritative Institutional Editorial & Terminal Motion System
+ */
+
+/* Landing Page Section Wrapper */
+.landing-page-root {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Common Section Base */
+.landing-section {
+  width: 100%;
+  position: relative;
+  padding-top: clamp(5rem, 8vw, 8rem);
+  padding-bottom: clamp(5rem, 8vw, 8rem);
+}
+
+.landing-section-light {
+  background-color: var(--color-surface);
+}
+
+.landing-section-paper {
+  background-color: var(--color-surface-paper);
+}
+
+.landing-section-white {
+  background-color: #ffffff;
+}
+
+.landing-section-dark {
+  background-color: var(--color-primary-900);
+  color: #ffffff;
+}
+
+/* Section Header Badges & Typography */
+.landing-section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-dim);
+  margin-bottom: 20px;
+}
+
+.landing-section-badge-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-mint-subtle);
+  border-radius: var(--radius-none);
+  display: inline-block;
+}
+
+.landing-section-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 4.5vw, 4.25rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  text-transform: uppercase;
+  color: var(--color-primary-900);
+  margin-bottom: 24px;
+}
+
+.landing-section-heading-dark {
+  color: #ffffff;
+}
+
+.landing-section-desc {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--color-text-main);
+  opacity: 0.85;
+  max-width: 680px;
+}
+
+/* Hero Section Specifics */
+.hero-telemetry-panel {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.hero-status-beacon {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  animation: hero-beacon-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes hero-beacon-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.hero-cta-button-primary {
+  background-color: var(--color-primary-900);
+  color: #ffffff;
+  padding: 16px 36px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: var(--radius-none);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  border: 1px solid var(--color-primary-900);
+}
+
+.hero-cta-button-primary:hover {
+  background-color: var(--color-primary-800);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 60, 43, 0.15);
+}
+
+.hero-cta-button-secondary {
+  border: 1px solid var(--color-primary-900);
+  color: var(--color-primary-900);
+  background-color: #ffffff;
+  padding: 16px 36px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-none);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.hero-cta-button-secondary:hover {
+  background-color: var(--color-primary-50);
+  transform: translateY(-2px);
+}
+
+/* Hairline Grid Cards */
+.landing-grid-container {
+  display: grid;
+  gap: 1px;
+  background-color: var(--color-border-hairline);
+  border: 1px solid var(--color-border-hairline);
+  overflow: hidden;
+}
+
+.landing-card {
+  background-color: #ffffff;
+  padding: 36px 32px;
+  transition: background-color 180ms ease, transform 180ms ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-card:hover {
+  background-color: #fbfbf9;
+}
+
+.landing-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-dim);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-hairline);
+  letter-spacing: 0.15em;
+}
+
+.landing-card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-primary-900);
+}
+
+.landing-card-body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-main);
+  opacity: 0.85;
+}
+
+.landing-card-arrow {
+  margin-top: auto;
+  padding-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-primary-700);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.6;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.landing-card:hover .landing-card-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* Interactive Timeline Specifics */
+.timeline-card-shell {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-hairline);
+  padding: 40px 36px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.timeline-track-wrapper {
+  position: relative;
+  padding: 60px 20px 40px;
+}
+
+.timeline-horizontal-bar {
+  position: absolute;
+  top: 76px;
+  left: 30px;
+  right: 30px;
+  height: 2px;
+  background-color: var(--color-border-hairline);
+  z-index: 1;
+}
+
+.timeline-horizontal-progress {
+  position: absolute;
+  top: 76px;
+  left: 30px;
+  height: 2px;
+  background-color: var(--color-primary-700);
+  z-index: 2;
+  transition: width 300ms ease;
+}
+
+.timeline-node-item {
+  position: relative;
+  z-index: 3;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 180ms ease;
+}
+
+.timeline-node-item:hover {
+  transform: translateY(-2px);
+}
+
+.timeline-node-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid var(--color-border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.timeline-node-inner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-text-dim);
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.timeline-node-item.active .timeline-node-circle,
+.timeline-node-item:hover .timeline-node-circle {
+  border-color: var(--color-primary-900);
+  box-shadow: 0 0 0 4px rgba(26, 60, 43, 0.1);
+}
+
+.timeline-node-item.active .timeline-node-inner-dot,
+.timeline-node-item:hover .timeline-node-inner-dot {
+  background-color: var(--color-primary-900);
+  transform: scale(1.2);
+}
+
+/* Data Foundation Equation Container */
+.equation-diagram-wrapper {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-hairline);
+  padding: 40px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.equation-step-card {
+  background-color: #faf9f6;
+  border: 1px solid var(--color-border-hairline);
+  padding: 24px 28px;
+  text-align: center;
+  min-width: 200px;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.equation-step-card:hover {
+  border-color: var(--color-primary-400);
+  transform: translateY(-2px);
+}
+
+.equation-operator-node {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--color-text-dim);
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+}
+
+/* Auditability Row */
+.audit-row-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 22px 32px;
+  border-bottom: 1px solid var(--color-border-hairline);
+  background-color: #ffffff;
+  transition: background-color 160ms ease, padding-left 160ms ease;
+}
+
+.audit-row-item:last-child {
+  border-bottom: none;
+}
+
+.audit-row-item:hover {
+  background-color: #fcfcfb;
+  padding-left: 36px;
+}
+
+/* Scrolling Reveal Classes */
+.landing-reveal-section {
+  opacity: 1; /* Fallback */
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .landing-card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .equation-diagram-wrapper {
+    padding: 24px 16px;
+  }
+}

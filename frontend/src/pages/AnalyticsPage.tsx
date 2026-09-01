@@ -15,8 +15,10 @@ import { PortfolioComposition } from "@/components/analytics/PortfolioCompositio
 import { ProgressAnalytics } from "@/components/analytics/ProgressAnalytics.tsx";
 import { CompletionAnalytics } from "@/components/analytics/CompletionAnalytics.tsx";
 import { AnalyticsDataProfile } from "@/components/analytics/AnalyticsDataProfile.tsx";
+import { usePageEnter } from "@/lib/motion/useMotion.ts";
 
 export const AnalyticsPage: React.FC = () => {
+  const containerRef = usePageEnter<HTMLDivElement>();
   const [filters, setFilters] = useState<AnalyticsFilterState>({
     sector: "",
     agency: "",
@@ -46,7 +48,7 @@ export const AnalyticsPage: React.FC = () => {
 
   if (isDatasetLoading && isFiltersLoading) {
     return (
-      <div className="analytics-container bg-blueprint-grid">
+      <div className="analytics-container">
         <div style={{ padding: "80px 0", display: "flex", justifyContent: "center" }}>
           <LoadingSpinner size="lg" label="CONNECTING TO IRIS PORTFOLIO ANALYTICS..." />
         </div>
@@ -56,7 +58,7 @@ export const AnalyticsPage: React.FC = () => {
 
   if (isDatasetError) {
     return (
-      <div className="analytics-container bg-blueprint-grid">
+      <div className="analytics-container">
         <div style={{ maxWidth: "600px", margin: "60px auto" }}>
           <TechnicalLabel label="SERVICE FAULT" sublabel="ANALYTICS PIPELINE" />
           <Card
@@ -86,7 +88,7 @@ export const AnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="analytics-container bg-blueprint-grid">
+    <div ref={containerRef} className="analytics-container">
       {/* Intro & Telemetry */}
       <AnalyticsIntro datasetInfo={datasetInfo} />
 
@@ -98,7 +100,7 @@ export const AnalyticsPage: React.FC = () => {
       />
 
       {/* 01. Portfolio Activity Over Time */}
-      <ActivityAnalytics datasetInfo={datasetInfo} />
+      <ActivityAnalytics datasetInfo={datasetInfo} filters={filters} />
 
       {/* 02. Where Schedules Move */}
       <ScheduleAnalytics datasetInfo={datasetInfo} />

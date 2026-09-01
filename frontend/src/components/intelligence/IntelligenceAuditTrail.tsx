@@ -20,7 +20,7 @@ export const IntelligenceAuditTrail: React.FC<IntelligenceAuditTrailProps> = ({ 
   return (
     <section className="intelligence-audit-banner">
       <div className="intelligence-audit-header">
-        <h2 className="intelligence-audit-title">07. Model Status / Audit Trail</h2>
+        <h2 className="intelligence-audit-title">10. Model Status / Audit Trail</h2>
         <span style={{ fontSize: "10px", fontFamily: "var(--font-mono)", color: "rgba(255, 255, 255, 0.7)" }}>
           GOVERNED PIPELINE SPECIFICATION
         </span>
