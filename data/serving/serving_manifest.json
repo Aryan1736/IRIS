@@ -1,0 +1,67 @@
+{
+  "serving_artifact_version": "iris_serving_v1_1",
+  "serving_contract_version": "1.1",
+  "runtime_versions": {
+    "python": "3.11.0",
+    "sqlite": "3.38.4"
+  },
+  "target": "target_effective_schedule_ext_3m",
+  "database": {
+    "path": "data\\serving\\iris_risk_serving_v1.sqlite3",
+    "sha256": "5D4574319F258328FF106C9B51AC4963D8CD6A3464DCE4A5AF4AD6210DEADC42"
+  },
+  "sources": {
+    "explainability_manifest": {
+      "path": "data\\ml\\schedule_extension_3m\\evaluation\\explainability\\explainability_manifest.json",
+      "sha256": "4F72EB67F4070B4470467E103288A67F41772B35CB677E24654491A7F5842B76"
+    },
+    "risk_rankings.csv": {
+      "path": "data\\ml\\schedule_extension_3m\\evaluation\\explainability\\risk_rankings.csv",
+      "sha256": "F25483E75DAF2AD1FCF8C642F446B7F0EB7AD9DE52D91F152AB743BF36543B90"
+    },
+    "top_contributors.csv": {
+      "path": "data\\ml\\schedule_extension_3m\\evaluation\\explainability\\top_contributors.csv",
+      "sha256": "F0076A14932B2F3ED10D3FADF8EB18B815B16D2632B2825BFECF3B712203F931"
+    },
+    "projects_monthly.csv": {
+      "path": "data/processed/projects_monthly.csv",
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    }
+  },
+  "locked_models": {
+    "LEGACY": "catboost_full_v1__unweighted",
+    "MODERN": "logistic_static_only__unweighted"
+  },
+  "explanation_version": "schedule_extension_3m_locked_models_explainability_v1",
+  "contribution_space": "RAW_MARGIN_LOGIT",
+  "record_counts": {
+    "project_months": 25189,
+    "contributors": 250570,
+    "by_regime": {
+      "LEGACY": 16999,
+      "MODERN": 8190
+    },
+    "calibration_active_project_months": 1625
+  },
+  "validation": {
+    "risk_recomputed": false,
+    "rank_recomputed": false,
+    "calibration_recomputed": false,
+    "complete_local_explanations_read": false,
+    "future_target_values_included": false,
+    "completed_project_metadata_included": false,
+    "display_metadata_included": [
+      "project_name",
+      "agency",
+      "ministry",
+      "sector",
+      "state"
+    ],
+    "project_name_included": true,
+    "project_name_used_as_model_feature": false,
+    "display_metadata_exact_key_match": true,
+    "crosswalk_used": false,
+    "records_without_contributors": 0,
+    "source_hashes_match_explainability_manifest": true
+  }
+}
