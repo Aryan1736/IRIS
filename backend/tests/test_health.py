@@ -29,3 +29,15 @@ def test_health_check_database_down(client: TestClient) -> None:
         data = response.json()
         assert data["status"] == "unhealthy"
         assert data["database"] == "disconnected"
+
+
+def test_ping_endpoint(client: TestClient) -> None:
+    """Verify lightweight /ping and /api/v1/ping keep-alive endpoints."""
+    for path in ("/ping", "/api/v1/ping"):
+        response = client.get(path)
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "pong"
+        assert "timestamp" in data
+        assert "service" in data
+

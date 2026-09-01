@@ -63,7 +63,19 @@ def create_application() -> FastAPI:
     app.include_router(risk.router, prefix="/risk", tags=["Risk Intelligence (Direct)"], include_in_schema=False)
 
 
-    # 5. Root Info Endpoint
+    # 5. Root Info and Keep-Alive Ping Endpoints
+    @app.get("/ping", tags=["Monitoring"], summary="Keep-Alive Ping")
+    @app.get(f"{settings.API_V1_PREFIX}/ping", tags=["Monitoring"], summary="Keep-Alive Ping (v1)")
+    def ping() -> dict[str, str]:
+        """Lightweight endpoint for uptime monitors and keep-alive crons."""
+        from datetime import datetime, timezone
+        return {
+            "status": "pong",
+            "service": settings.PROJECT_NAME,
+            "environment": settings.ENVIRONMENT,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
     @app.get("/", tags=["Root"], summary="API Root Info")
     def root_info() -> dict[str, str]:
         return {
@@ -72,6 +84,7 @@ def create_application() -> FastAPI:
             "environment": settings.ENVIRONMENT,
             "docs": f"{settings.API_V1_PREFIX}/docs",
             "health": f"{settings.API_V1_PREFIX}/health",
+            "ping": "/ping",
         }
 
     return app

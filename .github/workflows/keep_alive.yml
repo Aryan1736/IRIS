@@ -1,0 +1,25 @@
+name: Render Backend Keep-Alive
+
+on:
+  schedule:
+    # Run every 10 minutes (cron UTC) to prevent Render free instance cold-sleep
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Render Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Ping Keep-Alive Endpoint
+        run: |
+          echo "Pinging IRIS Backend on Render..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://iris-qgqm.onrender.com/ping)
+          echo "HTTP Status: $STATUS"
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ Render backend is awake and responding!"
+          else
+            echo "⚠️ Backend responded with status: $STATUS (may be waking up)"
+          fi
