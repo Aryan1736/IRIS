@@ -13,21 +13,32 @@ from backend.app.core.config import settings
 LOGGER = logging.getLogger("paimana.db.session")
 
 
-def create_db_engine(database_url: str) -> Engine:
+def normalize_db_url(url: str) -> str:
+    """Ensure standard PostgreSQL connection URLs use psycopg2 driver."""
+    clean = url.strip()
+    if clean.startswith("postgres://"):
+        return clean.replace("postgres://", "postgresql+psycopg2://", 1)
+    if clean.startswith("postgresql://") and not clean.startswith("postgresql+"):
+        return clean.replace("postgresql://", "postgresql+psycopg2://", 1)
+    return clean
+
+
+def create_db_engine(database_url: str, echo: bool = False) -> Engine:
     """Create a SQLAlchemy engine configured for PostgreSQL or SQLite."""
-    if database_url.startswith("sqlite"):
+    normalized_url = normalize_db_url(database_url)
+    if normalized_url.startswith("sqlite"):
         return create_engine(
-            database_url,
+            normalized_url,
             connect_args={"check_same_thread": False},
-            echo=settings.DEBUG and settings.ENVIRONMENT == "development",
+            echo=echo,
         )
     return create_engine(
-        database_url,
+        normalized_url,
         pool_size=settings.DB_POOL_SIZE,
         max_overflow=settings.DB_MAX_OVERFLOW,
         pool_timeout=settings.DB_POOL_TIMEOUT,
         pool_recycle=settings.DB_POOL_RECYCLE,
-        echo=settings.DEBUG and settings.ENVIRONMENT == "development",
+        echo=echo,
     )
 
 

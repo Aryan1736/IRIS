@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import logging
 import sys
 import time
@@ -25,9 +26,10 @@ from typing import Any
 from sqlalchemy import insert, update
 from sqlalchemy.orm import Session
 
-from backend.app.db.session import SessionLocal
+from backend.app.db.session import SessionLocal, create_db_engine
 from backend.app.models.dataset_metadata import DatasetMetadata
 from backend.app.models.project_month import ProjectMonthObservation
+from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 LOGGER = logging.getLogger("paimana.cli.ingest")
@@ -35,6 +37,7 @@ LOGGER = logging.getLogger("paimana.cli.ingest")
 # Known accepted combined SHA-256 hashes from docs/HANDOFF.md
 ACCEPTED_CANONICAL_HASHES = {
     "FE115E5FE71CC70552669FC4E0ACC2699B14CFE7545A319EEAEAF577E4DB95C3",  # 2024-01..03, 2024-06..2026-07 (46,568 rows)
+    "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",  # 2023-01..2026-07 (64,608 rows)
 }
 
 
@@ -185,27 +188,97 @@ def ingest_canonical_csv(
             .values(status="SUPERSEDED")
         )
 
-    # Insert DatasetMetadata
-    metadata = DatasetMetadata(
-        dataset_version=version_label,
-        canonical_sha256=actual_sha256,
-        covered_months=sorted(months_set),
-        row_count=total_rows,
-        unique_projects_count=len(projects_set),
-        source_version_identifier="paimana-export-v1",
-        status=status,
-        ingested_at=now,
-    )
-    session.add(metadata)
-    session.flush()
+    # Check if a metadata entry with version_label already exists
+    from sqlalchemy import select
+    existing_meta = session.execute(
+        select(DatasetMetadata).where(DatasetMetadata.dataset_version == version_label)
+    ).scalar_one_or_none()
 
-    # Bulk insert observations in chunks
-    for i in range(0, total_rows, batch_size):
-        chunk = records_to_insert[i : i + batch_size]
-        session.execute(insert(ProjectMonthObservation), chunk)
-        LOGGER.info("Inserted observations %d - %d of %d", i + 1, min(i + batch_size, total_rows), total_rows)
+    if existing_meta:
+        if clear_existing:
+            LOGGER.info("Updating existing metadata record for version %s", version_label)
+            existing_meta.canonical_sha256 = actual_sha256
+            existing_meta.covered_months = sorted(months_set)
+            existing_meta.row_count = total_rows
+            existing_meta.unique_projects_count = len(projects_set)
+            existing_meta.status = status
+            existing_meta.ingested_at = now
+            metadata = existing_meta
+        else:
+            version_label = f"{version_label}-{int(now.timestamp())}"
+            metadata = DatasetMetadata(
+                dataset_version=version_label,
+                canonical_sha256=actual_sha256,
+                covered_months=sorted(months_set),
+                row_count=total_rows,
+                unique_projects_count=len(projects_set),
+                source_version_identifier="paimana-export-v1",
+                status=status,
+                ingested_at=now,
+            )
+            session.add(metadata)
+    else:
+        metadata = DatasetMetadata(
+            dataset_version=version_label,
+            canonical_sha256=actual_sha256,
+            covered_months=sorted(months_set),
+            row_count=total_rows,
+            unique_projects_count=len(projects_set),
+            source_version_identifier="paimana-export-v1",
+            status=status,
+            ingested_at=now,
+        )
+        session.add(metadata)
 
     session.commit()
+
+    # Bulk insert observations: use native PostgreSQL COPY for instant streaming over WAN
+    bind = session.get_bind()
+    if bind.dialect.name == "postgresql":
+        LOGGER.info("Streaming %d observations to PostgreSQL using native COPY protocol...", total_rows)
+        raw_conn = session.connection().connection
+        cursor = raw_conn.cursor()
+        
+        output = io.StringIO()
+        cols = list(records_to_insert[0].keys())
+        writer = csv.writer(output, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_MINIMAL)
+        for r in records_to_insert:
+            row_vals = []
+            for c in cols:
+                val = r.get(c)
+                if val is None:
+                    row_vals.append("\\N")
+                elif isinstance(val, str):
+                    # Replace newlines/tabs inside string values for TSV format
+                    clean_str = val.replace("\\", "\\\\").replace("\t", " ").replace("\n", " ").replace("\r", " ")
+                    row_vals.append(clean_str)
+                else:
+                    row_vals.append(str(val))
+            writer.writerow(row_vals)
+        
+        output.seek(0)
+        col_names = ", ".join(cols)
+        sql_copy = f"COPY project_month_observations ({col_names}) FROM STDIN WITH (FORMAT text, NULL '\\N')"
+        cursor.copy_expert(sql_copy, output)
+        session.commit()
+    else:
+        # SQLite / generic chunked insert
+        chunk_size = max(100, batch_size) if batch_size else 2000
+        inserted_count = 0
+        LOGGER.info("Inserting %d observations in chunks of %d...", total_rows, chunk_size)
+        for i in range(0, total_rows, chunk_size):
+            chunk = records_to_insert[i : i + chunk_size]
+            session.execute(insert(ProjectMonthObservation), chunk)
+            session.commit()
+            inserted_count += len(chunk)
+            if inserted_count % 10000 < chunk_size or inserted_count == total_rows:
+                LOGGER.info(
+                    "Progress: %d / %d observations inserted (%.1f%%)...",
+                    inserted_count,
+                    total_rows,
+                    (inserted_count / total_rows) * 100,
+                )
+
     elapsed = time.perf_counter() - start_time
     LOGGER.info(
         "Ingestion completed in %.2fs: %d rows inserted (Version: %s, Status: %s).",
@@ -221,6 +294,7 @@ def main() -> int:
     """CLI entrypoint."""
     parser = argparse.ArgumentParser(description="Ingest canonical PAIMANA CSV dataset into database.")
     parser.add_argument("--csv", type=Path, default=Path("data/processed/projects_monthly.csv"), help="Path to CSV")
+    parser.add_argument("--database-url", type=str, default=None, help="Database connection URL override (e.g. Neon PostgreSQL URL)")
     parser.add_argument("--version", type=str, default=None, help="Custom dataset version label")
     parser.add_argument("--expected-sha256", type=str, default=None, help="Expected SHA-256 hash for verification")
     parser.add_argument("--dev", action="store_true", help="Explicitly mark dataset as ACTIVE for development")
@@ -229,7 +303,12 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    session = SessionLocal()
+    if args.database_url:
+        custom_engine = create_db_engine(args.database_url)
+        CustomSession = sessionmaker(autocommit=False, autoflush=False, bind=custom_engine)
+        session = CustomSession()
+    else:
+        session = SessionLocal()
     try:
         ingest_canonical_csv(
             csv_path=args.csv,

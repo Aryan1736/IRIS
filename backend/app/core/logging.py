@@ -20,4 +20,4 @@ def setup_logging(debug: bool = False) -> None:
 
     # Silence overly verbose loggers
     logging.getLogger("uvicorn.access").setLevel(logging.INFO)
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING if not debug else logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)

@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     VERSION: str = "0.1.0"
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
+    PORT: int = 8000
     API_V1_PREFIX: str = "/api/v1"
 
     # Database Configuration
@@ -34,15 +35,26 @@ class Settings(BaseSettings):
     # Serving Artifact Configuration
     SERVING_DIR: str = "data/serving"
 
-
-
     # CORS Configuration
+    FRONTEND_ORIGIN: str | None = None
     BACKEND_CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
     ]
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_url(cls, v: Any) -> str:
+        if isinstance(v, str):
+            v_clean = v.strip()
+            if v_clean.startswith("postgres://"):
+                return v_clean.replace("postgres://", "postgresql+psycopg2://", 1)
+            if v_clean.startswith("postgresql://") and not v_clean.startswith("postgresql+"):
+                return v_clean.replace("postgresql://", "postgresql+psycopg2://", 1)
+            return v_clean
+        return str(v)
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -59,6 +71,13 @@ class Settings(BaseSettings):
         elif isinstance(v, (list, tuple)):
             return [str(item).strip() for item in v if str(item).strip()]
         return []
+
+    def model_post_init(self, __context: Any) -> None:
+        if self.FRONTEND_ORIGIN:
+            origins = [o.strip() for o in self.FRONTEND_ORIGIN.split(",") if o.strip()]
+            for origin in origins:
+                if origin not in self.BACKEND_CORS_ORIGINS:
+                    self.BACKEND_CORS_ORIGINS.append(origin)
 
 
 settings = Settings()
