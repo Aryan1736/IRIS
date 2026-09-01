@@ -5,9 +5,22 @@ __pycache__/
 venv/
 tmp/
 
-# Source reports, runtime, ML, and generated datasets are local artifacts.
-data/
+# Source reports, raw extractions, and intermediate ML data are ignored
+data/raw/
+data/extracted/
+data/cleaned/
+data/cleaned_uncoded/
+data/validation/
+data/ml/
 *.parquet
+
+# Explicitly track locked serving artifacts and canonical processed dataset
+!data/serving/
+!data/serving/**
+!data/serving/iris_risk_serving_v1.sqlite3
+!data/processed/
+!data/processed/projects_monthly.csv
+!data/processed/projects_completed.csv
 # Frontend local artifacts and caches
 frontend/node_modules/
 frontend/dist/

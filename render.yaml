@@ -1,0 +1,27 @@
+# Render Blueprint for IRIS FastAPI Backend
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: iris-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/health
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SERVING_DIR
+        value: data/serving
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: API_V1_PREFIX
+        value: /api/v1
