@@ -41,14 +41,16 @@ def create_application() -> FastAPI:
         return response
 
     # 2. CORS Middleware Configuration
-    if settings.BACKEND_CORS_ORIGINS:
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origins=list(settings.BACKEND_CORS_ORIGINS),
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
+    origins = list(settings.BACKEND_CORS_ORIGINS)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins if origins else ["*"],
+        allow_origin_regex=r"^https?://([a-zA-Z0-9_-]+\.)*(vercel\.app|onrender\.com|localhost|127\.0\.0\.1)(:\d+)?$",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["*"],
+    )
 
     # 3. Register Structured Exception Handlers
     register_exception_handlers(app)
