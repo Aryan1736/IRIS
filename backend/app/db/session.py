@@ -8,24 +8,19 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.app.core.config import settings
+from backend.app.core.config import normalize_database_url, settings
 
 LOGGER = logging.getLogger("paimana.db.session")
 
 
 def normalize_db_url(url: str) -> str:
-    """Ensure standard PostgreSQL connection URLs use psycopg2 driver."""
-    clean = url.strip()
-    if clean.startswith("postgres://"):
-        return clean.replace("postgres://", "postgresql+psycopg2://", 1)
-    if clean.startswith("postgresql://") and not clean.startswith("postgresql+"):
-        return clean.replace("postgresql://", "postgresql+psycopg2://", 1)
-    return clean
+    """Normalize database connection URL (delegating to core canonical helper)."""
+    return normalize_database_url(url)
 
 
 def create_db_engine(database_url: str, echo: bool = False) -> Engine:
     """Create a SQLAlchemy engine configured for PostgreSQL or SQLite."""
-    normalized_url = normalize_db_url(database_url)
+    normalized_url = normalize_database_url(database_url)
     if normalized_url.startswith("sqlite"):
         return create_engine(
             normalized_url,

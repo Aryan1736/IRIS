@@ -21,3 +21,5 @@ def setup_logging(debug: bool = False) -> None:
     # Silence overly verbose loggers
     logging.getLogger("uvicorn.access").setLevel(logging.INFO)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("pdfminer").setLevel(logging.WARNING)
+    logging.getLogger("pypdf").setLevel(logging.WARNING)
