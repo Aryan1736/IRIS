@@ -54,6 +54,7 @@ Production deployment architecture for the **IRIS (PAIMANA)** infrastructure ris
      ```text
      postgresql://neondb_owner:npg_SECRET@ep-xyz-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
      ```
+   - *Note on JDBC URLs*: If your deployment environment or dashboard supplies a JDBC connection string (e.g. `jdbc:postgresql://...`), the backend automatically and safely normalizes it to standard SQLAlchemy `postgresql://...` while preserving all connection parameters and credentials.
 
 ---
 

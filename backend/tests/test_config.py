@@ -40,12 +40,15 @@ def test_frontend_origin_merged_into_cors() -> None:
 
 
 def test_database_url_normalization() -> None:
-    """Verify postgres:// and postgresql:// are normalized to postgresql+psycopg2://."""
+    """Verify postgres://, jdbc:postgresql://, and postgresql:// normalization."""
     s1 = Settings(DATABASE_URL="postgres://user:pass@host:5432/db?sslmode=require")
-    assert s1.DATABASE_URL.startswith("postgresql+psycopg2://")
+    assert s1.DATABASE_URL == "postgresql://user:pass@host:5432/db?sslmode=require"
 
     s2 = Settings(DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require")
-    assert s2.DATABASE_URL.startswith("postgresql+psycopg2://")
+    assert s2.DATABASE_URL == "postgresql://user:pass@host:5432/db?sslmode=require"
 
-    s3 = Settings(DATABASE_URL="sqlite:///tmp/test.db")
-    assert s3.DATABASE_URL == "sqlite:///tmp/test.db"
+    s3 = Settings(DATABASE_URL="jdbc:postgresql://host:5432/db?sslmode=require")
+    assert s3.DATABASE_URL == "postgresql://host:5432/db?sslmode=require"
+
+    s4 = Settings(DATABASE_URL="sqlite:///tmp/test.db")
+    assert s4.DATABASE_URL == "sqlite:///tmp/test.db"
