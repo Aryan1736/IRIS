@@ -16,6 +16,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from src.ml.data_contract import (
+    default_contract_path,
+    load_contract,
+    validate_canonical_inputs,
+    validate_continuous_segments,
+    validate_features,
+    validate_leakage_exclusion,
+)
+
 
 ONGOING_SHA256 = "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
 COMPLETED_SHA256 = "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
@@ -475,8 +484,14 @@ def _validate_outputs(eligible: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def build(root: Path) -> dict[str, Any]:
+def build(root: Path, contract_path: Path | None = None) -> dict[str, Any]:
     root = root.resolve()
+    contract = load_contract(contract_path or default_contract_path(root))
+    validate_canonical_inputs(root, contract)
+    validate_features(FEATURE_COLUMNS, contract, strict_order=True)
+    validate_leakage_exclusion(FEATURE_COLUMNS, contract)
+    validate_continuous_segments(SEGMENTS, contract)
+
     ongoing_path = root / "data" / "processed" / "projects_monthly.csv"
     completed_path = root / "data" / "processed" / "projects_completed.csv"
     output_dir = root / "data" / "ml" / "schedule_extension_3m"
@@ -636,6 +651,11 @@ def build(root: Path) -> dict[str, Any]:
             "explanation": "Differences arise because the implementation requires actual reported future revised values for positives and excludes null-return windows after a revision instead of treating null as a return to the original commitment.",
         },
         "validations": validation,
+        "data_contract": {
+            "dataset_name": contract["dataset_name"],
+            "contract_version": contract["contract_version"],
+            "validated": True,
+        },
         "generated_files": {},
     }
     manifest_path = output_dir / "manifest.json"
@@ -652,8 +672,9 @@ def build(root: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument("--contract", type=Path, default=None, help="Path to contract JSON (optional)")
     args = parser.parse_args()
-    manifest = build(args.root)
+    manifest = build(args.root, args.contract)
     print(json.dumps(manifest["summary"], indent=2))
     return 0
 

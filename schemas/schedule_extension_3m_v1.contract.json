@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "dataset_name": "schedule_extension_3m_v1",
+  "contract_version": "1.0.0",
+  "dataset_type": "schedule_extension_prediction",
+  "description": "Authoritative frozen ML data contract for IRIS 3-month schedule-extension prediction pipeline.",
+  "target": {
+    "name": "target_effective_schedule_ext_3m",
+    "horizon_months": 3,
+    "description": "Effective schedule push-out over forward H=3 months window within continuous segment.",
+    "baseline_definition": "revised_completion_date(T) if actually reported, otherwise original_completion_date(T)",
+    "positive_rule": "At least one actually reported revised_completion_date in T+1..T+3 is later than the usable baseline at T.",
+    "negative_rule": "Complete same-segment T+1..T+3 observations, no reported extension, and no unresolved revised-value null after a revision has appeared.",
+    "ambiguity_rule": "A null never resets a previously reported revision to the original commitment. Such baseline/window ambiguity is ineligible unless a reported future extension already proves a positive.",
+    "extension_types": {
+      "FIRST_REVISION": "No revised completion date reported at T; first revision appears in forward window.",
+      "SUBSEQUENT_REVISION": "Revised completion date already present at T; later revised completion date appears in forward window.",
+      "NONE": "No extension observed in forward window (negative)."
+    }
+  },
+  "features": {
+    "count": 36,
+    "ordered_names": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "families": {
+      "static_categoricals": [
+        "sector",
+        "agency",
+        "state"
+      ],
+      "static_cost_financial": [
+        "original_cost",
+        "revised_cost_t",
+        "cumulative_expenditure_t",
+        "expenditure_to_original_cost_ratio",
+        "revised_to_original_cost_ratio",
+        "cost_has_been_revised"
+      ],
+      "schedule": [
+        "project_age_months",
+        "months_to_original_schedule",
+        "months_to_effective_schedule",
+        "schedule_revision_lag_months",
+        "schedule_has_been_revised",
+        "months_since_start"
+      ],
+      "progress": [
+        "physical_progress_t"
+      ],
+      "missingness_presence_indicators": [
+        "state_is_missing",
+        "approval_date_is_missing",
+        "original_completion_date_is_missing",
+        "revised_cost_is_present",
+        "revised_date_is_present",
+        "physical_progress_is_present",
+        "physical_progress_supported",
+        "start_date_is_present",
+        "start_date_supported"
+      ],
+      "historical_expenditure": [
+        "exp_delta_1m",
+        "exp_delta_3m",
+        "past_exp_stagnant_3m"
+      ],
+      "historical_progress": [
+        "past_progress_delta_3m",
+        "past_progress_stagnant_3m"
+      ],
+      "historical_schedule_cost_revision_counts": [
+        "n_prior_schedule_extensions",
+        "n_prior_cost_revisions",
+        "observed_tenure_months"
+      ],
+      "delta_support": [
+        "exp_delta_1m_is_supported",
+        "exp_delta_3m_is_supported",
+        "progress_delta_3m_is_supported"
+      ]
+    },
+    "excluded_candidates_v1": [
+      "month_of_fiscal_year",
+      "is_fiscal_yearend",
+      "report_month_index",
+      "identifier_regime"
+    ]
+  },
+  "columns": {
+    "identifiers": [
+      "project_code"
+    ],
+    "metadata_only": [
+      "project_code",
+      "report_month",
+      "identifier_regime",
+      "continuous_segment",
+      "target_horizon_months",
+      "target_window_end_month",
+      "target_effective_schedule_ext_3m",
+      "extension_type",
+      "baseline_completion_date",
+      "baseline_completion_source",
+      "target_event_month",
+      "target_event_revised_completion_date",
+      "eventually_completed",
+      "completion_report_month"
+    ],
+    "leakage_strictly_prohibited": [
+      "target_effective_schedule_ext_3m",
+      "eventually_completed",
+      "completion_report_month",
+      "target_event_month",
+      "target_event_revised_completion_date",
+      "baseline_completion_date",
+      "baseline_completion_source",
+      "extension_type",
+      "target_window_end_month",
+      "project_code",
+      "project_name",
+      "actual_completion_date"
+    ]
+  },
+  "embargo": {
+    "rule": "strict_walk_forward",
+    "formula": "T + 3 < E (i.e. month_index(add_months(T, 3)) < month_index(E))",
+    "horizon_months": 3,
+    "description": "For evaluation reference month E, training observation T is usable only when the forward prediction window strictly ends before E."
+  },
+  "continuous_segments": [
+    {
+      "name": "SEGMENT_1",
+      "identifier_regime": "LEGACY",
+      "start": "2023-01",
+      "end": "2023-11"
+    },
+    {
+      "name": "SEGMENT_2",
+      "identifier_regime": "LEGACY",
+      "start": "2024-01",
+      "end": "2024-03"
+    },
+    {
+      "name": "SEGMENT_3",
+      "identifier_regime": "LEGACY",
+      "start": "2024-06",
+      "end": "2025-06"
+    },
+    {
+      "name": "SEGMENT_4",
+      "identifier_regime": "MODERN",
+      "start": "2025-07",
+      "end": "2026-07"
+    }
+  ],
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "relative_path": "data/processed/projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "relative_path": "data/processed/projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "expected_dataset_metrics": {
+    "eligible_rows": {
+      "LEGACY": 25406,
+      "MODERN": 11899,
+      "TOTAL": 37305
+    },
+    "positive_rows": {
+      "LEGACY": 2634,
+      "MODERN": 4327,
+      "TOTAL": 6961
+    },
+    "negative_rows": {
+      "LEGACY": 22772,
+      "MODERN": 7572,
+      "TOTAL": 30344
+    },
+    "ineligible_rows": 27303
+  },
+  "policies": {
+    "categorical_handling": "Raw source-faithful categorical values retained in dataset; no whole-dataset encoder fitted. Encoders must be fit strictly on training fold.",
+    "missingness": "No imputation. Structural/source missingness remains empty with explicit support/presence indicators.",
+    "structural_gaps_excluded": [
+      "2023-12 (unreported/gap month)",
+      "2024-04 and 2024-05 (uncoded Annexure XVIII layouts)",
+      "2025-06 to 2025-07 (identifier redesign boundary; unbridged)"
+    ]
+  },
+  "supported_model_regimes": [
+    "LEGACY",
+    "MODERN"
+  ],
+  "reproducibility": {
+    "hash_algorithm": "SHA-256",
+    "builder_module": "src.ml.dataset_builder",
+    "contract_validator_module": "src.ml.data_contract"
+  }
+}
