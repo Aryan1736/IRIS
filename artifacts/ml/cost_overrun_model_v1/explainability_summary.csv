@@ -1,0 +1,5 @@
+﻿regime,candidate_model,top_1_feature,top_2_feature,top_3_feature,top_1_importance,fold_importance_stability_spearman,reconciliation_tolerance,exact_shap_reconstruction_verified
+LEGACY,catboost_unweighted,project_age_months,state,expenditure_to_original_cost_ratio,11.4925,0.9555,1e-09,True
+LEGACY,catboost_balanced,state,project_age_months,original_cost,10.5758,0.9627,1e-09,True
+MODERN,catboost_unweighted,agency,physical_progress_t,state,11.1772,0.9497,1e-09,True
+MODERN,catboost_balanced,physical_progress_t,agency,cumulative_expenditure_t,10.3166,0.956,1e-09,True

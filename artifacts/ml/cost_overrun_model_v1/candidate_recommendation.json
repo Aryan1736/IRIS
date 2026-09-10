@@ -1,0 +1,36 @@
+{
+  "contract_version": "1.0.0",
+  "target": "target_effective_cost_esc_3m",
+  "horizon_months": 3,
+  "evaluation_regimes": {
+    "LEGACY": {
+      "regime": "LEGACY",
+      "best_ranking_model": "catboost_unweighted",
+      "best_ranking_micro_pr_auc": 0.02791880420079448,
+      "best_calibrated_model": "catboost_unweighted",
+      "best_calibrated_brier_score": 0.018344042613950017,
+      "prevalence_pr_auc": 0.01807058874332155,
+      "pr_auc_lift_over_prevalence": 0.009848,
+      "operational_status": "NOT_READY_FOR_PRODUCTION",
+      "rationale": "In LEGACY, catboost_unweighted achieves micro PR-AUC of 0.0279 vs prevalence baseline of 0.0181 (lift: 0.0098). Due to severe class imbalance (~2.18%) and low absolute precision, operational readiness is classified as NOT_READY_FOR_PRODUCTION."
+    },
+    "MODERN": {
+      "regime": "MODERN",
+      "best_ranking_model": "logistic_balanced",
+      "best_ranking_micro_pr_auc": 0.02101275228132602,
+      "best_calibrated_model": "catboost_unweighted",
+      "best_calibrated_brier_score": 0.01906441935106266,
+      "prevalence_pr_auc": 0.013744911644724312,
+      "pr_auc_lift_over_prevalence": 0.007268,
+      "operational_status": "NOT_READY_FOR_PRODUCTION",
+      "rationale": "In MODERN, logistic_balanced achieves micro PR-AUC of 0.0210 vs prevalence baseline of 0.0137 (lift: 0.0073). Due to severe class imbalance (~2.18%) and low absolute precision, operational readiness is classified as NOT_READY_FOR_PRODUCTION."
+    }
+  },
+  "overall_operational_recommendation": "NOT_READY_FOR_PRODUCTION",
+  "primary_recommendation_reasons": [
+    "Severe class imbalance (~2.18% positive rate) limits raw classification confidence.",
+    "PR-AUC remains low in both regimes (< 0.10 micro average precision), reflecting that cost revisions are administrative decisions driven by external fiscal and political approvals rather than purely project-internal metrics.",
+    "Neither model family achieves high reliable operational precision across all walk-forward folds.",
+    "Models should remain research-grade early warning signals rather than autonomous production gates."
+  ]
+}
