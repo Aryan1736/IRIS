@@ -1,0 +1,65 @@
+{
+  "manifest_version": "1.0.0",
+  "study_name": "feature_ablation_cuf_vs_longitudinal_v1",
+  "pr_reference": "PR-11",
+  "target": "target_effective_schedule_ext_3m",
+  "horizon_months": 3,
+  "embargo_rule": "strict_walk_forward (T_train + 3 < E)",
+  "random_seed": 20260829,
+  "bootstrap_iterations": 1000,
+  "canonical_inputs": {
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+  },
+  "locked_model_hashes": {
+    "legacy_catboost": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "modern_logistic": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "feature_counts": {
+    "static_current": 25,
+    "longitudinal": 11,
+    "full_contract": 36,
+    "excluded_inventory": 16
+  },
+  "evaluation_folds": {
+    "LEGACY": [
+      "2023-07",
+      "2023-08",
+      "2024-06",
+      "2024-07",
+      "2024-08",
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03"
+    ],
+    "MODERN": [
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04"
+    ],
+    "total_folds": 17
+  },
+  "runtime_metadata": {
+    "runtime_seconds": 500.1,
+    "python_version": "3.13.5",
+    "catboost_version": "1.2.10",
+    "scikit_learn_version": "1.9.0",
+    "numpy_version": "2.4.1"
+  },
+  "artifacts_generated": [
+    "manifest.json",
+    "feature_inventory.csv",
+    "fold_metrics.csv",
+    "regime_metrics.csv",
+    "ablation_summary.csv",
+    "feature_group_importance.csv",
+    "robustness_metrics.csv",
+    "candidate_recommendation.json"
+  ]
+}
