@@ -1,0 +1,95 @@
+{
+  "contract_version": "1.0.0",
+  "primary_target": "target_progress_stagnation_3m",
+  "viability_status": "VIABLE_WITH_LIMITATIONS",
+  "recommended_for_pr09": true,
+  "primary_rationale": "High statistical power (26,044 eligible observations, 7,344 positives, 28.20% prevalence) and balanced class ratio (~1:2.55) across Segments 3 & 4, supporting robust temporal walk-forward evaluation. Limitations include structural absence of physical progress in Segments 1 & 2 (2023-01 to 2024-03) and segment boundary censoring.",
+  "population_metrics": {
+    "total_source_rows": 64608,
+    "eligible_observations": 26044,
+    "positive_events": 7344,
+    "negative_events": 18700,
+    "positive_prevalence": 0.281984,
+    "class_imbalance_ratio": 2.5463,
+    "censored_observations": 24152,
+    "ambiguous_or_ineligible_observations": 14412
+  },
+  "audited_candidates": {
+    "candidate_1_rolling_progress_stagnation": {
+      "name": "target_progress_stagnation_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4, N=26,044 eligible)",
+      "baseline_field": "physical_progress(T)",
+      "outcome_field": "physical_progress(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "structural_omission_segments_1_and_2",
+        "segment_and_regime_boundary_censoring",
+        "administrative_self_reporting_proxy"
+      ]
+    },
+    "candidate_2_dual_stagnation": {
+      "name": "target_dual_stagnation_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4, N=26,044 eligible)",
+      "baseline_field": "physical_progress(T) and cumulative_expenditure(T)",
+      "outcome_field": "physical_progress(T+3) and cumulative_expenditure(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "structural_omission_segments_1_and_2",
+        "narrower_event_definition_misses_unproductive_expenditure"
+      ]
+    },
+    "candidate_3_progress_deterioration": {
+      "name": "target_progress_deterioration_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4)",
+      "baseline_field": "physical_progress(T)",
+      "outcome_field": "physical_progress(T+3)",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "severe_class_rarity_2.3_percent_prevalence",
+        "insufficient_temporal_positives_for_walk_forward_folds"
+      ]
+    },
+    "candidate_4_expenditure_stagnation": {
+      "name": "target_expenditure_stagnation_3m",
+      "scope": "projects_monthly.csv (All Segments, N=40,456 complete windows)",
+      "baseline_field": "cumulative_expenditure(T)",
+      "outcome_field": "cumulative_expenditure(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "financial_disbursement_cycle_proxy_rather_than_implementation",
+        "known_mospi_anomalies_expenditure_with_zero_progress"
+      ]
+    },
+    "candidate_5_lifecycle_completed_implementation": {
+      "name": "target_completed_implementation_overrun",
+      "scope": "projects_completed.csv (N=876)",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "extreme_right_censoring_81.5_pct_ongoing_projects",
+        "physical_progress_column_absent_in_completed_dataset",
+        "survivorship_bias_only_completed_projects_observed"
+      ]
+    }
+  },
+  "completed_projects_audit": {
+    "total_completed": 876,
+    "physical_progress_column_present": false,
+    "valid_progress_completed": 0,
+    "missing_progress_completed": 876,
+    "ongoing_projects_never_completed": 3862,
+    "ongoing_observations_uncompleted": 54106,
+    "viability_status": "NOT_YET_VIABLE",
+    "primary_bottlenecks": [
+      "extreme_right_censoring_81.5_pct_ongoing_projects",
+      "physical_progress_column_absent_in_completed_dataset",
+      "survivorship_bias_only_completed_projects_observed",
+      "sector_concentration_over_50_pct_road_transport",
+      "temporal_clustering_june_2026_and_oct_2024"
+    ]
+  },
+  "limitations": [
+    "structural_omission_segments_1_and_2",
+    "boundary_and_exit_censoring_24152_rows",
+    "administrative_self_reporting_proxy"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "manifest_version": "1.0.0",
+  "pipeline": "IRIS PR-08 Implementation Risk Target Definition",
+  "contract": {
+    "name": "implementation_risk_v1",
+    "version": "1.0.0",
+    "target": "target_progress_stagnation_3m",
+    "horizon_months": 3,
+    "tolerance_percentage": 1e-06
+  },
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "relative_path": "data/processed/projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "relative_path": "data/processed/projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "population_reconciliation": {
+    "total_observations": 64608,
+    "eligible_positives": 7344,
+    "eligible_negatives": 18700,
+    "censored_segment_boundary": 21489,
+    "censored_panel_exit": 2663,
+    "ineligible_layout_unsupported": 11993,
+    "ineligible_missing_baseline": 537,
+    "ineligible_baseline_completed": 1239,
+    "ineligible_future_missing": 643,
+    "reconciled": true,
+    "positive_prevalence": 0.2819843342036554,
+    "class_imbalance_ratio": 2.5462962962962963
+  },
+  "leakage_audit_summary": {
+    "is_leak_free": true,
+    "candidate_feature_count": 36,
+    "prohibited_count": 27
+  },
+  "viability_recommendation": {
+    "status": "VIABLE_WITH_LIMITATIONS",
+    "recommended_for_pr09": true,
+    "primary_rationale": "High statistical power (26,044 eligible observations, 7,344 positives, 28.20% prevalence) and balanced class ratio (~1:2.55) across Segments 3 & 4, supporting robust temporal walk-forward evaluation. Limitations include structural absence of physical progress in Segments 1 & 2 (2023-01 to 2024-03) and segment boundary censoring.",
+    "primary_bottlenecks": [
+      "structural_omission_segments_1_and_2",
+      "boundary_and_exit_censoring_24152_rows",
+      "administrative_self_reporting_proxy"
+    ]
+  },
+  "artifacts_generated": {
+    "target_population_summary": "artifacts\\ml\\implementation_risk_target_v1\\target_population_summary.csv",
+    "eligibility_summary": "artifacts\\ml\\implementation_risk_target_v1\\eligibility_summary.csv",
+    "temporal_feasibility": "artifacts\\ml\\implementation_risk_target_v1\\temporal_feasibility.csv",
+    "leakage_audit": "artifacts\\ml\\implementation_risk_target_v1\\leakage_audit.json",
+    "candidate_recommendation": "artifacts\\ml\\implementation_risk_target_v1\\candidate_recommendation.json"
+  }
+}

@@ -1,0 +1,5 @@
+identifier_regime,continuous_segment,total_rows,eligible_rows,positive_events,negative_events,positive_rate,censored_rows,ambiguous_or_ineligible_rows
+LEGACY,SEGMENT_1,18040,0,0,0,0.0,6047,11993
+LEGACY,SEGMENT_2,5596,0,0,0,0.0,5596,0
+LEGACY,SEGMENT_3,22371,14321,4335,9986,0.3027,5893,2157
+MODERN,SEGMENT_4,18601,11723,3009,8714,0.2567,6616,262
