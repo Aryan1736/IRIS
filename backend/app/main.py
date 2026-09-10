@@ -88,7 +88,18 @@ def create_application() -> FastAPI:
         include_in_schema=False,
     )(risk.predict_unified_risk_profile)
 
-
+    # 4e. Mount Model Registry endpoint at /api/ml/model-registry
+    app.get(
+        "/api/ml/model-registry",
+        tags=["Machine Learning"],
+        summary="Authoritative ML Model Registry Metadata",
+    )(risk.get_model_registry)
+    app.get(
+        f"{settings.API_V1_PREFIX}/ml/model-registry",
+        tags=["Machine Learning"],
+        summary="Authoritative ML Model Registry Metadata (v1)",
+        include_in_schema=False,
+    )(risk.get_model_registry)
 
     # 5. Root Info and Keep-Alive Ping Endpoints
     @app.get("/ping", tags=["Monitoring"], summary="Keep-Alive Ping")

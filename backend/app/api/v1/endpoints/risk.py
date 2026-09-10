@@ -322,3 +322,13 @@ def predict_unified_risk_profile(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
 
+
+@router.get(
+    "/model-registry",
+    summary="Get Authoritative ML Model Registry",
+    description="Retrieve authoritative ML Model Registry and Governance metadata covering all risk domains.",
+)
+def get_model_registry() -> dict[str, Any]:
+    from src.ml.model_registry import ModelRegistry
+    return ModelRegistry.load().to_dict(mask_internal_paths=True)
+

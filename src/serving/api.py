@@ -284,6 +284,21 @@ def create_app(
         except Exception as exc:
             raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
 
+    model_registry_instance: Any = None
+
+    def get_model_registry() -> Any:
+        nonlocal model_registry_instance
+        if model_registry_instance is None:
+            from src.ml.model_registry import ModelRegistry
+            model_registry_instance = ModelRegistry.load(root=repository_root)
+        return model_registry_instance
+
+    @app.get("/risk/model-registry")
+    @app.get("/api/ml/model-registry")
+    @app.get("/api/v1/ml/model-registry")
+    def model_registry() -> dict[str, Any]:
+        return get_model_registry().to_dict(mask_internal_paths=True)
+
     return app
 
 

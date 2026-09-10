@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_name": "ml_model_registry_v1",
+  "registry_version": "1.0.0",
+  "registry_id": "iris_ml_model_registry_v1",
+  "description": "Authoritative frozen schema and governance contract for the IRIS ML Model Registry.",
+  "generation_policy": "deterministic_authoritative_consolidation",
+  "governance_states": [
+    "LOCKED_PRODUCTION",
+    "VIABLE_WITH_LIMITATIONS",
+    "NOT_READY_FOR_PRODUCTION"
+  ],
+  "production_availability_states": [
+    "AVAILABLE",
+    "NOT_AVAILABLE",
+    "EVALUATION_ONLY",
+    "INELIGIBLE"
+  ],
+  "type": "object",
+  "required": [
+    "$schema",
+    "registry_version",
+    "registry_id",
+    "contract_name",
+    "description",
+    "generation_policy",
+    "canonical_datasets",
+    "source_contracts",
+    "source_manifests",
+    "domains"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "contract_name": { "type": "string", "const": "ml_model_registry_v1" },
+    "registry_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "registry_id": { "type": "string", "const": "iris_ml_model_registry_v1" },
+    "description": { "type": "string" },
+    "generation_policy": { "type": "string" },
+    "canonical_datasets": {
+      "type": "object",
+      "required": ["projects_monthly.csv", "projects_completed.csv"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "source_contracts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path", "version"],
+        "properties": {
+          "path": { "type": "string" },
+          "version": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "source_manifests": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "domains": {
+      "type": "object",
+      "required": ["schedule_3m", "cost_overrun", "implementation_risk"],
+      "additionalProperties": {
+        "$ref": "#/$defs/DomainRecord"
+      }
+    }
+  },
+  "$defs": {
+    "DomainRecord": {
+      "type": "object",
+      "required": [
+        "domain_id",
+        "domain_name",
+        "target",
+        "horizon_months",
+        "governance_status",
+        "production_availability",
+        "governance_rationale",
+        "models"
+      ],
+      "properties": {
+        "domain_id": { "type": "string" },
+        "domain_name": { "type": "string" },
+        "target": { "type": "string" },
+        "horizon_months": { "type": "integer", "enum": [3] },
+        "governance_status": {
+          "type": "string",
+          "enum": [
+            "LOCKED_PRODUCTION",
+            "VIABLE_WITH_LIMITATIONS",
+            "NOT_READY_FOR_PRODUCTION"
+          ]
+        },
+        "production_availability": {
+          "type": "string",
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "EVALUATION_ONLY",
+            "INELIGIBLE"
+          ]
+        },
+        "operational_decision_threshold": {
+          "type": ["number", "null"]
+        },
+        "governance_rationale": { "type": "string" },
+        "serving_behavior": { "type": "string" },
+        "safety_rule": { "type": "string" },
+        "models": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ModelRecord"
+          }
+        }
+      }
+    },
+    "ModelRecord": {
+      "type": "object",
+      "required": [
+        "model_id",
+        "model_name",
+        "model_version",
+        "model_family",
+        "domain",
+        "regime",
+        "candidate_type",
+        "target",
+        "horizon_months",
+        "validation_methodology",
+        "embargo_policy",
+        "features",
+        "governance_status",
+        "production_availability",
+        "limitations"
+      ],
+      "properties": {
+        "model_id": { "type": "string" },
+        "model_name": { "type": "string" },
+        "model_version": { "type": "string" },
+        "model_family": { "type": "string" },
+        "domain": { "type": "string" },
+        "regime": { "type": "string", "enum": ["LEGACY", "MODERN", "CROSS_REGIME", "NONE"] },
+        "candidate_type": { "type": "string", "enum": ["production", "baseline", "challenger"] },
+        "target": { "type": "string" },
+        "target_definition": {
+          "type": ["object", "string"]
+        },
+        "horizon_months": { "type": "integer", "enum": [3] },
+        "eligibility_population": { "type": "string" },
+        "training_metadata": {
+          "type": ["object", "null"]
+        },
+        "validation_methodology": { "type": "string" },
+        "embargo_policy": { "type": "string" },
+        "features": {
+          "type": "object",
+          "required": ["contract_reference", "feature_count", "ordered_names"],
+          "properties": {
+            "contract_reference": { "type": "string" },
+            "feature_count": { "type": "integer", "minimum": 1 },
+            "ordered_names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "categorical_features": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "leakage_exclusion_policy": { "type": "string" }
+          }
+        },
+        "artifact": {
+          "type": ["object", "null"],
+          "properties": {
+            "path": { "type": "string" },
+            "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+            "format": { "type": "string" },
+            "size_bytes": { "type": "integer" },
+            "version": { "type": "string" }
+          },
+          "required": ["path", "sha256", "format"]
+        },
+        "performance_metrics": {
+          "type": ["object", "null"]
+        },
+        "calibration": {
+          "type": "object",
+          "required": ["method", "status", "limitations"],
+          "properties": {
+            "method": { "type": "string" },
+            "status": { "type": "string" },
+            "limitations": { "type": "string" }
+          }
+        },
+        "threshold_policy": {
+          "type": "object",
+          "required": ["policy", "availability"],
+          "properties": {
+            "policy": { "type": "string" },
+            "threshold": { "type": ["number", "null"] },
+            "availability": { "type": "string" }
+          }
+        },
+        "explainability": {
+          "type": "object",
+          "required": ["method", "model_space_semantics", "limitations"],
+          "properties": {
+            "method": { "type": "string" },
+            "model_space_semantics": { "type": "string" },
+            "limitations": { "type": "string" }
+          }
+        },
+        "governance_status": {
+          "type": "string",
+          "enum": [
+            "LOCKED_PRODUCTION",
+            "VIABLE_WITH_LIMITATIONS",
+            "NOT_READY_FOR_PRODUCTION"
+          ]
+        },
+        "production_availability": {
+          "type": "string",
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "EVALUATION_ONLY",
+            "INELIGIBLE"
+          ]
+        },
+        "recommendation_status": { "type": "string" },
+        "intended_use": { "type": "string" },
+        "prohibited_use": { "type": "string" },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

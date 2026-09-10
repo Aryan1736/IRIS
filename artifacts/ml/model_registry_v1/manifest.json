@@ -1,0 +1,29 @@
+{
+  "canonical_inputs": {
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+  },
+  "contract_reference": "schemas/ml_model_registry_v1.contract.json",
+  "locked_schedule_artifacts": {
+    "legacy_catboost": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "modern_logistic": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "manifest_version": "1.0.0",
+  "registry_id": "iris_ml_model_registry_v1",
+  "registry_sha256": "5B6616D7E4A66EFD9CE00C97CF55E877E8FFBBA2DD49DD0A000998D56ED3FF0B",
+  "registry_version": "1.0.0",
+  "source_contracts": {
+    "cost_overrun_v1": "schemas/cost_overrun_v1.contract.json",
+    "implementation_risk_v1": "schemas/implementation_risk_v1.contract.json",
+    "schedule_extension_3m_v1": "schemas/schedule_extension_3m_v1.contract.json"
+  },
+  "source_manifests": {
+    "cost_overrun_model_v1": "artifacts/ml/cost_overrun_model_v1/manifest.json",
+    "implementation_risk_model_v1": "artifacts/ml/implementation_risk_model_v1/manifest.json",
+    "schedule_extension_3m": "artifacts/ml/schedule_extension_3m/manifest.json",
+    "schedule_final_evaluation": "artifacts/ml/schedule_extension_3m/final_evaluation/manifest.json",
+    "unified_risk_intelligence_v1": "artifacts/ml/unified_risk_intelligence_v1/manifest.json",
+    "unified_risk_serving_v1": "artifacts/ml/unified_risk_serving_v1/manifest.json"
+  },
+  "verification_policy": "fail_closed_strict_hash_verification"
+}
