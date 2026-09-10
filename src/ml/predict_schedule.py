@@ -175,13 +175,18 @@ class ScheduleExtensionPredictor:
                 raise ValueError(f"Unsupported regime '{regime}'. Must be 'LEGACY' or 'MODERN'.")
             if report_month is not None:
                 seg_info = segment_for_month(report_month)
-                if seg_info is not None:
-                    _, expected_regime = seg_info
-                    if regime_upper != expected_regime:
-                        raise ValueError(
-                            f"Declared regime '{regime_upper}' contradicts contract segment regime "
-                            f"'{expected_regime}' for month '{report_month}'."
-                        )
+                if seg_info is None:
+                    raise ValueError(
+                        f"Cannot assign report_month '{report_month}' to a continuous model segment. "
+                        "Month is unassigned, outside contract range, or falls in a structural gap month "
+                        "(e.g. 2023-12, 2024-04, 2024-05)."
+                    )
+                _, expected_regime = seg_info
+                if regime_upper != expected_regime:
+                    raise ValueError(
+                        f"Declared regime '{regime_upper}' contradicts contract segment regime "
+                        f"'{expected_regime}' for month '{report_month}'."
+                    )
             return regime_upper
 
         if report_month is not None:
