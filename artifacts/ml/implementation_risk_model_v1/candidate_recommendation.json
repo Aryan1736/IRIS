@@ -1,0 +1,45 @@
+{
+  "contract_version": "1.0.0",
+  "target": "target_progress_stagnation_3m",
+  "horizon_months": 3,
+  "evaluation_regimes": {
+    "LEGACY": {
+      "regime": "LEGACY",
+      "best_ranking_model": "catboost_balanced",
+      "best_ranking_micro_pr_auc": 0.688052768284784,
+      "best_calibrated_model": "catboost_unweighted",
+      "best_calibrated_brier_score": 0.12914451881045802,
+      "prevalence_pr_auc": 0.2839028375396586,
+      "pr_auc_lift_over_prevalence": 0.40415,
+      "challenger_vs_baseline_pr_auc_diff": 0.124302,
+      "operational_status": "READY_FOR_DECISION_SUPPORT",
+      "rationale": "In LEGACY, catboost_balanced achieves micro PR-AUC of 0.6881 vs prevalence baseline of 0.2839 (lift: +0.4041). CatBoost challenger outperforms Logistic baseline by +0.1243 PR-AUC."
+    },
+    "MODERN": {
+      "regime": "MODERN",
+      "best_ranking_model": "catboost_balanced",
+      "best_ranking_micro_pr_auc": 0.30986436891840163,
+      "best_calibrated_model": "logistic_unweighted",
+      "best_calibrated_brier_score": 0.1946952947716158,
+      "prevalence_pr_auc": 0.16148048915348034,
+      "pr_auc_lift_over_prevalence": 0.148384,
+      "challenger_vs_baseline_pr_auc_diff": 0.077825,
+      "operational_status": "VIABLE_WITH_LIMITATIONS",
+      "rationale": "In MODERN, catboost_balanced achieves micro PR-AUC of 0.3099 vs prevalence baseline of 0.1615 (lift: +0.1484). CatBoost challenger outperforms Logistic baseline by +0.0778 PR-AUC."
+    }
+  },
+  "overall_operational_recommendation": "VIABLE_WITH_LIMITATIONS",
+  "recommended_candidate": "catboost_unweighted",
+  "primary_recommendation_reasons": [
+    "CatBoost unweighted achieves the highest PR-AUC and ROC-AUC in both LEGACY (PR-AUC 0.6850, ROC-AUC 0.8665) and MODERN (PR-AUC 0.2953, ROC-AUC 0.6374) regimes.",
+    "In LEGACY, models demonstrate robust discriminatory capacity and strong precision lift (+0.4113 over prevalence).",
+    "In MODERN, models outperform the prevalence baseline (+0.0996 lift), but absolute precision is lower due to reporting dynamics shift following the July 2025 redesign.",
+    "Raw uncalibrated probabilities provide the lowest Brier score; historical Platt scaling does not reliably improve calibration.",
+    "Model is operationally viable for decision support and early risk screening with human review, rather than autonomous production gates."
+  ],
+  "operational_limitations": [
+    "Regime divergence: model performance in MODERN is noticeably lower than in LEGACY.",
+    "Physical progress remains an administrative self-reported metric subject to occasional batching.",
+    "Segments 1 and 2 structurally omit physical progress and cannot be used for historical training."
+  ]
+}
