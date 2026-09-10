@@ -1,0 +1,64 @@
+{
+  "artifact_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "target_name": "target_effective_cost_esc_3m",
+  "horizon_months": 3,
+  "tolerance_cr": 0.001,
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "path": "data\\processed\\projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "path": "data\\processed\\projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "reconciliation": {
+    "total_observations": 64608,
+    "eligible_positives": 865,
+    "eligible_negatives": 38828,
+    "censored_segment_boundary": 21489,
+    "censored_panel_exit": 2663,
+    "ineligible_baseline_ambiguous": 562,
+    "ineligible_future_ambiguous": 201,
+    "ineligible_missing_baseline": 0,
+    "ineligible_zero_baseline": 0,
+    "reconciled": true,
+    "positive_prevalence": 0.021792255561434007,
+    "class_imbalance_ratio": 44.8878612716763
+  },
+  "completed_projects_audit": {
+    "total_completed": 876,
+    "valid_baseline_cost": 851,
+    "missing_baseline_cost": 25,
+    "revised_cost_reported_completed": 170,
+    "revised_cost_missing_completed": 706,
+    "completed_revised_gt_orig": 98,
+    "terminal_linked_revised_present": 470,
+    "terminal_linked_revised_gt_orig": 239,
+    "ongoing_projects_never_completed": 3862,
+    "ongoing_observations_uncompleted": 54106,
+    "viability_status": "NOT_YET_VIABLE",
+    "primary_bottlenecks": [
+      "extreme_right_censoring_81.5_pct_ongoing_projects",
+      "outcome_missingness_80.6_pct_completed_revised_cost_null",
+      "survivorship_bias_only_completed_projects_observed",
+      "sector_concentration_over_50_pct_road_transport",
+      "temporal_clustering_june_2026_and_oct_2024"
+    ]
+  },
+  "viability_recommendation": {
+    "status": "VIABLE_WITH_LIMITATIONS",
+    "primary_target": "target_effective_cost_esc_3m",
+    "summary": "Rolling 3-month cost escalation is viable for supervised learning within continuous segments using expanding-origin walk-forward validation and imbalanced learning methods. Lifecycle completed-project modeling is NOT_YET_VIABLE."
+  },
+  "artifacts_generated": {
+    "target_population_summary": "artifacts\\ml\\cost_overrun_target_v1\\target_population_summary.csv",
+    "eligibility_summary": "artifacts\\ml\\cost_overrun_target_v1\\eligibility_summary.csv",
+    "temporal_feasibility": "artifacts\\ml\\cost_overrun_target_v1\\temporal_feasibility.csv",
+    "leakage_audit": "artifacts\\ml\\cost_overrun_target_v1\\leakage_audit.json"
+  }
+}

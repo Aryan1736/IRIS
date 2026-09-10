@@ -1,0 +1,14 @@
+metric,value
+total_source_observations,64608
+eligible_observations,39693
+eligible_positives,865
+eligible_negatives,38828
+positive_prevalence_pct,2.18
+class_imbalance_ratio,1:44.9
+censored_segment_boundary,21489
+censored_panel_exit,2663
+total_censored,24152
+ineligible_baseline_ambiguous,562
+ineligible_future_ambiguous,201
+total_ambiguous,763
+population_reconciled_exact,True
