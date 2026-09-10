@@ -62,6 +62,19 @@ def create_application() -> FastAPI:
     from backend.app.api.v1.endpoints import risk
     app.include_router(risk.router, prefix="/risk", tags=["Risk Intelligence (Direct)"], include_in_schema=False)
 
+    # 4c. Mount Unified Risk prediction endpoint at /api/ml/unified-risk
+    app.post(
+        "/api/ml/unified-risk",
+        tags=["Machine Learning"],
+        summary="Unified Multi-Domain Risk Prediction",
+    )(risk.predict_unified_risk)
+    app.post(
+        f"{settings.API_V1_PREFIX}/ml/unified-risk",
+        tags=["Machine Learning"],
+        summary="Unified Multi-Domain Risk Prediction (v1)",
+        include_in_schema=False,
+    )(risk.predict_unified_risk)
+
 
     # 5. Root Info and Keep-Alive Ping Endpoints
     @app.get("/ping", tags=["Monitoring"], summary="Keep-Alive Ping")

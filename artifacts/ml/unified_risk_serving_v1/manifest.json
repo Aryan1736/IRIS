@@ -1,0 +1,70 @@
+{
+  "manifest_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "serving_layer": "unified_risk_serving_v1",
+  "description": "Unified, deterministic, fail-closed multi-domain serving layer for IRIS PR-10.",
+  "deterministic": true,
+  "canonical_inputs": {
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+  },
+  "locked_schedule_artifacts": {
+    "manifest": "artifacts/ml/schedule_extension_3m/manifest.json",
+    "legacy_model": {
+      "path": "artifacts/ml/schedule_extension_3m/legacy_catboost/model.cbm",
+      "sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+      "model_identifier": "catboost_full_v1__unweighted",
+      "regime": "LEGACY"
+    },
+    "modern_model": {
+      "path": "artifacts/ml/schedule_extension_3m/modern_logistic/model.joblib",
+      "sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+      "model_identifier": "logistic_static_only__unweighted",
+      "regime": "MODERN"
+    }
+  },
+  "domains": {
+    "schedule_extension": {
+      "target": "target_effective_schedule_ext_3m",
+      "horizon_months": 3,
+      "governance_status": "LOCKED_PRODUCTION",
+      "operational_decision_rule": "risk_score >= 0.50",
+      "threshold": 0.50,
+      "serving_status": "AVAILABLE",
+      "inference_module": "src/ml/predict_schedule.py"
+    },
+    "cost_overrun": {
+      "target": "target_effective_cost_esc_3m",
+      "horizon_months": 3,
+      "governance_status": "NOT_READY_FOR_PRODUCTION",
+      "operational_decision_rule": "NONE (PROHIBITED FROM PRODUCTION GATES)",
+      "threshold": null,
+      "serving_status": "NOT_AVAILABLE",
+      "rationale": "Severe class imbalance (~2.18%) and low PR-AUC lift under PR-07 walk-forward evaluation. No production model artifact deployed."
+    },
+    "implementation_risk": {
+      "target": "target_progress_stagnation_3m",
+      "horizon_months": 3,
+      "governance_status": "VIABLE_WITH_LIMITATIONS",
+      "operational_decision_rule": "DECISION_SUPPORT_HUMAN_REVIEW_ONLY",
+      "threshold": null,
+      "serving_status": "NOT_AVAILABLE",
+      "rationale": "PR-09 provided evaluation-only artifacts; no production model artifact is serialized in artifacts/ml/implementation_risk_model_v1/. Dynamic retraining at inference time is prohibited."
+    }
+  },
+  "api_endpoints": [
+    "POST /api/ml/unified-risk",
+    "POST /api/v1/ml/unified-risk",
+    "POST /api/v1/risk/unified",
+    "POST /risk/unified"
+  ],
+  "validation_rules": {
+    "fail_closed": true,
+    "reject_unknown_features": true,
+    "reject_prohibited_leakage": true,
+    "reject_nan": true,
+    "reject_infinity": true,
+    "reject_regime_contradiction": true,
+    "reject_structural_gaps": true
+  }
+}
