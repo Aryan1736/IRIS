@@ -75,6 +75,20 @@ def create_application() -> FastAPI:
         include_in_schema=False,
     )(risk.predict_unified_risk)
 
+    # 4d. Mount Unified Risk Profile endpoint at /api/ml/unified-risk-profile
+    app.post(
+        "/api/ml/unified-risk-profile",
+        tags=["Machine Learning"],
+        summary="Unified Multi-Domain Project Risk Profile",
+    )(risk.predict_unified_risk_profile)
+    app.post(
+        f"{settings.API_V1_PREFIX}/ml/unified-risk-profile",
+        tags=["Machine Learning"],
+        summary="Unified Multi-Domain Project Risk Profile (v1)",
+        include_in_schema=False,
+    )(risk.predict_unified_risk_profile)
+
+
 
     # 5. Root Info and Keep-Alive Ping Endpoints
     @app.get("/ping", tags=["Monitoring"], summary="Keep-Alive Ping")

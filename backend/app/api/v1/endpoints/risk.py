@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.app.services.risk_service import (
     get_serving_repository,
+    get_unified_risk_intelligence,
     get_unified_risk_predictor,
 )
 from src.serving.repository import ServingRepository, score_distribution
@@ -18,6 +19,8 @@ from src.serving.schemas import (
     ProjectListResponse,
     RiskRecord,
     SummaryResponse,
+    UnifiedRiskProfileRequest,
+    UnifiedRiskProfileResponse,
     UnifiedRiskRequest,
     UnifiedRiskResponse,
 )
@@ -289,3 +292,33 @@ def predict_unified_risk(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
+
+
+@router.post(
+    "/profile",
+    response_model=UnifiedRiskProfileResponse,
+    summary="Unified Multi-Domain Project Risk Profile",
+    description=(
+        "Generate a deterministic, governance-aware Project Risk Profile synthesizing "
+        "Schedule Extension, Cost Overrun, and Implementation Risk. Enforces strict prohibitions "
+        "on arbitrary probability aggregation while providing priority ordering, attention level, "
+        "human-review recommendations, and explicit limitations."
+    ),
+)
+@router.post(
+    "/unified-profile",
+    response_model=UnifiedRiskProfileResponse,
+    include_in_schema=False,
+)
+def predict_unified_risk_profile(
+    request: UnifiedRiskProfileRequest,
+    intelligence: Any = Depends(get_unified_risk_intelligence),
+) -> dict[str, Any]:
+    payload = request.model_dump()
+    try:
+        return intelligence.predict_one(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
+
