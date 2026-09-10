@@ -1,0 +1,63 @@
+{
+  "candidate_feature_count": 36,
+  "prohibited_count": 27,
+  "is_leak_free": true,
+  "direct_leakage_fields": [],
+  "metadata_leakage_fields": [],
+  "allowed_input_families": {
+    "static_categoricals": [
+      "sector",
+      "agency",
+      "state"
+    ],
+    "static_cost_financial": [
+      "original_cost",
+      "revised_cost_t",
+      "cumulative_expenditure_t",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised"
+    ],
+    "schedule": [
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start"
+    ],
+    "progress": [
+      "physical_progress_t"
+    ],
+    "missingness_presence_indicators": [
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported"
+    ],
+    "historical_expenditure": [
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m"
+    ],
+    "historical_progress": [
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m"
+    ],
+    "historical_schedule_cost_revision_counts": [
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months"
+    ],
+    "delta_support": [
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ]
+  }
+}

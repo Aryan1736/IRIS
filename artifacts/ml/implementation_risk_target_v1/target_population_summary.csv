@@ -1,0 +1,16 @@
+metric,value
+total_observations,64608
+eligible_positives,7344
+eligible_negatives,18700
+eligible_total,26044
+positive_prevalence,0.281984
+class_imbalance_ratio,2.5463
+censored_segment_boundary,21489
+censored_panel_exit,2663
+censored_total,24152
+ineligible_layout_unsupported,11993
+ineligible_missing_baseline,537
+ineligible_baseline_completed,1239
+ineligible_future_missing,643
+ineligible_total,14412
+reconciled,True

@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_name": "implementation_risk_v1",
+  "dataset_name": "implementation_risk_v1",
+  "contract_version": "1.0.0",
+  "dataset_type": "implementation_risk_prediction",
+  "description": "Authoritative frozen ML data contract and target definition for IRIS 3-month implementation-risk / physical-progress stagnation prediction pipeline.",
+  "target": {
+    "name": "target_progress_stagnation_3m",
+    "horizon_months": 3,
+    "tolerance_percentage": 0.000001,
+    "description": "Observable physical progress stagnation or deterioration over forward H=3 months window within continuous segment for an actively ongoing project.",
+    "baseline_definition": "Reported physical_progress at prediction origin T satisfying 0.0 <= physical_progress < 100.0.",
+    "positive_rule": "physical_progress(T+3) - physical_progress(T) <= 1e-6 (physical works failed to advance, progress stalled at zero delta, or progress was revised downward over 3 months).",
+    "negative_rule": "physical_progress(T+3) - physical_progress(T) > 1e-6 with complete same-segment T+1..T+3 reported physical progress values.",
+    "ambiguity_rules": {
+      "LAYOUT_PROGRESS_UNSUPPORTED": "Report months in Segments 1 and 2 where the MoSPI Flash Report layout structurally omitted physical progress percentage.",
+      "MISSING_BASELINE_PROGRESS": "physical_progress at prediction origin T is null or unreported.",
+      "BASELINE_ALREADY_COMPLETED": "physical_progress at prediction origin T >= 100.0 (project is already completed on the ground; lack of further advance is expected completion, not stagnation).",
+      "FUTURE_PROGRESS_MISSING": "Project is continuously observed in T+1..T+3, but physical_progress is null/missing in one or more forward window months."
+    },
+    "progress_subtypes": {
+      "ZERO_ADVANCE": "Delta physical progress == 0.0 (physical works completely flat over 3 months).",
+      "DETERIORATION": "Delta physical progress < 0.0 (administrative downward revision of physical progress).",
+      "ADVANCE": "Delta physical progress > 0.0 (positive physical advancement on the ground; negative label)."
+    }
+  },
+  "audited_candidates": {
+    "candidate_1_rolling_progress_stagnation": {
+      "name": "target_progress_stagnation_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4, N=26,044 eligible)",
+      "baseline_field": "physical_progress(T)",
+      "outcome_field": "physical_progress(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "structural_omission_segments_1_and_2",
+        "segment_and_regime_boundary_censoring",
+        "administrative_self_reporting_proxy"
+      ]
+    },
+    "candidate_2_dual_stagnation": {
+      "name": "target_dual_stagnation_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4, N=26,044 eligible)",
+      "baseline_field": "physical_progress(T) and cumulative_expenditure(T)",
+      "outcome_field": "physical_progress(T+3) and cumulative_expenditure(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "structural_omission_segments_1_and_2",
+        "narrower_event_definition_misses_unproductive_expenditure"
+      ]
+    },
+    "candidate_3_progress_deterioration": {
+      "name": "target_progress_deterioration_3m",
+      "scope": "projects_monthly.csv (Segments 3 & 4)",
+      "baseline_field": "physical_progress(T)",
+      "outcome_field": "physical_progress(T+3)",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "severe_class_rarity_2.3_percent_prevalence",
+        "insufficient_temporal_positives_for_walk_forward_folds"
+      ]
+    },
+    "candidate_4_expenditure_stagnation": {
+      "name": "target_expenditure_stagnation_3m",
+      "scope": "projects_monthly.csv (All Segments, N=40,456 complete windows)",
+      "baseline_field": "cumulative_expenditure(T)",
+      "outcome_field": "cumulative_expenditure(T+3)",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "financial_disbursement_cycle_proxy_rather_than_implementation",
+        "known_mospi_anomalies_expenditure_with_zero_progress"
+      ]
+    },
+    "candidate_5_lifecycle_completed_implementation": {
+      "name": "target_completed_implementation_overrun",
+      "scope": "projects_completed.csv (N=876)",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "extreme_right_censoring_81.5_pct_ongoing_projects",
+        "physical_progress_column_absent_in_completed_dataset",
+        "survivorship_bias_only_completed_projects_observed"
+      ]
+    }
+  },
+  "features": {
+    "count": 36,
+    "ordered_names": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "families": {
+      "static_categoricals": [
+        "sector",
+        "agency",
+        "state"
+      ],
+      "static_cost_financial": [
+        "original_cost",
+        "revised_cost_t",
+        "cumulative_expenditure_t",
+        "expenditure_to_original_cost_ratio",
+        "revised_to_original_cost_ratio",
+        "cost_has_been_revised"
+      ],
+      "schedule": [
+        "project_age_months",
+        "months_to_original_schedule",
+        "months_to_effective_schedule",
+        "schedule_revision_lag_months",
+        "schedule_has_been_revised",
+        "months_since_start"
+      ],
+      "progress": [
+        "physical_progress_t"
+      ],
+      "missingness_presence_indicators": [
+        "state_is_missing",
+        "approval_date_is_missing",
+        "original_completion_date_is_missing",
+        "revised_cost_is_present",
+        "revised_date_is_present",
+        "physical_progress_is_present",
+        "physical_progress_supported",
+        "start_date_is_present",
+        "start_date_supported"
+      ],
+      "historical_expenditure": [
+        "exp_delta_1m",
+        "exp_delta_3m",
+        "past_exp_stagnant_3m"
+      ],
+      "historical_progress": [
+        "past_progress_delta_3m",
+        "past_progress_stagnant_3m"
+      ],
+      "historical_schedule_cost_revision_counts": [
+        "n_prior_schedule_extensions",
+        "n_prior_cost_revisions",
+        "observed_tenure_months"
+      ],
+      "delta_support": [
+        "exp_delta_1m_is_supported",
+        "exp_delta_3m_is_supported",
+        "progress_delta_3m_is_supported"
+      ]
+    }
+  },
+  "columns": {
+    "identifiers": [
+      "project_code"
+    ],
+    "metadata_only": [
+      "project_code",
+      "report_month",
+      "identifier_regime",
+      "continuous_segment",
+      "target_horizon_months",
+      "target_window_end_month",
+      "target_progress_stagnation_3m",
+      "progress_stagnation_subtype",
+      "delta_physical_progress_3m",
+      "baseline_progress",
+      "future_progress_t3"
+    ],
+    "leakage_strictly_prohibited": [
+      "target_progress_stagnation_3m",
+      "progress_stagnation_subtype",
+      "delta_physical_progress_3m",
+      "baseline_progress",
+      "future_progress_t3",
+      "target_window_end_month",
+      "target_extension_3m",
+      "target_effective_cost_esc_3m",
+      "cost_revision_type",
+      "cost_diff",
+      "target_event_month",
+      "target_event_revised_cost",
+      "eventually_completed",
+      "completion_report_month",
+      "actual_completion_date",
+      "completed_revised_cost",
+      "completed_cumulative_expenditure",
+      "project_code",
+      "project_name",
+      "legacy_ocms_code",
+      "pmgid",
+      "source_file",
+      "source_page",
+      "source_pages",
+      "source_row_number",
+      "source_serial_number",
+      "extraction_method"
+    ]
+  },
+  "embargo": {
+    "rule": "strict_walk_forward",
+    "formula": "T + 3 < E (i.e. month_index(add_months(T, 3)) < month_index(E))",
+    "horizon_months": 3,
+    "description": "For evaluation reference month E, training observation T is usable only when the forward prediction window strictly ends before E."
+  },
+  "continuous_segments": [
+    {
+      "name": "SEGMENT_1",
+      "identifier_regime": "LEGACY",
+      "start": "2023-01",
+      "end": "2023-11",
+      "physical_progress_supported": false
+    },
+    {
+      "name": "SEGMENT_2",
+      "identifier_regime": "LEGACY",
+      "start": "2024-01",
+      "end": "2024-03",
+      "physical_progress_supported": false
+    },
+    {
+      "name": "SEGMENT_3",
+      "identifier_regime": "LEGACY",
+      "start": "2024-06",
+      "end": "2025-06",
+      "physical_progress_supported": true
+    },
+    {
+      "name": "SEGMENT_4",
+      "identifier_regime": "MODERN",
+      "start": "2025-07",
+      "end": "2026-07",
+      "physical_progress_supported": true
+    }
+  ],
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "relative_path": "data/processed/projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "relative_path": "data/processed/projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "expected_dataset_metrics": {
+    "total_source_rows": 64608,
+    "eligible_rows": {
+      "LEGACY": 14321,
+      "MODERN": 11723,
+      "TOTAL": 26044
+    },
+    "eligible_positives": {
+      "LEGACY": 4335,
+      "MODERN": 3009,
+      "TOTAL": 7344
+    },
+    "eligible_negatives": {
+      "LEGACY": 9986,
+      "MODERN": 8714,
+      "TOTAL": 18700
+    },
+    "censored_rows": {
+      "segment_boundary": 21489,
+      "panel_exit": 2663,
+      "total_censored": 24152
+    },
+    "ambiguous_or_ineligible_rows": {
+      "layout_progress_unsupported": 11993,
+      "missing_baseline_progress": 537,
+      "baseline_already_completed": 1239,
+      "future_progress_missing": 643,
+      "total_ambiguous_or_ineligible": 14412
+    },
+    "reconciliation": {
+      "total_accounted": 64608,
+      "is_exact": true,
+      "positive_prevalence": 0.281984,
+      "class_imbalance_ratio": 2.546296
+    }
+  },
+  "policies": {
+    "determinism": "All classifications, right-censoring detections, ambiguity filters, and population accountings must be 100% deterministic with zero randomness.",
+    "canonical_immutability": "Canonical processed datasets under data/processed/ must never be modified by target classification or evaluation tooling.",
+    "fail_closed_leakage": "Any candidate feature matching prohibited metadata, future outcome, or identifier columns triggers an immediate fatal ContractValidationError.",
+    "strict_embargo": "Equality T + H == E is strictly rejected; only observations strictly completing before evaluation origin E (T + H < E) are eligible for training."
+  },
+  "viability_recommendation": {
+    "status": "VIABLE_WITH_LIMITATIONS",
+    "recommended_for_pr09": true,
+    "primary_rationale": "High statistical power (26,044 eligible observations, 7,344 positives, 28.20% prevalence) and balanced class ratio (~1:2.55) across Segments 3 & 4, supporting robust temporal walk-forward evaluation. Limitations include structural absence of physical progress in Segments 1 & 2 (2023-01 to 2024-03) and segment boundary censoring.",
+    "primary_bottlenecks": [
+      "structural_omission_segments_1_and_2",
+      "boundary_and_exit_censoring_24152_rows",
+      "administrative_self_reporting_proxy"
+    ]
+  }
+}
