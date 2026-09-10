@@ -332,3 +332,14 @@ def get_model_registry() -> dict[str, Any]:
     from src.ml.model_registry import ModelRegistry
     return ModelRegistry.load().to_dict(mask_internal_paths=True)
 
+
+@router.get(
+    "/platform-contract",
+    summary="Get Authoritative ML Platform Integration Contract",
+    description="Retrieve authoritative ML Platform Integration Contract metadata, schemas, domain definitions, and governance boundaries.",
+)
+def get_platform_contract() -> dict[str, Any]:
+    from src.ml.platform_contract import MLPlatformContract
+    return MLPlatformContract.load().to_dict(mask_internal_paths=True)
+
+

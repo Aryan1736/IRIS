@@ -416,3 +416,33 @@ def test_unified_risk_profile_endpoint_leakage_rejection(client: TestClient, tes
     assert resp.status_code == 422
 
 
+def test_platform_contract_endpoints(client: TestClient, test_serving_repo: ServingRepository) -> None:
+    """Test platform contract endpoints across /api/ml/platform-contract and /risk/platform-contract."""
+    resp1 = client.get("/api/ml/platform-contract")
+    assert resp1.status_code == 200
+    data = resp1.json()
+    assert data["contract_id"] == "iris_ml_platform_contract_v1"
+    assert data["contract_version"] == "1.0.0"
+    assert "domains" in data
+    assert "schedule_3m" in data["domains"]
+    assert "cost_overrun" in data["domains"]
+    assert "implementation_risk" in data["domains"]
+    assert "unified_profile" in data
+
+    # Route /risk/platform-contract
+    resp2 = client.get("/risk/platform-contract")
+    assert resp2.status_code == 200
+    assert resp2.json() == data
+
+    # Route /api/v1/ml/platform-contract
+    resp3 = client.get("/api/v1/ml/platform-contract")
+    assert resp3.status_code == 200
+    assert resp3.json() == data
+
+    # Ensure path masking
+    text = resp1.text
+    assert "D:\\Coding" not in text
+    assert "d:/coding" not in text.lower()
+
+
+

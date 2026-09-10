@@ -1,0 +1,26 @@
+{
+  "canonical_inputs": {
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+  },
+  "contract_id": "iris_ml_platform_contract_v1",
+  "contract_reference": "schemas/ml_platform_contract_v1.contract.json",
+  "contract_sha256": "5270D6CA815B1A0F2B755AAE7EF61820402F59C8B400FC837574E7507C653093",
+  "contract_version": "1.0.0",
+  "generation_policy": "deterministic_platform_contract_derivation",
+  "locked_schedule_artifacts": {
+    "legacy_catboost": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "modern_logistic": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "manifest_version": "1.0.0",
+  "registry_id": "iris_ml_model_registry_v1",
+  "registry_sha256": "154723648FD9A88B3C822A1CEDF0901D431F0C01F0DB21D44454DFCEB094911E",
+  "registry_version": "1.0.0",
+  "upstream_contracts": {
+    "cost_overrun_v1": "schemas/cost_overrun_v1.contract.json",
+    "implementation_risk_v1": "schemas/implementation_risk_v1.contract.json",
+    "ml_model_registry_v1": "schemas/ml_model_registry_v1.contract.json",
+    "schedule_extension_3m_v1": "schemas/schedule_extension_3m_v1.contract.json"
+  },
+  "verification_policy": "fail_closed_strict_hash_and_registry_verification"
+}

@@ -299,6 +299,22 @@ def create_app(
     def model_registry() -> dict[str, Any]:
         return get_model_registry().to_dict(mask_internal_paths=True)
 
+    platform_contract_instance: Any = None
+
+    def get_platform_contract() -> Any:
+        nonlocal platform_contract_instance
+        if platform_contract_instance is None:
+            from src.ml.platform_contract import MLPlatformContract
+            platform_contract_instance = MLPlatformContract.load(root=repository_root)
+        return platform_contract_instance
+
+    @app.get("/risk/platform-contract")
+    @app.get("/api/ml/platform-contract")
+    @app.get("/api/v1/ml/platform-contract")
+    def platform_contract() -> dict[str, Any]:
+        return get_platform_contract().to_dict(mask_internal_paths=True)
+
+
     return app
 
 

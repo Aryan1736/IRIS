@@ -101,6 +101,20 @@ def create_application() -> FastAPI:
         include_in_schema=False,
     )(risk.get_model_registry)
 
+    # 4f. Mount Platform Contract endpoint at /api/ml/platform-contract
+    app.get(
+        "/api/ml/platform-contract",
+        tags=["Machine Learning"],
+        summary="Authoritative ML Platform Integration Contract",
+    )(risk.get_platform_contract)
+    app.get(
+        f"{settings.API_V1_PREFIX}/ml/platform-contract",
+        tags=["Machine Learning"],
+        summary="Authoritative ML Platform Integration Contract (v1)",
+        include_in_schema=False,
+    )(risk.get_platform_contract)
+
+
     # 5. Root Info and Keep-Alive Ping Endpoints
     @app.get("/ping", tags=["Monitoring"], summary="Keep-Alive Ping")
     @app.get(f"{settings.API_V1_PREFIX}/ping", tags=["Monitoring"], summary="Keep-Alive Ping (v1)")

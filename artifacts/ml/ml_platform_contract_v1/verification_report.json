@@ -1,0 +1,133 @@
+{
+  "checks": [
+    {
+      "check": "platform_contract_structure",
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "check": "schema_contract_file_exists",
+      "path": "schemas/ml_platform_contract_v1.contract.json",
+      "status": "PASS"
+    },
+    {
+      "actual_sha256": "154723648FD9A88B3C822A1CEDF0901D431F0C01F0DB21D44454DFCEB094911E",
+      "check": "model_registry_sha256_match",
+      "referenced_sha256": "154723648FD9A88B3C822A1CEDF0901D431F0C01F0DB21D44454DFCEB094911E",
+      "status": "PASS"
+    },
+    {
+      "check": "domain_ids_match",
+      "contract_domains": [
+        "cost_overrun",
+        "implementation_risk",
+        "schedule_3m"
+      ],
+      "registry_domains": [
+        "cost_overrun",
+        "implementation_risk",
+        "schedule_3m"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "domain_metadata_consistency_cost_overrun",
+      "domain_id": "cost_overrun",
+      "mismatches": [],
+      "status": "PASS"
+    },
+    {
+      "check": "models_consistency_cost_overrun",
+      "contract_models": [
+        "baseline",
+        "challenger"
+      ],
+      "domain_id": "cost_overrun",
+      "registry_models": [
+        "baseline",
+        "challenger"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_cost_overrun_baseline",
+      "mismatches": [],
+      "model_id": "cost_overrun_baseline_logistic",
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_cost_overrun_challenger",
+      "mismatches": [],
+      "model_id": "cost_overrun_challenger_catboost",
+      "status": "PASS"
+    },
+    {
+      "check": "domain_metadata_consistency_implementation_risk",
+      "domain_id": "implementation_risk",
+      "mismatches": [],
+      "status": "PASS"
+    },
+    {
+      "check": "models_consistency_implementation_risk",
+      "contract_models": [
+        "baseline",
+        "challenger"
+      ],
+      "domain_id": "implementation_risk",
+      "registry_models": [
+        "baseline",
+        "challenger"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_implementation_risk_baseline",
+      "mismatches": [],
+      "model_id": "implementation_risk_baseline_logistic",
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_implementation_risk_challenger",
+      "mismatches": [],
+      "model_id": "implementation_risk_challenger_catboost",
+      "status": "PASS"
+    },
+    {
+      "check": "domain_metadata_consistency_schedule_3m",
+      "domain_id": "schedule_3m",
+      "mismatches": [],
+      "status": "PASS"
+    },
+    {
+      "check": "models_consistency_schedule_3m",
+      "contract_models": [
+        "legacy",
+        "modern"
+      ],
+      "domain_id": "schedule_3m",
+      "registry_models": [
+        "legacy",
+        "modern"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_schedule_3m_legacy",
+      "mismatches": [],
+      "model_id": "schedule_legacy_catboost",
+      "status": "PASS"
+    },
+    {
+      "check": "model_record_schedule_3m_modern",
+      "mismatches": [],
+      "model_id": "schedule_modern_logistic",
+      "status": "PASS"
+    }
+  ],
+  "checks_count": 16,
+  "contract_id": "iris_ml_platform_contract_v1",
+  "contract_version": "1.0.0",
+  "failed_checks_count": 0,
+  "overall_status": "PASS",
+  "timestamp": "2026-09-10T10:18:16.182974+00:00"
+}
