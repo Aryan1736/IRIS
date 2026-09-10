@@ -382,3 +382,37 @@ def test_unified_risk_endpoint_leakage_rejection(client: TestClient, test_servin
     resp = client.post("/api/ml/unified-risk", json=bad)
     assert resp.status_code == 422
 
+
+def test_unified_risk_profile_endpoint_valid(client: TestClient, test_serving_repo: ServingRepository) -> None:
+    """Test unified risk profile endpoint across /api/ml/unified-risk-profile and /api/v1/risk/profile."""
+    from tests.test_ml_unified_risk_serving import TestUnifiedRiskServing
+    TestUnifiedRiskServing.setUpClass()
+    sample = TestUnifiedRiskServing.sample_modern_dict
+
+    resp = client.post("/api/ml/unified-risk-profile", json=sample)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["profile"]["overall_status"] == "PARTIAL"
+    assert data["profile"]["coverage_status"] == "PARTIAL_COVERAGE"
+    assert "priority_domains" in data["profile"]
+    assert "attention_level" in data["profile"]
+    assert "recommendations" in data["profile"]
+    assert "limitations" in data["profile"]
+
+    # Also test /api/v1/risk/profile
+    resp_v1 = client.post("/api/v1/risk/profile", json=sample)
+    assert resp_v1.status_code == 200
+    assert resp_v1.json() == data
+
+
+def test_unified_risk_profile_endpoint_leakage_rejection(client: TestClient, test_serving_repo: ServingRepository) -> None:
+    """Test unified risk profile endpoint rejects prohibited leakage fields with 422."""
+    from tests.test_ml_unified_risk_serving import TestUnifiedRiskServing
+    TestUnifiedRiskServing.setUpClass()
+    bad = dict(TestUnifiedRiskServing.sample_modern_dict)
+    bad["target_effective_schedule_ext_3m"] = 1.0
+
+    resp = client.post("/api/ml/unified-risk-profile", json=bad)
+    assert resp.status_code == 422
+
+

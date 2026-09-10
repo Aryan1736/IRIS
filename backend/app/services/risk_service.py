@@ -49,6 +49,7 @@ def get_serving_repository(artifact_dir: Path | None = None) -> ServingRepositor
 
 
 _CACHED_UNIFIED_PREDICTOR: Any = None
+_CACHED_UNIFIED_INTELLIGENCE: Any = None
 
 
 def get_unified_risk_predictor(artifacts_dir: Path | str | None = None) -> Any:
@@ -61,10 +62,22 @@ def get_unified_risk_predictor(artifacts_dir: Path | str | None = None) -> Any:
     return _CACHED_UNIFIED_PREDICTOR
 
 
+def get_unified_risk_intelligence(artifacts_dir: Path | str | None = None) -> Any:
+    """Retrieve or initialize the cached UnifiedRiskIntelligence layer."""
+    global _CACHED_UNIFIED_INTELLIGENCE
+    if _CACHED_UNIFIED_INTELLIGENCE is None:
+        from src.ml.unified_risk_intelligence import UnifiedRiskIntelligence
+        predictor = get_unified_risk_predictor(artifacts_dir=artifacts_dir)
+        _CACHED_UNIFIED_INTELLIGENCE = UnifiedRiskIntelligence(predictor=predictor)
+    return _CACHED_UNIFIED_INTELLIGENCE
+
+
 def reset_cached_repository() -> None:
     """Reset cached repository and predictor instances (useful for hermetic test fixtures)."""
-    global _CACHED_REPOSITORY, _CACHED_DIR, _CACHED_UNIFIED_PREDICTOR
+    global _CACHED_REPOSITORY, _CACHED_DIR, _CACHED_UNIFIED_PREDICTOR, _CACHED_UNIFIED_INTELLIGENCE
     _CACHED_REPOSITORY = None
     _CACHED_DIR = None
     _CACHED_UNIFIED_PREDICTOR = None
+    _CACHED_UNIFIED_INTELLIGENCE = None
+
 

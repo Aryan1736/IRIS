@@ -1,0 +1,38 @@
+{
+  "governance_specification_version": "1.0.0",
+  "domains": {
+    "schedule_extension": {
+      "name": "Schedule Extension Risk (3-Month Horizon)",
+      "target": "target_effective_schedule_ext_3m",
+      "governance_status": "LOCKED_PRODUCTION",
+      "operational_decision_threshold": 0.50,
+      "production_capable": true,
+      "locked_models": {
+        "legacy": "catboost_full_v1__unweighted",
+        "modern": "logistic_static_only__unweighted"
+      },
+      "serving_behavior": "Evaluates live scores against 0.50 threshold via ScheduleExtensionPredictor.",
+      "causal_disclaimer": "Predictions are non-causal statistical associations based on historical reporting patterns."
+    },
+    "cost_overrun": {
+      "name": "Cost Overrun Risk (3-Month Horizon)",
+      "target": "target_effective_cost_esc_3m",
+      "governance_status": "NOT_READY_FOR_PRODUCTION",
+      "operational_decision_threshold": null,
+      "production_capable": false,
+      "governance_rationale": "Under PR-07 walk-forward evaluation, cost escalation exhibited extreme class imbalance (~2.18% base rate) and marginal precision lift. No model is approved for autonomous operational scoring.",
+      "serving_behavior": "Returns status=NOT_AVAILABLE with null score, prediction, and threshold. Fails closed.",
+      "safety_rule": "Missing score must NEVER be treated as evidence of zero or low cost overrun risk."
+    },
+    "implementation_risk": {
+      "name": "Implementation Risk / Progress Stagnation (3-Month Horizon)",
+      "target": "target_progress_stagnation_3m",
+      "governance_status": "VIABLE_WITH_LIMITATIONS",
+      "operational_decision_threshold": null,
+      "production_capable": false,
+      "governance_rationale": "Under PR-09 walk-forward evaluation, progress stagnation modeling showed viable predictive signal with human review limitations. However, no serialized production inference artifact is deployed in artifacts/ml/implementation_risk_model_v1/.",
+      "serving_behavior": "Segments 1 & 2 fail closed as INELIGIBLE (structural absence of physical progress). Segments 3 & 4 fail closed as NOT_AVAILABLE. Live retraining is prohibited.",
+      "safety_rule": "Decision support only. Human review of physical progress logs is mandatory."
+    }
+  }
+}

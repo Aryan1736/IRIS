@@ -219,3 +219,87 @@ class UnifiedRiskResponse(StrictModel):
     metadata: UnifiedRiskMetadata
 
 
+class DomainPriority(StrictModel):
+    domain: str
+    status: Literal["AVAILABLE", "NOT_AVAILABLE", "INELIGIBLE", "ERROR", "RESEARCH_ONLY"]
+    governance_status: str
+    priority_level: Literal[
+        "HIGH_PRIORITY",
+        "MEDIUM_PRIORITY",
+        "LOW_PRIORITY",
+        "UNAVAILABLE",
+        "INELIGIBLE",
+    ]
+    risk_score: float | None = None
+    rank: int = Field(ge=1)
+    rationale: str
+
+
+class RecommendationItem(StrictModel):
+    code: str
+    domain: str
+    description: str
+    action: str
+
+
+class ProjectProfileData(StrictModel):
+    overall_status: Literal["FULL", "PARTIAL", "LIMITED", "UNAVAILABLE", "INELIGIBLE"]
+    coverage_status: Literal[
+        "COMPLETE_COVERAGE",
+        "PARTIAL_COVERAGE",
+        "LIMITED_COVERAGE",
+        "NO_PREDICTIVE_COVERAGE",
+    ]
+    available_domain_count: int = Field(ge=0)
+    unavailable_domain_count: int = Field(ge=0)
+    ineligible_domain_count: int = Field(ge=0)
+    priority_domains: list[DomainPriority]
+    attention_level: Literal[
+        "HIGH_ATTENTION",
+        "MEDIUM_ATTENTION",
+        "ROUTINE",
+        "LIMITED_ASSESSMENT",
+        "NO_ASSESSMENT",
+    ]
+    recommendations: list[RecommendationItem]
+    limitations: list[str]
+    governance_notes: list[str]
+    summary: str
+
+
+class UnifiedRiskProfileProject(StrictModel):
+    project_identifier: str | None = None
+    report_month: str
+
+
+class UnifiedRiskProfileMetadata(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    profile_version: str
+    policy_version: str
+    generated_deterministically: bool
+    serving_contract_version: str
+    continuous_segment: str | int | None = None
+    governance: dict[str, str]
+
+
+class UnifiedRiskProfileRequest(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    project_id: str | None = None
+    project_code: str | None = None
+    report_month: str
+    regime: Literal["LEGACY", "MODERN"] | None = None
+    identifier_regime: Literal["LEGACY", "MODERN"] | None = None
+    continuous_segment: str | int | None = None
+    features: dict[str, Any] | None = None
+
+
+class UnifiedRiskProfileResponse(StrictModel):
+    project: UnifiedRiskProfileProject
+    domains: dict[str, DomainRiskResponse]
+    profile: ProjectProfileData
+    metadata: UnifiedRiskProfileMetadata
+
+
+

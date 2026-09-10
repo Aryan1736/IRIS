@@ -1,0 +1,74 @@
+{
+  "policy_version": "1.0.0",
+  "name": "IRIS Unified Risk Profile Policy",
+  "description": "Deterministic rules for profile status, coverage, priority, attention, and human-review recommendations.",
+  "aggregation_mandate": {
+    "prohibited": [
+      "weighted_sum_probability",
+      "arithmetic_mean_probability",
+      "geometric_mean_probability",
+      "maximum_probability",
+      "minimum_probability",
+      "synthetic_combined_score"
+    ],
+    "rationale": "Domains have distinct target semantics, divergent base rates, and differing governance statuses. Cost overrun is NOT_READY_FOR_PRODUCTION, and Implementation Risk lacks a serialized production artifact. Arbitrary aggregation is scientifically invalid and masks critical risk dimensions."
+  },
+  "profile_status_rules": {
+    "FULL": {
+      "condition": "available_count == total_domains (3 of 3 domains available)",
+      "interpretation": "Complete predictive intelligence available across all domains."
+    },
+    "PARTIAL": {
+      "condition": "available_count > 0 and unavailable_count > 0 and ineligible_count == 0",
+      "interpretation": "At least one domain is available, some domains are unavailable due to model governance, and none are structurally ineligible."
+    },
+    "LIMITED": {
+      "condition": "available_count > 0 and ineligible_count > 0",
+      "interpretation": "Risk prediction exists for some domains, but structural source omissions render one or more domains ineligible."
+    },
+    "UNAVAILABLE": {
+      "condition": "available_count == 0 and unavailable_count > 0",
+      "interpretation": "No domain risk predictions are available for this observation."
+    },
+    "INELIGIBLE": {
+      "condition": "ineligible_count == total_domains",
+      "interpretation": "All domains are structurally ineligible for this observation."
+    }
+  },
+  "coverage_status_rules": {
+    "COMPLETE_COVERAGE": "available_count == total_domains",
+    "PARTIAL_COVERAGE": "available_count > 0 and unavailable_count > 0 and ineligible_count == 0",
+    "LIMITED_COVERAGE": "available_count > 0 and ineligible_count > 0",
+    "NO_PREDICTIVE_COVERAGE": "available_count == 0"
+  },
+  "priority_policy": {
+    "levels": {
+      "HIGH_PRIORITY": "status == 'AVAILABLE' and risk_score >= 0.50 (meets operational decision threshold)",
+      "MEDIUM_PRIORITY": "status == 'AVAILABLE' and 0.30 <= risk_score < 0.50 (moderate/borderline risk)",
+      "LOW_PRIORITY": "status == 'AVAILABLE' and risk_score < 0.30 (sub-threshold risk)",
+      "UNAVAILABLE": "status == 'NOT_AVAILABLE' (unassessed; strictly never treated as low risk)",
+      "INELIGIBLE": "status == 'INELIGIBLE' (structurally absent)"
+    },
+    "sort_order": [
+      "HIGH_PRIORITY",
+      "MEDIUM_PRIORITY",
+      "UNAVAILABLE",
+      "LOW_PRIORITY",
+      "INELIGIBLE"
+    ]
+  },
+  "attention_level_rules": {
+    "HIGH_ATTENTION": "At least one available domain is HIGH_PRIORITY",
+    "MEDIUM_ATTENTION": "No HIGH_PRIORITY, but at least one available domain is MEDIUM_PRIORITY",
+    "LIMITED_ASSESSMENT": "All available domains are LOW_PRIORITY, but coverage is incomplete (PARTIAL_COVERAGE or LIMITED_COVERAGE)",
+    "ROUTINE": "All domains are assessed under COMPLETE_COVERAGE and all are LOW_PRIORITY",
+    "NO_ASSESSMENT": "available_count == 0 (NO_PREDICTIVE_COVERAGE)"
+  },
+  "recommendations_inventory": {
+    "REVIEW_SCHEDULE_RISK": "Triggered when schedule extension risk is elevated (HIGH_PRIORITY or MEDIUM_PRIORITY).",
+    "COST_RISK_NOT_PRODUCTION_READY": "Triggered because cost overrun domain is governed as NOT_READY_FOR_PRODUCTION.",
+    "INSUFFICIENT_DOMAIN_COVERAGE": "Triggered when coverage is PARTIAL_COVERAGE, LIMITED_COVERAGE, or NO_PREDICTIVE_COVERAGE.",
+    "IMPLEMENTATION_MODEL_LIMITATIONS": "Triggered when implementation risk is NOT_AVAILABLE due to lack of a serialized production artifact.",
+    "STRUCTURAL_ELIGIBILITY_LIMITATION": "Triggered when implementation risk is INELIGIBLE due to structural column absence in source reports."
+  }
+}

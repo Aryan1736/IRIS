@@ -17,6 +17,8 @@ from src.serving.schemas import (
     ProjectListResponse,
     RiskRecord,
     SummaryResponse,
+    UnifiedRiskProfileRequest,
+    UnifiedRiskProfileResponse,
     UnifiedRiskRequest,
     UnifiedRiskResponse,
 )
@@ -255,6 +257,28 @@ def create_app(
         payload = request.model_dump()
         try:
             return get_unified().predict_one(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
+
+    unified_intelligence: Any = None
+
+    def get_intelligence() -> Any:
+        nonlocal unified_intelligence
+        if unified_intelligence is None:
+            from src.ml.unified_risk_intelligence import UnifiedRiskIntelligence
+            unified_intelligence = UnifiedRiskIntelligence(predictor=get_unified())
+        return unified_intelligence
+
+    @app.post("/risk/profile", response_model=UnifiedRiskProfileResponse)
+    @app.post("/api/ml/unified-risk-profile", response_model=UnifiedRiskProfileResponse)
+    @app.post("/api/v1/ml/unified-risk-profile", response_model=UnifiedRiskProfileResponse)
+    @app.post("/api/v1/risk/profile", response_model=UnifiedRiskProfileResponse)
+    def unified_risk_profile(request: UnifiedRiskProfileRequest) -> dict[str, Any]:
+        payload = request.model_dump()
+        try:
+            return get_intelligence().predict_one(payload)
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         except Exception as exc:
