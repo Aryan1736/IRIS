@@ -1,0 +1,744 @@
+{
+  "$schema": "../schemas/ml_model_registry_v1.contract.json",
+  "canonical_datasets": {
+    "projects_completed.csv": {
+      "description": "Historical records of completed projects used for cross-sectional study.",
+      "path": "data/processed/projects_completed.csv",
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    },
+    "projects_monthly.csv": {
+      "description": "Cleaned, standardized monthly panel of ongoing infrastructure projects.",
+      "path": "data/processed/projects_monthly.csv",
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    }
+  },
+  "contract_name": "ml_model_registry_v1",
+  "description": "Authoritative frozen ML Model Registry and Governance layer for IRIS.",
+  "domains": {
+    "cost_overrun": {
+      "domain_id": "cost_overrun",
+      "domain_name": "Cost Overrun / Escalation Risk (3-Month Horizon)",
+      "governance_rationale": "Under PR-07 walk-forward evaluation, cost escalation exhibited extreme class imbalance (~2.18% base rate) and marginal precision lift (PR-AUC < 0.03 micro average precision). Cost revisions are administrative decisions driven by external fiscal and political approvals rather than internal project telemetry. No model is approved for autonomous operational scoring.",
+      "governance_status": "NOT_READY_FOR_PRODUCTION",
+      "horizon_months": 3,
+      "models": {
+        "baseline": {
+          "artifact": null,
+          "calibration": {
+            "limitations": "Severe miscalibration due to class rebalancing; Brier score > 0.17 vs 0.017 prevalence baseline.",
+            "method": "balanced_class_weight_rescaling",
+            "status": "research_only"
+          },
+          "candidate_type": "baseline",
+          "domain": "cost_overrun",
+          "eligibility_population": "Actively ongoing infrastructure projects with continuous forward 3-month observation and baseline cost > 0.",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Research-only baseline; low discriminatory power.",
+            "method": "LogisticCoefficients",
+            "model_space_semantics": "log-odds contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/cost_overrun_v1.contract.json",
+            "feature_count": 36,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "exp_delta_1m",
+              "exp_delta_3m",
+              "past_exp_stagnant_3m",
+              "past_progress_delta_3m",
+              "past_progress_stagnant_3m",
+              "n_prior_schedule_extensions",
+              "n_prior_cost_revisions",
+              "observed_tenure_months",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported",
+              "exp_delta_1m_is_supported",
+              "exp_delta_3m_is_supported",
+              "progress_delta_3m_is_supported"
+            ]
+          },
+          "governance_status": "NOT_READY_FOR_PRODUCTION",
+          "horizon_months": 3,
+          "intended_use": "Research baseline comparison for cost overrun modeling feasibility.",
+          "limitations": [
+            "Severe class imbalance (~2.18% positive rate).",
+            "Near-zero predictive lift over prevalence baseline.",
+            "Administrative approvals occur externally to project telemetry."
+          ],
+          "model_family": "LogisticRegression",
+          "model_id": "cost_overrun_baseline_logistic",
+          "model_name": "logistic_balanced",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "legacy_macro_ap": 0.03026,
+            "legacy_micro_ap": 0.022856,
+            "legacy_roc_auc": 0.558448,
+            "modern_macro_ap": 0.022169,
+            "modern_micro_ap": 0.021013,
+            "modern_roc_auc": 0.389548
+          },
+          "production_availability": "EVALUATION_ONLY",
+          "prohibited_use": "Operational scoring, production decision gating, or capital allocation.",
+          "regime": "CROSS_REGIME",
+          "target": "target_effective_cost_esc_3m",
+          "target_definition": "Effective administrative upward cost revision / escalation over forward H=3 months window within continuous segment.",
+          "threshold_policy": {
+            "availability": "NOT_AVAILABLE",
+            "policy": "research_only",
+            "threshold": null
+          },
+          "training_metadata": null,
+          "validation_methodology": "strict_walk_forward_expanding_window (12 LEGACY folds, 5 MODERN folds)"
+        },
+        "challenger": {
+          "artifact": null,
+          "calibration": {
+            "limitations": "Low absolute probabilities; highest Brier reliability but insufficient precision.",
+            "method": "uncalibrated_raw_probabilities",
+            "status": "research_only"
+          },
+          "candidate_type": "challenger",
+          "domain": "cost_overrun",
+          "eligibility_population": "Actively ongoing infrastructure projects with continuous forward 3-month observation and baseline cost > 0.",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Research-only candidate; feature importance heavily dominated by project age and expenditure ratio.",
+            "method": "TreeSHAP",
+            "model_space_semantics": "log-odds contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/cost_overrun_v1.contract.json",
+            "feature_count": 36,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "exp_delta_1m",
+              "exp_delta_3m",
+              "past_exp_stagnant_3m",
+              "past_progress_delta_3m",
+              "past_progress_stagnant_3m",
+              "n_prior_schedule_extensions",
+              "n_prior_cost_revisions",
+              "observed_tenure_months",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported",
+              "exp_delta_1m_is_supported",
+              "exp_delta_3m_is_supported",
+              "progress_delta_3m_is_supported"
+            ]
+          },
+          "governance_status": "NOT_READY_FOR_PRODUCTION",
+          "horizon_months": 3,
+          "intended_use": "Research exploration of non-linear cost escalation patterns.",
+          "limitations": [
+            "Severe class imbalance (~2.18% positive rate).",
+            "Micro average precision < 0.03 in both regimes.",
+            "External political and fiscal approval dynamics."
+          ],
+          "model_family": "CatBoostClassifier",
+          "model_id": "cost_overrun_challenger_catboost",
+          "model_name": "catboost_unweighted",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "legacy_brier_score": 0.018344,
+            "legacy_macro_ap": 0.04704,
+            "legacy_micro_ap": 0.027919,
+            "legacy_roc_auc": 0.602087,
+            "modern_brier_score": 0.019064,
+            "modern_macro_ap": 0.038165,
+            "modern_micro_ap": 0.018076,
+            "modern_roc_auc": 0.52869
+          },
+          "production_availability": "EVALUATION_ONLY",
+          "prohibited_use": "Operational scoring, production decision gating, or capital allocation.",
+          "regime": "CROSS_REGIME",
+          "target": "target_effective_cost_esc_3m",
+          "target_definition": "Effective administrative upward cost revision / escalation over forward H=3 months window within continuous segment.",
+          "threshold_policy": {
+            "availability": "NOT_AVAILABLE",
+            "policy": "research_only",
+            "threshold": null
+          },
+          "training_metadata": null,
+          "validation_methodology": "strict_walk_forward_expanding_window (12 LEGACY folds, 5 MODERN folds)"
+        }
+      },
+      "operational_decision_threshold": null,
+      "production_availability": "NOT_AVAILABLE",
+      "safety_rule": "Missing score must NEVER be treated as evidence of zero or low cost overrun risk.",
+      "serving_behavior": "Returns status=NOT_AVAILABLE with null score, prediction, and threshold. Fails closed.",
+      "target": "target_effective_cost_esc_3m"
+    },
+    "implementation_risk": {
+      "domain_id": "implementation_risk",
+      "domain_name": "Implementation Risk / Progress Stagnation (3-Month Horizon)",
+      "governance_rationale": "Under PR-09 walk-forward evaluation, progress stagnation modeling showed viable predictive signal with human review limitations. However, no serialized production inference artifact is deployed in artifacts/ml/implementation_risk_model_v1/. Dynamic retraining at inference time is prohibited.",
+      "governance_status": "VIABLE_WITH_LIMITATIONS",
+      "horizon_months": 3,
+      "models": {
+        "baseline": {
+          "artifact": null,
+          "calibration": {
+            "limitations": "Under-predicts stagnation in Modern regime.",
+            "method": "uncalibrated_raw_probabilities",
+            "status": "research_only"
+          },
+          "candidate_type": "baseline",
+          "domain": "implementation_risk",
+          "eligibility_population": "Actively ongoing infrastructure projects with reported physical progress in [0, 100) and continuous 3-month forward observation.",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Linear baseline; lower discriminatory power than gradient boosted challenger.",
+            "method": "LogisticCoefficients",
+            "model_space_semantics": "log-odds contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/implementation_risk_v1.contract.json",
+            "feature_count": 36,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "exp_delta_1m",
+              "exp_delta_3m",
+              "past_exp_stagnant_3m",
+              "past_progress_delta_3m",
+              "past_progress_stagnant_3m",
+              "n_prior_schedule_extensions",
+              "n_prior_cost_revisions",
+              "observed_tenure_months",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported",
+              "exp_delta_1m_is_supported",
+              "exp_delta_3m_is_supported",
+              "progress_delta_3m_is_supported"
+            ]
+          },
+          "governance_status": "VIABLE_WITH_LIMITATIONS",
+          "horizon_months": 3,
+          "intended_use": "Linear baseline benchmark for physical progress stagnation.",
+          "limitations": [
+            "Regime divergence between Legacy and Modern reporting dynamics.",
+            "Underperforms non-linear tree models by ~0.12 PR-AUC in Legacy.",
+            "Administrative reporting batching in physical progress telemetry."
+          ],
+          "model_family": "LogisticRegression",
+          "model_id": "implementation_risk_baseline_logistic",
+          "model_name": "logistic_unweighted",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "legacy_brier_score": 0.166372,
+            "legacy_macro_ap": 0.556955,
+            "legacy_micro_ap": 0.562873,
+            "legacy_roc_auc": 0.786989,
+            "modern_brier_score": 0.194695,
+            "modern_macro_ap": 0.283897,
+            "modern_micro_ap": 0.222885,
+            "modern_roc_auc": 0.516375
+          },
+          "production_availability": "EVALUATION_ONLY",
+          "prohibited_use": "Autonomous operational gating without human engineering review.",
+          "regime": "CROSS_REGIME",
+          "target": "target_progress_stagnation_3m",
+          "target_definition": "Y(i,T) = 1 if physical_progress(T+3) - physical_progress(T) <= 1e-6, else 0; 0 <= physical_progress(T) < 100.",
+          "threshold_policy": {
+            "availability": "NOT_AVAILABLE",
+            "policy": "research_only",
+            "threshold": null
+          },
+          "training_metadata": null,
+          "validation_methodology": "strict_walk_forward_expanding_window (6 LEGACY folds, 5 MODERN folds)"
+        },
+        "challenger": {
+          "artifact": null,
+          "calibration": {
+            "limitations": "Raw probabilities yield lowest Brier score; Platt scaling does not reliably improve cross-regime calibration.",
+            "method": "uncalibrated_raw_probabilities",
+            "status": "research_only"
+          },
+          "candidate_type": "challenger",
+          "domain": "implementation_risk",
+          "eligibility_population": "Actively ongoing infrastructure projects with reported physical progress in [0, 100) and continuous 3-month forward observation.",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Explains stagnation probability contributions from past progress deltas and project maturity.",
+            "method": "TreeSHAP",
+            "model_space_semantics": "log-odds contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/implementation_risk_v1.contract.json",
+            "feature_count": 36,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "exp_delta_1m",
+              "exp_delta_3m",
+              "past_exp_stagnant_3m",
+              "past_progress_delta_3m",
+              "past_progress_stagnant_3m",
+              "n_prior_schedule_extensions",
+              "n_prior_cost_revisions",
+              "observed_tenure_months",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported",
+              "exp_delta_1m_is_supported",
+              "exp_delta_3m_is_supported",
+              "progress_delta_3m_is_supported"
+            ]
+          },
+          "governance_status": "VIABLE_WITH_LIMITATIONS",
+          "horizon_months": 3,
+          "intended_use": "Evidence-based recommended challenger for decision support and early risk screening.",
+          "limitations": [
+            "Regime divergence: performance in MODERN (PR-AUC 0.30) is lower than in LEGACY (PR-AUC 0.69).",
+            "Physical progress remains an administrative self-reported metric subject to occasional batching.",
+            "Segments 1 and 2 structurally omit physical progress.",
+            "No serialized production model artifact deployed in repository."
+          ],
+          "model_family": "CatBoostClassifier",
+          "model_id": "implementation_risk_challenger_catboost",
+          "model_name": "catboost_unweighted",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "legacy_brier_score": 0.129145,
+            "legacy_macro_ap": 0.689828,
+            "legacy_micro_ap": 0.687176,
+            "legacy_roc_auc": 0.866352,
+            "modern_brier_score": 0.211446,
+            "modern_macro_ap": 0.390284,
+            "modern_micro_ap": 0.300709,
+            "modern_roc_auc": 0.645406
+          },
+          "production_availability": "EVALUATION_ONLY",
+          "prohibited_use": "Autonomous operational gating without human engineering review.",
+          "recommendation_status": "RECOMMENDED_CHALLENGER",
+          "regime": "CROSS_REGIME",
+          "target": "target_progress_stagnation_3m",
+          "target_definition": "Y(i,T) = 1 if physical_progress(T+3) - physical_progress(T) <= 1e-6, else 0; 0 <= physical_progress(T) < 100.",
+          "threshold_policy": {
+            "availability": "NOT_AVAILABLE",
+            "policy": "research_only",
+            "threshold": null
+          },
+          "training_metadata": null,
+          "validation_methodology": "strict_walk_forward_expanding_window (6 LEGACY folds, 5 MODERN folds)"
+        }
+      },
+      "operational_decision_threshold": null,
+      "production_availability": "NOT_AVAILABLE",
+      "safety_rule": "Decision support only. Human review of physical progress logs is mandatory.",
+      "serving_behavior": "Segments 1 & 2 fail closed as INELIGIBLE (structural absence of physical progress). Segments 3 & 4 fail closed as NOT_AVAILABLE. Live retraining is prohibited.",
+      "target": "target_progress_stagnation_3m"
+    },
+    "schedule_3m": {
+      "domain_id": "schedule_3m",
+      "domain_name": "Schedule Extension Risk (3-Month Horizon)",
+      "governance_rationale": "Operational production domain. Rigorously validated under PR-03 and PR-05 strict walk-forward evaluation. Legacy and modern regimes remain separate with locked model artifacts.",
+      "governance_status": "LOCKED_PRODUCTION",
+      "horizon_months": 3,
+      "models": {
+        "legacy": {
+          "artifact": {
+            "format": "cbm",
+            "path": "artifacts/ml/schedule_extension_3m/legacy_catboost/model.cbm",
+            "sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+            "size_bytes": 562232,
+            "version": "1.0.0"
+          },
+          "calibration": {
+            "limitations": "Platt scaling evaluated in PR-05 but raw probabilities retained for lower Brier score and operational monotonicity.",
+            "method": "uncalibrated_raw_probabilities",
+            "status": "evaluated_uncalibrated_retained"
+          },
+          "candidate_type": "production",
+          "domain": "schedule_3m",
+          "eligibility_population": "Ongoing infrastructure projects observed continuously over forward 3-month window in Segments 1-3.",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Explanations represent non-causal statistical associations based on reporting patterns.",
+            "method": "TreeSHAP",
+            "model_space_semantics": "log-odds / marginal tree contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/schedule_extension_3m_v1.contract.json",
+            "feature_count": 36,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "exp_delta_1m",
+              "exp_delta_3m",
+              "past_exp_stagnant_3m",
+              "past_progress_delta_3m",
+              "past_progress_stagnant_3m",
+              "n_prior_schedule_extensions",
+              "n_prior_cost_revisions",
+              "observed_tenure_months",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported",
+              "exp_delta_1m_is_supported",
+              "exp_delta_3m_is_supported",
+              "progress_delta_3m_is_supported"
+            ]
+          },
+          "governance_status": "LOCKED_PRODUCTION",
+          "horizon_months": 3,
+          "intended_use": "Early operational screening of schedule extension risk in legacy reporting regime (pre-July 2025).",
+          "limitations": [
+            "Legacy reporting quirks and unstandardized project codes in Segments 1-3.",
+            "MoSPI Flash Report administrative reporting lag.",
+            "Non-causal statistical associations."
+          ],
+          "model_family": "CatBoostClassifier",
+          "model_id": "schedule_legacy_catboost",
+          "model_name": "catboost_full_v1__unweighted",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "average_precision": 0.407094,
+            "brier_score": 0.071988,
+            "evaluation_folds": 12,
+            "evaluation_rows": 16999,
+            "f1_at_0_5": 0.346056,
+            "positives": 1606,
+            "precision_at_0_5": 0.542553,
+            "prevalence": 0.094476,
+            "recall_at_0_5": 0.254047,
+            "roc_auc": 0.806439
+          },
+          "production_availability": "AVAILABLE",
+          "prohibited_use": "Autonomous contractual penalties, financial withholding, or project termination without human review.",
+          "regime": "LEGACY",
+          "target": "target_effective_schedule_ext_3m",
+          "target_definition": {
+            "baseline_definition": "revised_completion_date(T) if actually reported, otherwise original_completion_date(T)",
+            "description": "Effective schedule push-out over forward H=3 months window within continuous segment.",
+            "name": "target_effective_schedule_ext_3m"
+          },
+          "threshold_policy": {
+            "availability": "AVAILABLE",
+            "policy": "operational_decision_rule",
+            "threshold": 0.5
+          },
+          "training_metadata": {
+            "cutoff_month": "2025-03",
+            "hyperparameters": {
+              "auto_class_weights": null,
+              "depth": 5,
+              "iterations": 300,
+              "l2_leaf_reg": 3.0,
+              "learning_rate": 0.05,
+              "random_seed": 20260829
+            },
+            "negative_row_count": 22772,
+            "positive_row_count": 2634,
+            "start_month": "2023-01",
+            "target_matures_by": "2025-06",
+            "training_row_count": 25406
+          },
+          "validation_methodology": "strict_walk_forward_expanding_window (12 evaluation folds, 2023-07 to 2025-03)"
+        },
+        "modern": {
+          "artifact": {
+            "format": "joblib",
+            "path": "artifacts/ml/schedule_extension_3m/modern_logistic/model.joblib",
+            "sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+            "size_bytes": 7145,
+            "version": "1.0.0"
+          },
+          "calibration": {
+            "limitations": "Platt scaling evaluated in PR-05 with conditional improvement; raw probabilities retained for operational consistency.",
+            "method": "uncalibrated_raw_probabilities",
+            "status": "evaluated_uncalibrated_retained"
+          },
+          "candidate_type": "production",
+          "domain": "schedule_3m",
+          "eligibility_population": "Ongoing infrastructure projects observed continuously over forward 3-month window in Segment 4 (July 2025 redesign onward).",
+          "embargo_policy": "strict_walk_forward (T_train + 3 < E_eval)",
+          "explainability": {
+            "limitations": "Linear associations in normalized feature space; non-causal.",
+            "method": "StandardizedCoefficients",
+            "model_space_semantics": "log-odds contribution"
+          },
+          "features": {
+            "categorical_features": [
+              "sector",
+              "agency",
+              "state"
+            ],
+            "contract_reference": "schemas/schedule_extension_3m_v1.contract.json",
+            "feature_count": 25,
+            "leakage_exclusion_policy": "Strict embargo: only features observable at or before prediction origin month T are permitted.",
+            "ordered_names": [
+              "sector",
+              "agency",
+              "state",
+              "original_cost",
+              "cumulative_expenditure_t",
+              "revised_cost_t",
+              "physical_progress_t",
+              "project_age_months",
+              "months_to_original_schedule",
+              "months_to_effective_schedule",
+              "schedule_revision_lag_months",
+              "schedule_has_been_revised",
+              "months_since_start",
+              "expenditure_to_original_cost_ratio",
+              "revised_to_original_cost_ratio",
+              "cost_has_been_revised",
+              "state_is_missing",
+              "approval_date_is_missing",
+              "original_completion_date_is_missing",
+              "revised_cost_is_present",
+              "revised_date_is_present",
+              "physical_progress_is_present",
+              "physical_progress_supported",
+              "start_date_is_present",
+              "start_date_supported"
+            ]
+          },
+          "governance_status": "LOCKED_PRODUCTION",
+          "horizon_months": 3,
+          "intended_use": "Early operational screening of schedule extension risk in modern 6-digit reporting regime (July 2025 onward).",
+          "limitations": [
+            "Shorter longitudinal history in Segment 4 (July 2025 to July 2026).",
+            "MoSPI administrative reporting changes after redesign.",
+            "Non-causal statistical associations."
+          ],
+          "model_family": "LogisticRegression",
+          "model_id": "schedule_modern_logistic",
+          "model_name": "logistic_static_only__unweighted",
+          "model_version": "1.0.0",
+          "performance_metrics": {
+            "average_precision": 0.758717,
+            "brier_score": 0.191617,
+            "evaluation_folds": 5,
+            "evaluation_rows": 8190,
+            "f1_at_0_5": 0.5,
+            "positives": 3680,
+            "precision_at_0_5": 0.808252,
+            "prevalence": 0.449328,
+            "recall_at_0_5": 0.361957,
+            "roc_auc": 0.84193
+          },
+          "production_availability": "AVAILABLE",
+          "prohibited_use": "Autonomous contractual penalties, financial withholding, or project termination without human review.",
+          "regime": "MODERN",
+          "target": "target_effective_schedule_ext_3m",
+          "target_definition": {
+            "baseline_definition": "revised_completion_date(T) if actually reported, otherwise original_completion_date(T)",
+            "description": "Effective schedule push-out over forward H=3 months window within continuous segment.",
+            "name": "target_effective_schedule_ext_3m"
+          },
+          "threshold_policy": {
+            "availability": "AVAILABLE",
+            "policy": "operational_decision_rule",
+            "threshold": 0.5
+          },
+          "training_metadata": {
+            "cutoff_month": "2026-04",
+            "hyperparameters": {
+              "C": 1.0,
+              "class_weight": null,
+              "max_iter": 2000,
+              "penalty": "l2",
+              "random_state": 20260829,
+              "solver": "lbfgs"
+            },
+            "negative_row_count": 7572,
+            "positive_row_count": 4327,
+            "start_month": "2025-07",
+            "target_matures_by": "2026-07",
+            "training_row_count": 11899
+          },
+          "validation_methodology": "strict_walk_forward_expanding_window (5 evaluation folds, 2025-12 to 2026-04)"
+        }
+      },
+      "operational_decision_threshold": 0.5,
+      "production_availability": "AVAILABLE",
+      "safety_rule": "Predictions are non-causal statistical associations based on reporting patterns.",
+      "serving_behavior": "Evaluates live scores against 0.50 threshold via ScheduleExtensionPredictor.",
+      "target": "target_effective_schedule_ext_3m"
+    }
+  },
+  "generation_policy": "deterministic_authoritative_consolidation",
+  "registry_id": "iris_ml_model_registry_v1",
+  "registry_version": "1.0.0",
+  "source_contracts": {
+    "cost_overrun_v1": {
+      "description": "Frozen ML data contract and target definition for cost overrun prediction.",
+      "path": "schemas/cost_overrun_v1.contract.json",
+      "version": "1.0.0"
+    },
+    "implementation_risk_v1": {
+      "description": "Frozen ML data contract and target definition for physical progress stagnation.",
+      "path": "schemas/implementation_risk_v1.contract.json",
+      "version": "1.0.0"
+    },
+    "schedule_extension_3m_v1": {
+      "description": "Frozen ML data contract for 3-month schedule extension prediction.",
+      "path": "schemas/schedule_extension_3m_v1.contract.json",
+      "version": "1.0.0"
+    }
+  },
+  "source_manifests": {
+    "cost_overrun_model_v1": {
+      "description": "PR-07 walk-forward evaluation manifest for cost overrun models.",
+      "path": "artifacts/ml/cost_overrun_model_v1/manifest.json"
+    },
+    "implementation_risk_model_v1": {
+      "description": "PR-09 walk-forward evaluation manifest for implementation risk models.",
+      "path": "artifacts/ml/implementation_risk_model_v1/manifest.json"
+    },
+    "schedule_extension_3m": {
+      "description": "Authoritative manifest of locked schedule extension models.",
+      "path": "artifacts/ml/schedule_extension_3m/manifest.json"
+    },
+    "schedule_final_evaluation": {
+      "description": "Strict walk-forward evaluation manifest for schedule extension models.",
+      "path": "artifacts/ml/schedule_extension_3m/final_evaluation/manifest.json"
+    },
+    "unified_risk_intelligence_v1": {
+      "description": "PR-12 multi-domain unified risk profile and intelligence manifest.",
+      "path": "artifacts/ml/unified_risk_intelligence_v1/manifest.json"
+    },
+    "unified_risk_serving_v1": {
+      "description": "PR-10 multi-domain unified risk serving manifest.",
+      "path": "artifacts/ml/unified_risk_serving_v1/manifest.json"
+    }
+  }
+}

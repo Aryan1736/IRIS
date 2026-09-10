@@ -1,0 +1,69 @@
+{
+  "governance_summary": {
+    "cost_overrun": {
+      "governance_status": "NOT_READY_FOR_PRODUCTION",
+      "model_count": 2,
+      "production_availability": "NOT_AVAILABLE"
+    },
+    "implementation_risk": {
+      "governance_status": "VIABLE_WITH_LIMITATIONS",
+      "model_count": 2,
+      "production_availability": "NOT_AVAILABLE"
+    },
+    "schedule_3m": {
+      "governance_status": "LOCKED_PRODUCTION",
+      "model_count": 2,
+      "production_availability": "AVAILABLE"
+    }
+  },
+  "hash_verification": {
+    "all_passed": true,
+    "canonical_datasets": {
+      "projects_completed.csv": {
+        "actual_sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+        "exists": true,
+        "expected_sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+        "match": true,
+        "path": "data/processed/projects_completed.csv"
+      },
+      "projects_monthly.csv": {
+        "actual_sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+        "exists": true,
+        "expected_sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+        "match": true,
+        "path": "data/processed/projects_monthly.csv"
+      }
+    },
+    "locked_models": {
+      "schedule_legacy_catboost": {
+        "actual_sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+        "exists": true,
+        "expected_sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+        "match": true,
+        "path": "artifacts/ml/schedule_extension_3m/legacy_catboost/model.cbm"
+      },
+      "schedule_modern_logistic": {
+        "actual_sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+        "exists": true,
+        "expected_sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+        "match": true,
+        "path": "artifacts/ml/schedule_extension_3m/modern_logistic/model.joblib"
+      }
+    }
+  },
+  "overall_status": "PASS",
+  "registry_id": "iris_ml_model_registry_v1",
+  "registry_version": "1.0.0",
+  "source_references_resolved": {
+    "contract:cost_overrun_v1": true,
+    "contract:implementation_risk_v1": true,
+    "contract:schedule_extension_3m_v1": true,
+    "manifest:cost_overrun_model_v1": true,
+    "manifest:implementation_risk_model_v1": true,
+    "manifest:schedule_extension_3m": true,
+    "manifest:schedule_final_evaluation": true,
+    "manifest:unified_risk_intelligence_v1": true,
+    "manifest:unified_risk_serving_v1": true
+  },
+  "validation_errors": []
+}
