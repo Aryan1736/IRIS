@@ -1,0 +1,46 @@
+{
+  "checks": {
+    "api_compatibility": {
+      "status": "PASS"
+    },
+    "artifact_integrity": {
+      "status": "PASS"
+    },
+    "artifact_loading": {
+      "status": "PASS"
+    },
+    "dataset_integrity": {
+      "status": "PASS"
+    },
+    "explanation_consistency": {
+      "status": "PASS"
+    },
+    "fail_closed_behavior": {
+      "status": "PASS"
+    },
+    "inference_parity": {
+      "status": "PASS"
+    },
+    "ml_data_contract": {
+      "status": "PASS"
+    },
+    "model_registry": {
+      "status": "PASS"
+    },
+    "platform_contract": {
+      "status": "PASS"
+    },
+    "unified_risk_intelligence": {
+      "status": "PASS"
+    }
+  },
+  "overall_status": "PASS",
+  "release_id": "iris_ml_release_v1",
+  "release_ready": true,
+  "release_version": "1.0.0",
+  "summary": {
+    "failed_gates": [],
+    "passed_gates": 11,
+    "total_gates": 11
+  }
+}
