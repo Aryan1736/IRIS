@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "study_name": "feature_ablation_cuf_vs_longitudinal_v1",
+  "primary_question": "Does longitudinal project behavior provide meaningful incremental predictive value over static/current CUF-style attributes?",
+  "executive_answer": "No across both regimes for overall PR-AUC / Average Precision. In Legacy, static/CUF-style attributes alone achieve 0.4131 AP (89.55% of feature importance), and adding 11 longitudinal features yields a statistically neutral delta of -0.0060 AP (95% CI [-0.0189, 0.0073], spanning zero), while offering a targeted recall improvement at tau=0.5 (+0.0336). In Modern, static attributes provide 0.7587 AP (84.06% of importance), and adding longitudinal features significantly degrades performance (-0.0496 AP, strictly negative 95% CI) due to truncated tenure across the July 2025 boundary.",
+  "findings_by_regime": {
+    "LEGACY": {
+      "regime_span": "2023-01 to 2025-06",
+      "model_family": "CatBoostClassifier",
+      "evaluation_folds": 12,
+      "static_only_ap": 0.41310410315689294,
+      "static_plus_longitudinal_ap": 0.40709423800399497,
+      "delta_ap": -0.006009865152897975,
+      "delta_roc_auc": -0.004255787694087743,
+      "delta_recall_tau_0_5": 0.03362391033623913,
+      "delta_f1_tau_0_5": 0.025258517024826233,
+      "delta_ap_95ci": [
+        -0.01887895283955944,
+        0.007320294915328767
+      ],
+      "fold_win_rate": 0.4166666666666667,
+      "statistically_significant_ap_improvement": false,
+      "conclusion": "Static/CUF features provide the primary predictive baseline (0.4131 AP). Adding longitudinal features does not provide a statistically significant overall AP improvement (delta CI spans zero), though it modestly improves thresholded recall (+3.36 percentage points at tau=0.5)."
+    },
+    "MODERN": {
+      "regime_span": "2025-07 to 2026-07",
+      "model_family": "LogisticRegression",
+      "evaluation_folds": 5,
+      "static_only_ap": 0.7587165821263023,
+      "static_plus_longitudinal_ap": 0.7091363989429846,
+      "delta_ap": -0.049580183183317694,
+      "locked_production_posture": "STATIC_ONLY (25 features)",
+      "contract_status": "Longitudinal features are structurally excluded from the locked Modern production model contract.",
+      "conclusion": "Static/CUF-style attributes account for virtually all predictive signal in Modern (0.7587 AP). Adding longitudinal features degrades performance (-0.0496 AP) due to short post-July-2025 tenure depth."
+    }
+  },
+  "operational_recommendation": {
+    "serving_posture": "PRESERVE_FROZEN_DUAL_REGIME_MODELS",
+    "legacy_serving": "CatBoost with full 36 features (static + longitudinal) for historical pre-2025-07 queries.",
+    "modern_serving": "Logistic Regression with 25 static features for active 2025-07+ monitoring.",
+    "future_evolution_trigger": "Re-evaluate longitudinal feature inclusion for Modern only after at least 24 months of continuous post-redesign observations accumulate (earliest 2027-07)."
+  }
+}

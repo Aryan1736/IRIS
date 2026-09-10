@@ -1,0 +1,53 @@
+﻿feature_name,feature_group,available_legacy,available_modern,rationale
+sector,static_current,True,True,Contemporaneous categorical industry classification reported at month T.
+agency,static_current,True,True,Contemporaneous categorical executing agency reported at month T.
+state,static_current,True,True,Contemporaneous categorical project state/UT location reported at month T.
+original_cost,static_current,True,True,Sanctioned baseline capital cost in Rs crore available at prediction time.
+cumulative_expenditure_t,static_current,True,True,Contemporaneous total cumulative expenditure at month T.
+revised_cost_t,static_current,True,True,Contemporaneous latest sanctioned cost at month T.
+physical_progress_t,static_current,True,True,Contemporaneous physical progress percentage reported at month T.
+project_age_months,static_current,True,True,Elapsed calendar months from approval date to prediction month T.
+months_to_original_schedule,static_current,True,True,Calendar months from month T to original completion date.
+months_to_effective_schedule,static_current,True,True,Calendar months from month T to effective completion date.
+schedule_revision_lag_months,static_current,True,True,Current schedule push-out (effective date - original date) at T.
+schedule_has_been_revised,static_current,True,True,Binary indicator whether effective completion date exceeds original date at T.
+months_since_start,static_current,True,True,Elapsed calendar months from reported start date to prediction month T.
+expenditure_to_original_cost_ratio,static_current,True,True,Contemporaneous financial burn ratio (expenditure / original cost).
+revised_to_original_cost_ratio,static_current,True,True,Contemporaneous cost escalation ratio (revised cost / original cost).
+cost_has_been_revised,static_current,True,True,Binary indicator whether revised cost exceeds original cost at T.
+state_is_missing,static_current,True,True,Indicator for missing state information at month T.
+approval_date_is_missing,static_current,True,True,Indicator for missing approval date at month T.
+original_completion_date_is_missing,static_current,True,True,Indicator for missing original completion date at month T.
+revised_cost_is_present,static_current,True,True,Indicator for reported revised cost at month T.
+revised_date_is_present,static_current,True,True,Indicator for reported revised completion date at month T.
+physical_progress_is_present,static_current,True,True,Indicator for reported physical progress value at month T.
+physical_progress_supported,static_current,True,True,Layout indicator whether physical progress was published in current month.
+start_date_is_present,static_current,True,True,Indicator for reported project start date at month T.
+start_date_supported,static_current,True,True,Layout indicator whether start date was published in current month.
+exp_delta_1m,longitudinal,True,False,1-month historical change in cumulative expenditure (T minus T-1).
+exp_delta_3m,longitudinal,True,False,3-month historical change in cumulative expenditure (T minus T-3).
+past_exp_stagnant_3m,longitudinal,True,False,Binary indicator whether cumulative expenditure changed < 0.01 Cr over past 3 months.
+past_progress_delta_3m,longitudinal,True,False,3-month historical change in physical progress percentage (T minus T-3).
+past_progress_stagnant_3m,longitudinal,True,False,Binary indicator whether physical progress changed < 0.1% over past 3 months.
+n_prior_schedule_extensions,longitudinal,True,False,Cumulative count of discrete schedule revisions recorded strictly prior to T.
+n_prior_cost_revisions,longitudinal,True,False,Cumulative count of discrete cost revisions recorded strictly prior to T.
+observed_tenure_months,longitudinal,True,False,Total count of prior monthly reporting observations for project up to T.
+exp_delta_1m_is_supported,longitudinal,True,False,Indicator whether 1-month expenditure backward history is valid/supported.
+exp_delta_3m_is_supported,longitudinal,True,False,Indicator whether 3-month expenditure backward history is valid/supported.
+progress_delta_3m_is_supported,longitudinal,True,False,Indicator whether 3-month progress backward history is valid/supported.
+month_of_fiscal_year,excluded,False,False,Calendar candidate excluded from v1 contract to avoid seasonal overfitting.
+is_fiscal_yearend,excluded,False,False,Calendar candidate excluded from v1 contract.
+report_month_index,excluded,False,False,Trend candidate excluded from v1 contract to prevent temporal memorization.
+identifier_regime,excluded,False,False,Regime partition metadata; models are trained with strict regime separation.
+project_code,excluded,False,False,High-cardinality primary identifier; strictly prohibited from feature matrix.
+project_name,excluded,False,False,Unstructured identifier text; strictly prohibited from feature matrix.
+actual_completion_date,excluded,False,False,Post-prediction realization date; strictly prohibited future leakage.
+eventually_completed,excluded,False,False,Terminal lifecycle completion outcome; strictly prohibited future leakage.
+completion_report_month,excluded,False,False,Future report month of completion; strictly prohibited future leakage.
+target_event_month,excluded,False,False,Future month of extension event; strictly prohibited future leakage.
+target_event_revised_completion_date,excluded,False,False,Future revised date from event; strictly prohibited future leakage.
+baseline_completion_date,excluded,False,False,Target derivation metadata; excluded from feature matrix.
+baseline_completion_source,excluded,False,False,Target derivation metadata; excluded from feature matrix.
+extension_type,excluded,False,False,Target categorization metadata; excluded from feature matrix.
+target_window_end_month,excluded,False,False,Forward window temporal boundary metadata; excluded from feature matrix.
+target_effective_schedule_ext_3m,excluded,False,False,Target prediction label; strictly prohibited from feature matrix.
