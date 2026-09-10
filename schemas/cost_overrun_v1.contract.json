@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "dataset_name": "cost_overrun_v1",
+  "contract_version": "1.0.0",
+  "dataset_type": "cost_overrun_prediction",
+  "description": "Authoritative frozen ML data contract and target definition for IRIS 3-month cost-overrun / cost-escalation prediction pipeline.",
+  "target": {
+    "name": "target_effective_cost_esc_3m",
+    "horizon_months": 3,
+    "tolerance_cr": 0.001,
+    "description": "Effective administrative upward cost revision / escalation over forward H=3 months window within continuous segment.",
+    "baseline_definition": "revised_cost(T) if actually reported and > 0, otherwise original_cost(T)",
+    "positive_rule": "At least one actually reported revised_cost in T+1..T+3 is strictly greater than the usable baseline at T (by > 0.001 Rs crore).",
+    "negative_rule": "Complete same-segment T+1..T+3 observations, no reported cost escalation, and no unresolved revised-cost null after a revision has appeared.",
+    "ambiguity_rule": "A null never resets a previously reported cost revision to the original sanctioned cost. Such baseline/window ambiguity is ineligible unless a reported future extension already proves a positive.",
+    "revision_types": {
+      "FIRST_COST_REVISION": "No revised cost reported at T; first revised cost appears in forward window exceeding original cost.",
+      "SUBSEQUENT_COST_REVISION": "Revised cost already present at T; higher revised cost appears in forward window.",
+      "NONE": "No cost escalation observed in forward window (negative)."
+    }
+  },
+  "audited_candidates": {
+    "candidate_a_lifecycle_completed": {
+      "name": "target_completed_cost_overrun_v1",
+      "scope": "projects_completed.csv (N=876)",
+      "baseline_field": "original_cost",
+      "outcome_field": "revised_cost / cumulative_expenditure",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "extreme_right_censoring_81.5_pct_ongoing_projects",
+        "outcome_missingness_80.6_pct_completed_revised_cost_null",
+        "survivorship_bias_only_completed_projects_observed",
+        "sector_concentration_over_50_pct_road_transport",
+        "temporal_clustering_june_2026_and_oct_2024"
+      ]
+    },
+    "candidate_b_rolling_escalation": {
+      "name": "target_effective_cost_esc_3m",
+      "scope": "projects_monthly.csv (N=64608)",
+      "baseline_field": "effective_cost(T)",
+      "outcome_field": "revised_cost(t) for t in T+1..T+3",
+      "viability": "VIABLE_WITH_LIMITATIONS",
+      "primary_bottlenecks": [
+        "severe_class_imbalance_1_to_44.9",
+        "boundary_and_exit_censoring_24152_rows",
+        "administrative_reporting_proxy_rather_than_final_audit"
+      ]
+    },
+    "candidate_c_lifecycle_cost_growth": {
+      "name": "target_lifecycle_cost_growth_threshold",
+      "scope": "cross_sectional_lifecycle",
+      "viability": "NOT_YET_VIABLE",
+      "primary_bottlenecks": [
+        "unrevised_ongoing_projects_cannot_be_labeled_negatives_due_to_right_censoring",
+        "collapses_to_candidate_a_if_restricted_to_completed_projects"
+      ]
+    }
+  },
+  "features": {
+    "count": 36,
+    "ordered_names": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "families": {
+      "static_categoricals": [
+        "sector",
+        "agency",
+        "state"
+      ],
+      "static_cost_financial": [
+        "original_cost",
+        "revised_cost_t",
+        "cumulative_expenditure_t",
+        "expenditure_to_original_cost_ratio",
+        "revised_to_original_cost_ratio",
+        "cost_has_been_revised"
+      ],
+      "schedule": [
+        "project_age_months",
+        "months_to_original_schedule",
+        "months_to_effective_schedule",
+        "schedule_revision_lag_months",
+        "schedule_has_been_revised",
+        "months_since_start"
+      ],
+      "progress": [
+        "physical_progress_t"
+      ],
+      "missingness_presence_indicators": [
+        "state_is_missing",
+        "approval_date_is_missing",
+        "original_completion_date_is_missing",
+        "revised_cost_is_present",
+        "revised_date_is_present",
+        "physical_progress_is_present",
+        "physical_progress_supported",
+        "start_date_is_present",
+        "start_date_supported"
+      ],
+      "historical_expenditure": [
+        "exp_delta_1m",
+        "exp_delta_3m",
+        "past_exp_stagnant_3m"
+      ],
+      "historical_progress": [
+        "past_progress_delta_3m",
+        "past_progress_stagnant_3m"
+      ],
+      "historical_schedule_cost_revision_counts": [
+        "n_prior_schedule_extensions",
+        "n_prior_cost_revisions",
+        "observed_tenure_months"
+      ],
+      "delta_support": [
+        "exp_delta_1m_is_supported",
+        "exp_delta_3m_is_supported",
+        "progress_delta_3m_is_supported"
+      ]
+    }
+  },
+  "columns": {
+    "identifiers": [
+      "project_code"
+    ],
+    "metadata_only": [
+      "project_code",
+      "report_month",
+      "identifier_regime",
+      "continuous_segment",
+      "target_horizon_months",
+      "target_window_end_month",
+      "target_effective_cost_esc_3m",
+      "cost_revision_type",
+      "cost_diff",
+      "baseline_cost",
+      "baseline_cost_source",
+      "target_event_month",
+      "target_event_revised_cost",
+      "eventually_completed",
+      "completion_report_month"
+    ],
+    "leakage_strictly_prohibited": [
+      "target_effective_cost_esc_3m",
+      "cost_revision_type",
+      "cost_diff",
+      "target_event_month",
+      "target_event_revised_cost",
+      "target_window_end_month",
+      "baseline_cost",
+      "baseline_cost_source",
+      "eventually_completed",
+      "completion_report_month",
+      "actual_completion_date",
+      "completed_revised_cost",
+      "completed_cumulative_expenditure",
+      "project_code",
+      "project_name",
+      "legacy_ocms_code",
+      "pmgid",
+      "source_file",
+      "source_page",
+      "source_pages",
+      "source_row_number",
+      "source_serial_number",
+      "extraction_method"
+    ]
+  },
+  "embargo": {
+    "rule": "strict_walk_forward",
+    "formula": "T + 3 < E (i.e. month_index(add_months(T, 3)) < month_index(E))",
+    "horizon_months": 3,
+    "description": "For evaluation reference month E, training observation T is usable only when the forward prediction window strictly ends before E."
+  },
+  "continuous_segments": [
+    {
+      "name": "SEGMENT_1",
+      "identifier_regime": "LEGACY",
+      "start": "2023-01",
+      "end": "2023-11"
+    },
+    {
+      "name": "SEGMENT_2",
+      "identifier_regime": "LEGACY",
+      "start": "2024-01",
+      "end": "2024-03"
+    },
+    {
+      "name": "SEGMENT_3",
+      "identifier_regime": "LEGACY",
+      "start": "2024-06",
+      "end": "2025-06"
+    },
+    {
+      "name": "SEGMENT_4",
+      "identifier_regime": "MODERN",
+      "start": "2025-07",
+      "end": "2026-07"
+    }
+  ],
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "relative_path": "data/processed/projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "relative_path": "data/processed/projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "expected_dataset_metrics": {
+    "total_source_rows": 64608,
+    "eligible_rows": {
+      "LEGACY": 27708,
+      "MODERN": 11985,
+      "TOTAL": 39693
+    },
+    "positive_rows": {
+      "LEGACY": 616,
+      "MODERN": 249,
+      "TOTAL": 865
+    },
+    "negative_rows": {
+      "LEGACY": 27092,
+      "MODERN": 11736,
+      "TOTAL": 38828
+    },
+    "censored_rows": {
+      "segment_boundary": 21489,
+      "panel_exit": 2663,
+      "total_censored": 24152
+    },
+    "ineligible_ambiguous_rows": {
+      "baseline_persistence": 562,
+      "future_persistence": 201,
+      "total_ambiguous": 763
+    },
+    "reconciliation_equation": "total_source_rows == eligible_rows.TOTAL + censored_rows.total_censored + ineligible_ambiguous_rows.total_ambiguous",
+    "reconciliation_evaluated": "64608 == 39693 + 24152 + 763"
+  },
+  "policies": {
+    "class_imbalance_handling": "Severe class imbalance (~1:44.9 / 2.18% positive rate). PR-07 modeling must use Precision-Recall AUC (PR-AUC) as the primary evaluation metric, probability calibration (Brier score, ECE), and cost-sensitive loss or class weights. Raw accuracy is strictly prohibited.",
+    "survivorship_policy": "Completed-project outcomes cannot be applied retroactively to ongoing observations. 81.5% of projects remain ongoing and right-censored.",
+    "categorical_handling": "Raw source-faithful categorical values retained in dataset; no whole-dataset encoder fitted. Encoders must be fit strictly on training fold.",
+    "missingness": "No imputation. Structural/source missingness remains empty with explicit support/presence indicators.",
+    "structural_gaps_excluded": [
+      "2023-12 (unreported/gap month)",
+      "2024-04 and 2024-05 (uncoded Annexure XVIII layouts)",
+      "2025-06 to 2025-07 (identifier redesign boundary; unbridged)"
+    ]
+  },
+  "viability_recommendation": {
+    "status": "VIABLE_WITH_LIMITATIONS",
+    "primary_target": "target_effective_cost_esc_3m",
+    "summary": "Rolling 3-month cost escalation is viable for supervised learning within continuous segments using expanding-origin walk-forward validation and imbalanced learning methods. Lifecycle completed-project modeling is NOT_YET_VIABLE."
+  },
+  "supported_model_regimes": [
+    "LEGACY",
+    "MODERN"
+  ],
+  "reproducibility": {
+    "hash_algorithm": "SHA-256",
+    "builder_module": "src.ml.cost_overrun_target"
+  }
+}
