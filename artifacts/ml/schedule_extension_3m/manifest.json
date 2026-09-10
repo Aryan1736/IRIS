@@ -1,0 +1,156 @@
+{
+  "manifest_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "dataset_name": "schedule_extension_3m_v1",
+  "target": "target_effective_schedule_ext_3m",
+  "horizon_months": 3,
+  "embargo_rule": "strict_walk_forward (T + 3 < E)",
+  "canonical_inputs": {
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+  },
+  "environment": {
+    "python_version": "3.13.5",
+    "catboost_version": "1.2.10",
+    "scikit_learn_version": "1.9.0",
+    "numpy_version": "2.4.1",
+    "joblib_version": "1.5.3"
+  },
+  "models": {
+    "LEGACY": {
+      "model_identifier": "catboost_full_v1__unweighted",
+      "model_family": "CatBoostClassifier",
+      "regime": "LEGACY",
+      "artifact_relpath": "legacy_catboost/model.cbm",
+      "artifact_format": "cbm",
+      "artifact_sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+      "feature_count": 36,
+      "feature_ordering": [
+        "sector",
+        "agency",
+        "state",
+        "original_cost",
+        "cumulative_expenditure_t",
+        "revised_cost_t",
+        "physical_progress_t",
+        "project_age_months",
+        "months_to_original_schedule",
+        "months_to_effective_schedule",
+        "schedule_revision_lag_months",
+        "schedule_has_been_revised",
+        "months_since_start",
+        "expenditure_to_original_cost_ratio",
+        "revised_to_original_cost_ratio",
+        "cost_has_been_revised",
+        "exp_delta_1m",
+        "exp_delta_3m",
+        "past_exp_stagnant_3m",
+        "past_progress_delta_3m",
+        "past_progress_stagnant_3m",
+        "n_prior_schedule_extensions",
+        "n_prior_cost_revisions",
+        "observed_tenure_months",
+        "state_is_missing",
+        "approval_date_is_missing",
+        "original_completion_date_is_missing",
+        "revised_cost_is_present",
+        "revised_date_is_present",
+        "physical_progress_is_present",
+        "physical_progress_supported",
+        "start_date_is_present",
+        "start_date_supported",
+        "exp_delta_1m_is_supported",
+        "exp_delta_3m_is_supported",
+        "progress_delta_3m_is_supported"
+      ],
+      "categorical_features": [
+        "sector",
+        "agency",
+        "state"
+      ],
+      "hyperparameters": {
+        "iterations": 300,
+        "learning_rate": 0.05,
+        "depth": 5,
+        "l2_leaf_reg": 3.0,
+        "random_seed": 20260829,
+        "auto_class_weights": null
+      },
+      "production_training_boundary": {
+        "start_month": "2023-01",
+        "cutoff_month": "2025-03",
+        "target_matures_by": "2025-06",
+        "training_row_count": 25406,
+        "positive_row_count": 2634,
+        "negative_row_count": 22772,
+        "rationale": "Latest fully matured observation month in Segment 3 under H=3 horizon before the 2025-06 to 2025-07 identifier redesign regime boundary."
+      },
+      "operational_calibration": "uncalibrated_raw_probabilities"
+    },
+    "MODERN": {
+      "model_identifier": "logistic_static_only__unweighted",
+      "model_family": "LogisticRegression",
+      "regime": "MODERN",
+      "artifact_relpath": "modern_logistic/model.joblib",
+      "artifact_format": "joblib",
+      "artifact_sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+      "feature_count": 25,
+      "feature_ordering": [
+        "sector",
+        "agency",
+        "state",
+        "original_cost",
+        "cumulative_expenditure_t",
+        "revised_cost_t",
+        "physical_progress_t",
+        "project_age_months",
+        "months_to_original_schedule",
+        "months_to_effective_schedule",
+        "schedule_revision_lag_months",
+        "schedule_has_been_revised",
+        "months_since_start",
+        "expenditure_to_original_cost_ratio",
+        "revised_to_original_cost_ratio",
+        "cost_has_been_revised",
+        "state_is_missing",
+        "approval_date_is_missing",
+        "original_completion_date_is_missing",
+        "revised_cost_is_present",
+        "revised_date_is_present",
+        "physical_progress_is_present",
+        "physical_progress_supported",
+        "start_date_is_present",
+        "start_date_supported"
+      ],
+      "categorical_features": [
+        "sector",
+        "agency",
+        "state"
+      ],
+      "preprocessor": {
+        "type": "FoldPreprocessor",
+        "output_feature_count": 47,
+        "categorical_encoding": "TRAIN_FREQUENCY",
+        "numeric_encoding": "TRAIN_STANDARDIZED + MISSING_INDICATOR"
+      },
+      "hyperparameters": {
+        "penalty": "l2",
+        "C": 1.0,
+        "solver": "lbfgs",
+        "max_iter": 2000,
+        "class_weight": null,
+        "random_state": 20260829
+      },
+      "production_training_boundary": {
+        "start_month": "2025-07",
+        "cutoff_month": "2026-04",
+        "target_matures_by": "2026-07",
+        "training_row_count": 11899,
+        "positive_row_count": 4327,
+        "negative_row_count": 7572,
+        "rationale": "Latest fully matured observation month in Segment 4 under H=3 horizon before the end of available canonical ongoing project data (2026-07)."
+      },
+      "operational_calibration": "uncalibrated_raw_probabilities (platt scaling evaluated conditionally)"
+    }
+  }
+}
