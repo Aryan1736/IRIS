@@ -1,0 +1,253 @@
+{
+  "evaluation_name": "final_schedule_model_evaluation_v1",
+  "contract_version": "1.0.0",
+  "target": "target_effective_schedule_ext_3m",
+  "horizon_months": 3,
+  "embargo_rule": "strict_walk_forward (T + 3 < E)",
+  "canonical_hashes": {
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+    "model_LEGACY": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "model_MODERN": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "model_artifact_hashes": {
+    "LEGACY": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "MODERN": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "locked_models": {
+    "LEGACY": "catboost_full_v1__unweighted",
+    "MODERN": "logistic_static_only__unweighted"
+  },
+  "locked_features": {
+    "LEGACY": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "MODERN": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported"
+    ]
+  },
+  "evaluation_origins": {
+    "LEGACY": [
+      "2023-07",
+      "2023-08",
+      "2024-06",
+      "2024-07",
+      "2024-08",
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03"
+    ],
+    "MODERN": [
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04"
+    ]
+  },
+  "population_reconciliation": {
+    "canonical_monthly_rows": 64608,
+    "eligible_legacy_rows": 25406,
+    "eligible_modern_rows": 11899,
+    "total_eligible_rows": 37305,
+    "ineligible_rows": 27303,
+    "evaluation_legacy_rows": 16999,
+    "evaluation_modern_rows": 8190,
+    "evaluation_total_rows": 25189,
+    "legacy_positives": 1606,
+    "modern_positives": 3680,
+    "legacy_prevalence": 0.0944761456556268,
+    "modern_prevalence": 0.44932844932844934,
+    "pre_evaluation_legacy_rows": 8407,
+    "pre_evaluation_modern_rows": 3709,
+    "accepted_folds_count": 17,
+    "legacy_folds_count": 12,
+    "modern_folds_count": 5,
+    "structural_exclusions_by_reason": [
+      {
+        "identifier_regime": "LEGACY",
+        "rejection_reason": "BASELINE_REVISION_PERSISTENCE_AMBIGUOUS",
+        "count": 888
+      },
+      {
+        "identifier_regime": "LEGACY",
+        "rejection_reason": "FUTURE_REVISION_PERSISTENCE_AMBIGUOUS",
+        "count": 1653
+      },
+      {
+        "identifier_regime": "LEGACY",
+        "rejection_reason": "MISSING_BASELINE_COMPLETION_COMMITMENT",
+        "count": 524
+      },
+      {
+        "identifier_regime": "LEGACY",
+        "rejection_reason": "PROJECT_DISAPPEARED_OR_MONTH_MISSING",
+        "count": 1656
+      },
+      {
+        "identifier_regime": "LEGACY",
+        "rejection_reason": "STRUCTURAL_GAP_OR_REGIME_BOUNDARY",
+        "count": 15880
+      },
+      {
+        "identifier_regime": "MODERN",
+        "rejection_reason": "BASELINE_REVISION_PERSISTENCE_AMBIGUOUS",
+        "count": 29
+      },
+      {
+        "identifier_regime": "MODERN",
+        "rejection_reason": "FUTURE_REVISION_PERSISTENCE_AMBIGUOUS",
+        "count": 57
+      },
+      {
+        "identifier_regime": "MODERN",
+        "rejection_reason": "PROJECT_DISAPPEARED_OR_MONTH_MISSING",
+        "count": 1007
+      },
+      {
+        "identifier_regime": "MODERN",
+        "rejection_reason": "STRUCTURAL_GAP_OR_REGIME_BOUNDARY",
+        "count": 5609
+      }
+    ]
+  },
+  "calibration_policy": {
+    "LEGACY": "Uncalibrated native CatBoost probabilities (well-calibrated, ECE 0.0287).",
+    "MODERN": "Platt scaling active on M5 (2026-04) via nested OOF pool (>=1000 rows, 2 months). M1-M4 uncalibrated under strict nested sub-embargo."
+  },
+  "threshold_policy": {
+    "no_in_sample_fallback": true,
+    "threshold_selection_history_only": true,
+    "undefined_precision_preserved": true,
+    "research_grid_evaluated": true
+  },
+  "bootstrap": {
+    "iterations": 1000,
+    "confidence_level": 0.95,
+    "methods": [
+      "PROJECT_CLUSTER_BOOTSTRAP",
+      "EVALUATION_MONTH_BLOCK_BOOTSTRAP"
+    ]
+  },
+  "summary_metrics": {
+    "LEGACY": {
+      "model": "catboost_full_v1__unweighted",
+      "average_precision": 0.40709423800399497,
+      "roc_auc": 0.8064393666348478,
+      "brier_score": 0.07198817162644858,
+      "ece_10bin": 0.028739589847495778
+    },
+    "MODERN": {
+      "model": "logistic_static_only__unweighted",
+      "raw_average_precision": 0.7587165821263023,
+      "raw_roc_auc": 0.8419298298467175,
+      "raw_brier_score": 0.1916166137204209,
+      "raw_ece_10bin": 0.14051924699757423,
+      "operational_average_precision": 0.7487446911775972,
+      "operational_roc_auc": 0.8345050853176517,
+      "operational_brier_score": 0.18900883401572452,
+      "operational_ece_10bin": 0.12965082991640714
+    }
+  },
+  "generated_files": {
+    "fold_metrics.csv": {
+      "rows": 17,
+      "sha256": "AF6575E774B984D8062FC06C40B841D0D19E1DF483F69D6D90A7888789146645"
+    },
+    "regime_metrics.csv": {
+      "rows": 4,
+      "sha256": "9F75F79C7B3745630F4ED0BA6DD936F0CBD6BF02C562D42535BC63EF40E7904F"
+    },
+    "calibration_metrics.csv": {
+      "rows": 4,
+      "sha256": "950C0C2D9DB977A10930E059497A0E72657B83F72A538ABBA435B974E9F508C0"
+    },
+    "calibration_bins.csv": {
+      "rows": 40,
+      "sha256": "548BDE519E54FC0427729E359192116328F7969555512C591C1DD47D0005552B"
+    },
+    "threshold_research.csv": {
+      "rows": 214,
+      "sha256": "72DE4FE33864D8B65E6ACE975FE2E7C57E8E75D907AE782FB0AC630FD9FF2BD4"
+    },
+    "error_analysis.csv": {
+      "rows": 79,
+      "sha256": "0EEA8856C92B28D40850379A11B9FED99D40EE1073BC343242739E3D991C3507"
+    },
+    "subgroup_metrics.csv": {
+      "rows": 28,
+      "sha256": "FE1039B7ACA39CE6AF2F31997067A49060F997FF46C6859010D9993C61F19C55"
+    },
+    "robustness_metrics.csv": {
+      "rows": 26,
+      "sha256": "338D2023AC1D3566EFEA795E358F322B8FD31158B710F6431F3DC400B8BA7393"
+    },
+    "manifest.json": {
+      "rows": 1,
+      "sha256": "D7D35BFB5C7EE7DB83BDA677E2098A7F80580120C7C9C83594B6A41D9EDBBC8E"
+    }
+  }
+}

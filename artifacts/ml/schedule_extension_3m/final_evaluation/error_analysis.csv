@@ -1,0 +1,80 @@
+﻿regime,analysis_category,grouping_key,sample_size,metric_or_feature,value_tp,value_fp,value_fn,value_tn,notes
+LEGACY,QUADRANT_SUMMARY,OVERALL,16999,count,408,344,1198,15049,Observation counts by confusion quadrant at operational threshold 0.5.
+LEGACY,QUADRANT_SUMMARY,OVERALL,16999,percentage_of_population,2.40014118477557,2.02364844990882,7.0474733807871,88.5287369845285,Percentage of total regime population in each confusion quadrant.
+LEGACY,PROBABILITY_DISTRIBUTION,OVERALL,16999,mean_probability,0.741978659533755,0.628274536008874,0.173436539199427,0.0669151837333664,Predicted probability mean_probability across confusion quadrants.
+LEGACY,PROBABILITY_DISTRIBUTION,OVERALL,16999,median_probability,0.73182588551888,0.594666424171037,0.13894092738333,0.0234248775196465,Predicted probability median_probability across confusion quadrants.
+LEGACY,PROBABILITY_DISTRIBUTION,OVERALL,16999,std_probability,0.152861120000053,0.112805818660902,0.142468086567489,0.0953027973973839,Predicted probability std_probability across confusion quadrants.
+LEGACY,PROBABILITY_DISTRIBUTION,OVERALL,16999,min_probability,0.500058019394268,0.501186432668476,0.00161140980141872,0.000235317335637429,Predicted probability min_probability across confusion quadrants.
+LEGACY,PROBABILITY_DISTRIBUTION,OVERALL,16999,max_probability,0.995523711082216,0.979281018428656,0.499669722765799,0.499947402677237,Predicted probability max_probability across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,project_age_months,71.3995098039216,73.3662790697674,63.3338898163606,56.890690411323,Mean value of project_age_months across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,project_age_months,59.5,65,48,43,Median value of project_age_months across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,original_cost,1031.50463235294,847.71636627907,1452.75804674457,1595.63261944315,Mean value of original_cost across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,original_cost,741.86,442.5,621.45,613.89,Median value of original_cost across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,cumulative_expenditure_t,1001.02659313725,1045.09424418605,1090.12278797997,901.886753937139,Mean value of cumulative_expenditure_t across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,cumulative_expenditure_t,536.175,311.07,337.715,223.73,Median value of cumulative_expenditure_t across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,physical_progress_t,88.395382262997,79.0867015706806,66.9211627906977,52.9881145824608,Mean value of physical_progress_t across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,physical_progress_t,96,88,73.37,55.3,Median value of physical_progress_t across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,expenditure_to_original_cost_ratio,0.867187971397168,0.950447585780058,0.669444189544483,0.527688480388313,Mean value of expenditure_to_original_cost_ratio across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,expenditure_to_original_cost_ratio,0.785967554446308,0.746825175873167,0.571122581973023,0.430594594594595,Median value of expenditure_to_original_cost_ratio across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,months_to_effective_schedule,1.33578431372549,-9.59011627906977,-5.0550918196995,-3.84769752143,Mean value of months_to_effective_schedule across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,months_to_effective_schedule,1,-1,0,3,Median value of months_to_effective_schedule across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,n_prior_schedule_extensions,2.70343137254902,1.34302325581395,0.724540901502504,0.207987241677188,Mean value of n_prior_schedule_extensions across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,n_prior_schedule_extensions,2,1,1,0,Median value of n_prior_schedule_extensions across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,n_prior_cost_revisions,0.345588235294118,0.273255813953488,0.247913188647746,0.143664030832613,Mean value of n_prior_cost_revisions across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,n_prior_cost_revisions,0,0,0,0,Median value of n_prior_cost_revisions across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEAN,OVERALL,16999,schedule_has_been_revised,0.965686274509804,0.773255813953488,0.636894824707846,0.219682370921656,Mean value of schedule_has_been_revised across confusion quadrants.
+LEGACY,FEATURE_PROFILE_MEDIAN,OVERALL,16999,schedule_has_been_revised,1,1,1,0,Median value of schedule_has_been_revised across confusion quadrants.
+LEGACY,TEMPORAL_DISTRIBUTION,2023-07,1480,quadrant_counts,43,85,101,1251,Confusion quadrant counts for evaluation origin 2023-07.
+LEGACY,TEMPORAL_DISTRIBUTION,2023-08,1590,quadrant_counts,36,68,94,1392,Confusion quadrant counts for evaluation origin 2023-08.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-06,1706,quadrant_counts,30,20,111,1545,Confusion quadrant counts for evaluation origin 2024-06.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-07,1633,quadrant_counts,26,22,134,1451,Confusion quadrant counts for evaluation origin 2024-07.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-08,1623,quadrant_counts,22,27,144,1430,Confusion quadrant counts for evaluation origin 2024-08.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-09,1613,quadrant_counts,31,35,138,1409,Confusion quadrant counts for evaluation origin 2024-09.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-10,1611,quadrant_counts,42,30,93,1446,Confusion quadrant counts for evaluation origin 2024-10.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-11,1092,quadrant_counts,27,4,67,994,Confusion quadrant counts for evaluation origin 2024-11.
+LEGACY,TEMPORAL_DISTRIBUTION,2024-12,1113,quadrant_counts,42,2,91,978,Confusion quadrant counts for evaluation origin 2024-12.
+LEGACY,TEMPORAL_DISTRIBUTION,2025-01,1109,quadrant_counts,36,3,99,971,Confusion quadrant counts for evaluation origin 2025-01.
+LEGACY,TEMPORAL_DISTRIBUTION,2025-02,983,quadrant_counts,0,5,43,935,Confusion quadrant counts for evaluation origin 2025-02.
+LEGACY,TEMPORAL_DISTRIBUTION,2025-03,1446,quadrant_counts,73,43,83,1247,Confusion quadrant counts for evaluation origin 2025-03.
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,344,unique_projects_with_error,,201,,,Number of distinct projects generating false alarms.
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,344,repeat_error_projects_count_2plus,,94,,,Projects generating multiple false alarms (>=2 months).
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,344,repeat_error_share_pct,,68.8953488372093,,,Percentage of false alarms originating from chronic repeat-alert projects.
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,1198,unique_projects_with_error,,,448,,Number of distinct projects with missed schedule extensions.
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,1198,repeat_error_projects_count_2plus,,,337,,Projects with multiple missed extensions (>=2 months).
+LEGACY,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,1198,repeat_error_share_pct,,,90.7345575959933,,Percentage of missed extensions originating from chronic repeat-miss projects.
+MODERN,QUADRANT_SUMMARY,OVERALL,8190,count,1485,408,2195,4102,Observation counts by confusion quadrant at operational threshold 0.5.
+MODERN,QUADRANT_SUMMARY,OVERALL,8190,percentage_of_population,18.1318681318681,4.98168498168498,26.8009768009768,50.0854700854701,Percentage of total regime population in each confusion quadrant.
+MODERN,PROBABILITY_DISTRIBUTION,OVERALL,8190,mean_probability,0.66539823023589,0.660725799025708,0.340835951010263,0.169968840577842,Predicted probability mean_probability across confusion quadrants.
+MODERN,PROBABILITY_DISTRIBUTION,OVERALL,8190,median_probability,0.635487616104545,0.619389693239021,0.366037273166938,0.140428847599219,Predicted probability median_probability across confusion quadrants.
+MODERN,PROBABILITY_DISTRIBUTION,OVERALL,8190,std_probability,0.127834489320806,0.133855947752257,0.114016011706967,0.131812749363163,Predicted probability std_probability across confusion quadrants.
+MODERN,PROBABILITY_DISTRIBUTION,OVERALL,8190,min_probability,0.500244213623914,0.500126835634393,0.0035264896913564,5.22777549652326e-06,Predicted probability min_probability across confusion quadrants.
+MODERN,PROBABILITY_DISTRIBUTION,OVERALL,8190,max_probability,0.999971854348122,0.999999999719985,0.499667554112282,0.499902776204577,Predicted probability max_probability across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,project_age_months,67.7299371946964,73.788029925187,58.9963218390805,67.6652678351024,Mean value of project_age_months across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,project_age_months,61,65,48,45,Median value of project_age_months across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,original_cost,982.512821548822,1229.84889705882,1634.94766742597,2526.97907362262,Mean value of original_cost across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,original_cost,697.66,474.23,879.26,819,Median value of original_cost across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,cumulative_expenditure_t,464.916323232323,804.487426470588,893.875480637813,1420.05383471477,Mean value of cumulative_expenditure_t across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,cumulative_expenditure_t,298.7,194.27,269,171.79,Median value of cumulative_expenditure_t across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,physical_progress_t,85.9235420875421,78.0884558823529,62.4177129840547,41.853927352511,Mean value of physical_progress_t across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,physical_progress_t,92.89,91.75,70,37.7,Median value of physical_progress_t across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,expenditure_to_original_cost_ratio,0.44250735679573,0.774617600677662,0.402020980934664,0.478236150453166,Mean value of expenditure_to_original_cost_ratio across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,expenditure_to_original_cost_ratio,0.475749390447961,0.437973891020402,0.345101036640711,0.241820535755201,Median value of expenditure_to_original_cost_ratio across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,months_to_effective_schedule,-15.759595959596,-15.4338235294118,3.44692482915718,17.2959531935641,Mean value of months_to_effective_schedule across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,months_to_effective_schedule,-9,-9,2,13,Median value of months_to_effective_schedule across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,n_prior_schedule_extensions,1.02491582491583,1.01470588235294,0.924373576309795,0.563139931740614,Mean value of n_prior_schedule_extensions across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,n_prior_schedule_extensions,1,1,1,0,Median value of n_prior_schedule_extensions across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,n_prior_cost_revisions,0.37979797979798,0.28921568627451,0.304783599088838,0.237688932228181,Mean value of n_prior_cost_revisions across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,n_prior_cost_revisions,0,0,0,0,Median value of n_prior_cost_revisions across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEAN,OVERALL,8190,schedule_has_been_revised,0.737373737373737,0.725490196078431,0.70250569476082,0.597025841053145,Mean value of schedule_has_been_revised across confusion quadrants.
+MODERN,FEATURE_PROFILE_MEDIAN,OVERALL,8190,schedule_has_been_revised,1,1,1,1,Median value of schedule_has_been_revised across confusion quadrants.
+MODERN,TEMPORAL_DISTRIBUTION,2025-12,1338,quadrant_counts,301,75,307,655,Confusion quadrant counts for evaluation origin 2025-12.
+MODERN,TEMPORAL_DISTRIBUTION,2026-01,1630,quadrant_counts,305,62,434,829,Confusion quadrant counts for evaluation origin 2026-01.
+MODERN,TEMPORAL_DISTRIBUTION,2026-02,1867,quadrant_counts,380,74,567,846,Confusion quadrant counts for evaluation origin 2026-02.
+MODERN,TEMPORAL_DISTRIBUTION,2026-03,1730,quadrant_counts,25,32,699,974,Confusion quadrant counts for evaluation origin 2026-03.
+MODERN,TEMPORAL_DISTRIBUTION,2026-04,1625,quadrant_counts,474,165,188,798,Confusion quadrant counts for evaluation origin 2026-04.
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,408,unique_projects_with_error,,255,,,Number of distinct projects generating false alarms.
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,408,repeat_error_projects_count_2plus,,83,,,Projects generating multiple false alarms (>=2 months).
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_POSITIVES,408,repeat_error_share_pct,,57.843137254902,,,Percentage of false alarms originating from chronic repeat-alert projects.
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,2195,unique_projects_with_error,,,955,,Number of distinct projects with missed schedule extensions.
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,2195,repeat_error_projects_count_2plus,,,620,,Projects with multiple missed extensions (>=2 months).
+MODERN,PROJECT_REPEAT_CLUSTERING,FALSE_NEGATIVES,2195,repeat_error_share_pct,,,84.7380410022779,,Percentage of missed extensions originating from chronic repeat-miss projects.
