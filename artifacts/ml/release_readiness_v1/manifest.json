@@ -1,0 +1,42 @@
+{
+  "canonical_inputs": {
+    "projects_completed.csv": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+    "projects_monthly.csv": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+  },
+  "generation_policy": "deterministic_release_readiness_derivation",
+  "locked_schedule_artifacts": {
+    "legacy_catboost": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+    "modern_logistic": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082"
+  },
+  "manifest_version": "1.0.0",
+  "platform_contract_reference": {
+    "contract_id": "iris_ml_platform_contract_v1",
+    "contract_version": "1.0.0",
+    "path": "artifacts/ml/ml_platform_contract_v1/contract.json"
+  },
+  "registry_reference": {
+    "path": "artifacts/ml/model_registry_v1/registry.json",
+    "registry_id": "iris_ml_model_registry_v1",
+    "registry_version": "1.0.0"
+  },
+  "release_id": "iris_ml_release_v1",
+  "release_version": "1.0.0",
+  "unified_risk_intelligence_reference": {
+    "cost_domain": "NOT_READY_FOR_PRODUCTION",
+    "implementation_domain": "VIABLE_WITH_LIMITATIONS",
+    "schedule_domain": "LOCKED_PRODUCTION",
+    "version": "1.0.0"
+  },
+  "upstream_contracts": {
+    "cost_overrun_v1": "schemas/cost_overrun_v1.contract.json",
+    "implementation_risk_v1": "schemas/implementation_risk_v1.contract.json",
+    "ml_model_registry_v1": "schemas/ml_model_registry_v1.contract.json",
+    "ml_platform_contract_v1": "schemas/ml_platform_contract_v1.contract.json",
+    "schedule_extension_3m_v1": "schemas/schedule_extension_3m_v1.contract.json"
+  },
+  "upstream_manifests": {
+    "ml_platform_contract_v1": "artifacts/ml/ml_platform_contract_v1/manifest.json",
+    "model_registry_v1": "artifacts/ml/model_registry_v1/manifest.json"
+  },
+  "verification_policy": "fail_closed_strict_release_gate_verification"
+}

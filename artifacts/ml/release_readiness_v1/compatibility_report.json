@@ -1,0 +1,60 @@
+{
+  "cross_layer_checks": {
+    "anti_fusion_guarantees_match": true,
+    "availability_states_match": true,
+    "domain_ids_match": true,
+    "explanation_semantics_match": true,
+    "feature_contract_match": true,
+    "governance_states_match": true,
+    "schedule_horizon_match": true,
+    "schedule_target_match": true,
+    "threshold_match": true
+  },
+  "domains": {
+    "cost_overrun": {
+      "governance_status": "NOT_READY_FOR_PRODUCTION",
+      "horizon_months": 3,
+      "probability_state": "strictly_null",
+      "production_availability": "NOT_AVAILABLE",
+      "serving_state": "unavailable",
+      "target": "target_cost_overrun_3m"
+    },
+    "implementation_risk": {
+      "governance_status": "VIABLE_WITH_LIMITATIONS",
+      "horizon_months": 3,
+      "production_availability": "EVALUATION_ONLY",
+      "structural_eligibility": {
+        "segment_1": "INELIGIBLE",
+        "segment_2": "INELIGIBLE",
+        "segment_3": "NOT_AVAILABLE",
+        "segment_4": "NOT_AVAILABLE"
+      },
+      "target": "target_implementation_risk_3m"
+    },
+    "schedule_3m": {
+      "decision_threshold": 0.5,
+      "governance_status": "LOCKED_PRODUCTION",
+      "horizon_months": 3,
+      "production_availability": "AVAILABLE",
+      "regimes": {
+        "LEGACY": {
+          "explanation_space": "model_margin_or_logit",
+          "feature_count": 36,
+          "model_family": "CatBoostClassifier",
+          "model_id": "schedule_legacy_catboost",
+          "non_causal": true
+        },
+        "MODERN": {
+          "explanation_space": "model_margin_or_logit",
+          "feature_count": 25,
+          "model_family": "LogisticRegression",
+          "model_id": "schedule_modern_logistic",
+          "non_causal": true,
+          "preprocessed_features": 47
+        }
+      },
+      "target": "target_effective_schedule_ext_3m"
+    }
+  },
+  "matrix_version": "1.0.0"
+}

@@ -1,0 +1,261 @@
+{
+  "checks": {
+    "api_compatibility": {
+      "endpoints": {
+        "backend:GET:/api/ml/model-registry": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "backend:GET:/api/ml/platform-contract": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "backend:POST:/api/ml/unified-risk-profile": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "backend:POST:/risk/profile": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "serving:GET:/api/ml/model-registry": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "serving:GET:/api/ml/platform-contract": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "serving:POST:/api/ml/unified-risk-profile": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        },
+        "serving:POST:/risk/profile": {
+          "path_masking_passed": true,
+          "status": "PASS",
+          "status_code": 200
+        }
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "artifact_integrity": {
+      "artifacts": {
+        "legacy_catboost": {
+          "actual_sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+          "byte_size": 562232,
+          "exists": true,
+          "expected_sha256": "59586004F5967602651156E0A26FE564015F240958F5416CBB565E4755C524EE",
+          "path": "artifacts/ml/schedule_extension_3m/legacy_catboost/model.cbm",
+          "sha256_match": true,
+          "status": "PASS"
+        },
+        "modern_logistic": {
+          "actual_sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+          "byte_size": 7145,
+          "exists": true,
+          "expected_sha256": "679D9768869088BA8CEE297577B1935DCF903F00B38697BF9A3FFA2F7DEB5082",
+          "path": "artifacts/ml/schedule_extension_3m/modern_logistic/model.joblib",
+          "sha256_match": true,
+          "status": "PASS"
+        }
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "artifact_loading": {
+      "errors": [],
+      "models_loaded": {
+        "schedule_legacy": {
+          "feature_count": 36,
+          "governance_status": "LOCKED_PRODUCTION",
+          "horizon_months": 3,
+          "loaded_successfully": true,
+          "model_family": "CatBoostClassifier",
+          "model_identifier": "catboost_full_v1__unweighted",
+          "production_availability": "AVAILABLE",
+          "regime": "LEGACY",
+          "target": "target_effective_schedule_ext_3m"
+        },
+        "schedule_modern": {
+          "feature_count": 25,
+          "governance_status": "LOCKED_PRODUCTION",
+          "horizon_months": 3,
+          "loaded_successfully": true,
+          "model_family": "LogisticRegression",
+          "model_identifier": "logistic_static_only__unweighted",
+          "preprocessed_columns": 47,
+          "production_availability": "AVAILABLE",
+          "regime": "MODERN",
+          "target": "target_effective_schedule_ext_3m"
+        }
+      },
+      "status": "PASS"
+    },
+    "dataset_integrity": {
+      "datasets": {
+        "completed": {
+          "actual_rows": 876,
+          "actual_sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+          "exists": true,
+          "expected_rows": 876,
+          "expected_sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910",
+          "path": "data/processed/projects_completed.csv",
+          "rows_match": true,
+          "sha256_match": true,
+          "status": "PASS"
+        },
+        "monthly": {
+          "actual_rows": 64608,
+          "actual_sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+          "exists": true,
+          "expected_rows": 64608,
+          "expected_sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF",
+          "path": "data/processed/projects_monthly.csv",
+          "rows_match": true,
+          "sha256_match": true,
+          "status": "PASS"
+        }
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "explanation_consistency": {
+      "checks": {
+        "formatted_disclaimer_present": true,
+        "formatted_non_causal": true,
+        "legacy_contribution_space": true,
+        "legacy_disclaimer": true,
+        "legacy_non_causal": true,
+        "modern_contribution_space": true,
+        "modern_disclaimer": true,
+        "modern_non_causal": true,
+        "signed_direction_preserved": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "fail_closed_behavior": {
+      "checks": {
+        "hash_mismatch_fails_closed": true,
+        "infinity_fails_closed": true,
+        "leakage_field_fails_closed": true,
+        "missing_artifact_fails_closed": true,
+        "missing_metadata_fails_closed": true,
+        "nan_fails_closed": true,
+        "unknown_domain_fails_closed": true,
+        "unknown_regime_fails_closed": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "inference_parity": {
+      "errors": [],
+      "parity_summary": {
+        "legacy_cases_evaluated": 16,
+        "legacy_max_prob_diff": 0.0,
+        "legacy_max_raw_diff": 0.0,
+        "legacy_parity_passed": true,
+        "legacy_tolerance": 1e-09,
+        "modern_cases_evaluated": 16,
+        "modern_max_prob_diff": 0.0,
+        "modern_max_raw_diff": 0.0,
+        "modern_parity_passed": true,
+        "modern_tolerance": 1e-12
+      },
+      "status": "PASS"
+    },
+    "ml_data_contract": {
+      "details": {
+        "canonical_inputs_verified": [
+          "projects_monthly.csv",
+          "projects_completed.csv"
+        ],
+        "continuous_segments_count": 4,
+        "contract_version": "1.0.0",
+        "dataset_name": "schedule_extension_3m_v1",
+        "embargo_enforcement_verified": true,
+        "feature_count": 36,
+        "prohibited_leakage_count": 12,
+        "supported_model_regimes": [
+          "LEGACY",
+          "MODERN"
+        ],
+        "target": {
+          "ambiguity_rule": "A null never resets a previously reported revision to the original commitment. Such baseline/window ambiguity is ineligible unless a reported future extension already proves a positive.",
+          "baseline_definition": "revised_completion_date(T) if actually reported, otherwise original_completion_date(T)",
+          "description": "Effective schedule push-out over forward H=3 months window within continuous segment.",
+          "extension_types": {
+            "FIRST_REVISION": "No revised completion date reported at T; first revision appears in forward window.",
+            "NONE": "No extension observed in forward window (negative).",
+            "SUBSEQUENT_REVISION": "Revised completion date already present at T; later revised completion date appears in forward window."
+          },
+          "horizon_months": 3,
+          "name": "target_effective_schedule_ext_3m",
+          "negative_rule": "Complete same-segment T+1..T+3 observations, no reported extension, and no unresolved revised-value null after a revision has appeared.",
+          "positive_rule": "At least one actually reported revised_completion_date in T+1..T+3 is later than the usable baseline at T."
+        }
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    "model_registry": {
+      "errors": [],
+      "governance_summary": {
+        "cost_overrun": {
+          "governance_status": "NOT_READY_FOR_PRODUCTION",
+          "model_count": 2,
+          "production_availability": "NOT_AVAILABLE"
+        },
+        "implementation_risk": {
+          "governance_status": "VIABLE_WITH_LIMITATIONS",
+          "model_count": 2,
+          "production_availability": "NOT_AVAILABLE"
+        },
+        "schedule_3m": {
+          "governance_status": "LOCKED_PRODUCTION",
+          "model_count": 2,
+          "production_availability": "AVAILABLE"
+        }
+      },
+      "registry_id": "iris_ml_model_registry_v1",
+      "registry_version": "1.0.0",
+      "status": "PASS"
+    },
+    "platform_contract": {
+      "checks_count": 16,
+      "contract_id": "iris_ml_platform_contract_v1",
+      "contract_version": "1.0.0",
+      "errors": [],
+      "failed_checks_count": 0,
+      "status": "PASS"
+    },
+    "unified_risk_intelligence": {
+      "checks": {
+        "all_domains_present": true,
+        "cost_risk_valid": true,
+        "governance_recommendations_present": true,
+        "implementation_risk_ineligible_in_segment_1": true,
+        "no_probability_fusion": true,
+        "profile_deterministic": true,
+        "schedule_risk_valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    }
+  },
+  "failed_gates": [],
+  "overall_status": "PASS",
+  "passed_gates": 11,
+  "release_id": "iris_ml_release_v1",
+  "release_ready": true,
+  "release_version": "1.0.0",
+  "total_gates": 11
+}
