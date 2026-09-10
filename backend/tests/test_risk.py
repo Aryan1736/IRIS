@@ -351,3 +351,34 @@ def test_zero_future_label_exposure(client: TestClient, test_serving_repo: Servi
     record_str = json.dumps(record)
     for prohibited in prohibited_substrings:
         assert prohibited not in record_str, f"Prohibited label {prohibited} found in response"
+
+
+def test_unified_risk_endpoint_valid(client: TestClient, test_serving_repo: ServingRepository) -> None:
+    """Test unified risk serving endpoint across /api/ml/unified-risk and /api/v1/risk/unified."""
+    from tests.test_ml_unified_risk_serving import TestUnifiedRiskServing
+    TestUnifiedRiskServing.setUpClass()
+    sample = TestUnifiedRiskServing.sample_modern_dict
+
+    resp = client.post("/api/ml/unified-risk", json=sample)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["schedule_extension"]["status"] == "AVAILABLE"
+    assert data["cost_overrun"]["status"] == "NOT_AVAILABLE"
+    assert data["implementation_risk"]["status"] == "NOT_AVAILABLE"
+
+    # Also test /api/v1/risk/unified
+    resp_v1 = client.post("/api/v1/risk/unified", json=sample)
+    assert resp_v1.status_code == 200
+    assert resp_v1.json() == data
+
+
+def test_unified_risk_endpoint_leakage_rejection(client: TestClient, test_serving_repo: ServingRepository) -> None:
+    """Test unified risk serving endpoint rejects prohibited leakage fields with 422."""
+    from tests.test_ml_unified_risk_serving import TestUnifiedRiskServing
+    TestUnifiedRiskServing.setUpClass()
+    bad = dict(TestUnifiedRiskServing.sample_modern_dict)
+    bad["target_effective_schedule_ext_3m"] = 1.0
+
+    resp = client.post("/api/ml/unified-risk", json=bad)
+    assert resp.status_code == 422
+

@@ -17,6 +17,8 @@ from src.serving.schemas import (
     ProjectListResponse,
     RiskRecord,
     SummaryResponse,
+    UnifiedRiskRequest,
+    UnifiedRiskResponse,
 )
 
 
@@ -235,6 +237,28 @@ def create_app(
             "regimes": [regimes[key] for key in sorted(regimes)],
             "sector_summary": store().sector_summary(rows),
         }
+
+    unified_predictor: Any = None
+
+    def get_unified() -> Any:
+        nonlocal unified_predictor
+        if unified_predictor is None:
+            from src.ml.unified_risk_predictor import UnifiedRiskPredictor
+            unified_predictor = UnifiedRiskPredictor.load(
+                artifacts_dir=repository_root / "artifacts/ml/schedule_extension_3m"
+            )
+        return unified_predictor
+
+    @app.post("/risk/unified", response_model=UnifiedRiskResponse)
+    @app.post("/api/ml/unified-risk", response_model=UnifiedRiskResponse)
+    def unified_risk(request: UnifiedRiskRequest) -> dict[str, Any]:
+        payload = request.model_dump()
+        try:
+            return get_unified().predict_one(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc
 
     return app
 

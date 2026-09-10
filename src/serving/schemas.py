@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -176,4 +176,46 @@ class ModelInfoResponse(StrictModel):
     horizon_months: int = 3
     status: Literal["READY", "NOT_TRAINED", "MODEL_NOT_DEPLOYED"] = "READY"
     models: list[ModelDetail]
+
+
+class UnifiedRiskRequest(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    project_id: str | None = None
+    project_code: str | None = None
+    report_month: str
+    regime: Literal["LEGACY", "MODERN"] | None = None
+    identifier_regime: Literal["LEGACY", "MODERN"] | None = None
+    continuous_segment: str | int | None = None
+    features: dict[str, Any] | None = None
+
+
+class DomainRiskResponse(StrictModel):
+    status: Literal["AVAILABLE", "NOT_AVAILABLE", "INELIGIBLE", "ERROR", "RESEARCH_ONLY"]
+    regime: str | None = None
+    risk_score: float | None = None
+    prediction: int | None = None
+    threshold: float | None = None
+    model_version: str | None = None
+    operational_status: str
+    reason: str | None = None
+
+
+class UnifiedRiskMetadata(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    serving_contract_version: str
+    deterministic: bool
+    continuous_segment: str | int | None = None
+    governance: dict[str, str]
+
+
+class UnifiedRiskResponse(StrictModel):
+    project_id: str | None = None
+    report_month: str
+    schedule_extension: DomainRiskResponse
+    cost_overrun: DomainRiskResponse
+    implementation_risk: DomainRiskResponse
+    metadata: UnifiedRiskMetadata
+
 

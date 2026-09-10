@@ -6,7 +6,10 @@ import re
 from typing import Annotated, Any, Literal
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from backend.app.services.risk_service import get_serving_repository
+from backend.app.services.risk_service import (
+    get_serving_repository,
+    get_unified_risk_predictor,
+)
 from src.serving.repository import ServingRepository, score_distribution
 from src.serving.schemas import (
     DashboardOptionsResponse,
@@ -15,6 +18,8 @@ from src.serving.schemas import (
     ProjectListResponse,
     RiskRecord,
     SummaryResponse,
+    UnifiedRiskRequest,
+    UnifiedRiskResponse,
 )
 
 router = APIRouter()
@@ -256,3 +261,31 @@ def get_project_risk_history(
         "count": len(records),
         "items": records,
     }
+
+
+@router.post(
+    "/unified",
+    response_model=UnifiedRiskResponse,
+    summary="Unified Multi-Domain Risk Prediction",
+    description=(
+        "Run deterministic, fail-closed multi-domain risk evaluation across Schedule Extension, "
+        "Cost Overrun (research-only / NOT_READY_FOR_PRODUCTION), and Implementation Risk "
+        "(decision support / VIABLE_WITH_LIMITATIONS). Requires valid contract features and report month."
+    ),
+)
+@router.post(
+    "/unified-risk",
+    response_model=UnifiedRiskResponse,
+    include_in_schema=False,
+)
+def predict_unified_risk(
+    request: UnifiedRiskRequest,
+    predictor: Any = Depends(get_unified_risk_predictor),
+) -> dict[str, Any]:
+    payload = request.model_dump()
+    try:
+        return predictor.predict_one(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Inference error: {exc}") from exc

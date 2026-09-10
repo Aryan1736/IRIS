@@ -48,8 +48,23 @@ def get_serving_repository(artifact_dir: Path | None = None) -> ServingRepositor
 
 
 
+_CACHED_UNIFIED_PREDICTOR: Any = None
+
+
+def get_unified_risk_predictor(artifacts_dir: Path | str | None = None) -> Any:
+    """Retrieve or initialize the cached UnifiedRiskPredictor."""
+    global _CACHED_UNIFIED_PREDICTOR
+    if _CACHED_UNIFIED_PREDICTOR is None:
+        from src.ml.unified_risk_predictor import UnifiedRiskPredictor
+        target = resolve_serving_dir(artifacts_dir or "artifacts/ml/schedule_extension_3m")
+        _CACHED_UNIFIED_PREDICTOR = UnifiedRiskPredictor.load(target)
+    return _CACHED_UNIFIED_PREDICTOR
+
+
 def reset_cached_repository() -> None:
-    """Reset cached repository instance (useful for hermetic test fixtures)."""
-    global _CACHED_REPOSITORY, _CACHED_DIR
+    """Reset cached repository and predictor instances (useful for hermetic test fixtures)."""
+    global _CACHED_REPOSITORY, _CACHED_DIR, _CACHED_UNIFIED_PREDICTOR
     _CACHED_REPOSITORY = None
     _CACHED_DIR = None
+    _CACHED_UNIFIED_PREDICTOR = None
+
