@@ -1,0 +1,5 @@
+﻿regime,candidate_model,top_1_feature,top_2_feature,top_3_feature,top_1_importance,fold_importance_stability_spearman,reconciliation_tolerance,exact_shap_reconstruction_verified
+LEGACY,catboost_unweighted,agency,state,physical_progress_t,18.5733,0.9516,1e-09,True
+LEGACY,catboost_balanced,agency,state,physical_progress_t,20.6779,0.9428,1e-09,True
+MODERN,catboost_unweighted,sector,agency,physical_progress_t,13.162,0.9521,1e-09,True
+MODERN,catboost_balanced,sector,agency,physical_progress_t,13.2914,0.9364,1e-09,True

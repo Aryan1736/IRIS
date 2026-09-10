@@ -1,0 +1,655 @@
+{
+  "artifact_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "target_name": "target_progress_stagnation_3m",
+  "horizon_months": 3,
+  "embargo_rule": "T_train + 3 < E (strict inequality; equality fails)",
+  "canonical_inputs": {
+    "projects_monthly.csv": {
+      "path": "data\\processed\\projects_monthly.csv",
+      "rows": 64608,
+      "sha256": "9512A9881E17DFDED6E182D87A8DFB1C4EDBD36C0D9B8A7DA9FD1ABB7E002FBF"
+    },
+    "projects_completed.csv": {
+      "path": "data\\processed\\projects_completed.csv",
+      "rows": 876,
+      "sha256": "89BEA84FD68A22E327090C1E4E4533F5BCD745ADCA61EB4E66172EE9023BB910"
+    }
+  },
+  "modeling_population": {
+    "total_source_observations": 64608,
+    "eligible_observations": 26044,
+    "positive_observations": 7344,
+    "negative_observations": 18700,
+    "positive_prevalence": 0.281984
+  },
+  "candidate_configurations": {
+    "prevalence": {
+      "family": "BaselinePrevalence",
+      "variant": "empirical_rate",
+      "class_weight": null,
+      "hyperparameters": {}
+    },
+    "logistic_unweighted": {
+      "family": "LogisticRegression",
+      "variant": "unweighted",
+      "class_weight": null,
+      "hyperparameters": {
+        "l1_ratio": 0.0,
+        "C": 1.0,
+        "solver": "lbfgs",
+        "max_iter": 2000,
+        "random_state": 20260910
+      }
+    },
+    "logistic_balanced": {
+      "family": "LogisticRegression",
+      "variant": "balanced",
+      "class_weight": "balanced",
+      "hyperparameters": {
+        "l1_ratio": 0.0,
+        "C": 1.0,
+        "solver": "lbfgs",
+        "max_iter": 2000,
+        "random_state": 20260910
+      }
+    },
+    "catboost_unweighted": {
+      "family": "CatBoost",
+      "variant": "unweighted",
+      "auto_class_weights": null,
+      "hyperparameters": {
+        "iterations": 300,
+        "learning_rate": 0.05,
+        "depth": 5,
+        "l2_leaf_reg": 3.0,
+        "random_seed": 20260910,
+        "verbose": false,
+        "thread_count": 4,
+        "allow_writing_files": false
+      }
+    },
+    "catboost_balanced": {
+      "family": "CatBoost",
+      "variant": "balanced",
+      "auto_class_weights": "Balanced",
+      "hyperparameters": {
+        "iterations": 300,
+        "learning_rate": 0.05,
+        "depth": 5,
+        "l2_leaf_reg": 3.0,
+        "random_seed": 20260910,
+        "verbose": false,
+        "thread_count": 4,
+        "allow_writing_files": false
+      }
+    }
+  },
+  "feature_manifest": {
+    "count": 36,
+    "feature_names": [
+      "sector",
+      "agency",
+      "state",
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "categorical_features": [
+      "sector",
+      "agency",
+      "state"
+    ],
+    "numeric_features": [
+      "original_cost",
+      "cumulative_expenditure_t",
+      "revised_cost_t",
+      "physical_progress_t",
+      "project_age_months",
+      "months_to_original_schedule",
+      "months_to_effective_schedule",
+      "schedule_revision_lag_months",
+      "schedule_has_been_revised",
+      "months_since_start",
+      "expenditure_to_original_cost_ratio",
+      "revised_to_original_cost_ratio",
+      "cost_has_been_revised",
+      "exp_delta_1m",
+      "exp_delta_3m",
+      "past_exp_stagnant_3m",
+      "past_progress_delta_3m",
+      "past_progress_stagnant_3m",
+      "n_prior_schedule_extensions",
+      "n_prior_cost_revisions",
+      "observed_tenure_months",
+      "state_is_missing",
+      "approval_date_is_missing",
+      "original_completion_date_is_missing",
+      "revised_cost_is_present",
+      "revised_date_is_present",
+      "physical_progress_is_present",
+      "physical_progress_supported",
+      "start_date_is_present",
+      "start_date_supported",
+      "exp_delta_1m_is_supported",
+      "exp_delta_3m_is_supported",
+      "progress_delta_3m_is_supported"
+    ],
+    "prohibited_leakage_fields": [
+      "actual_completion_date",
+      "baseline_progress",
+      "completed_cumulative_expenditure",
+      "completed_revised_cost",
+      "completion_report_month",
+      "cost_diff",
+      "cost_revision_type",
+      "delta_physical_progress_3m",
+      "eventually_completed",
+      "extraction_method",
+      "future_progress_t3",
+      "legacy_ocms_code",
+      "pmgid",
+      "progress_stagnation_subtype",
+      "project_code",
+      "project_name",
+      "source_file",
+      "source_page",
+      "source_pages",
+      "source_row_number",
+      "source_serial_number",
+      "target_effective_cost_esc_3m",
+      "target_event_month",
+      "target_event_revised_cost",
+      "target_extension_3m",
+      "target_progress_stagnation_3m",
+      "target_window_end_month"
+    ]
+  },
+  "walk_forward_evaluation": {
+    "total_accepted_folds": 11,
+    "legacy_folds": 6,
+    "modern_folds": 5,
+    "accepted_folds_audit": [
+      {
+        "fold_id": "LEGACY_2024_10",
+        "regime": "LEGACY",
+        "evaluation_origin": "2024-10",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-06",
+        "max_training_label_window_end": "2024-09",
+        "training_rows": 1555,
+        "training_positives": 535,
+        "training_prevalence": 0.344051,
+        "evaluation_rows": 1422,
+        "evaluation_positives": 425,
+        "evaluation_prevalence": 0.298875,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "LEGACY_2024_11",
+        "regime": "LEGACY",
+        "evaluation_origin": "2024-11",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-07",
+        "max_training_label_window_end": "2024-10",
+        "training_rows": 3049,
+        "training_positives": 1034,
+        "training_prevalence": 0.339128,
+        "evaluation_rows": 1406,
+        "evaluation_positives": 404,
+        "evaluation_prevalence": 0.28734,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "LEGACY_2024_12",
+        "regime": "LEGACY",
+        "evaluation_origin": "2024-12",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-08",
+        "max_training_label_window_end": "2024-11",
+        "training_rows": 4536,
+        "training_positives": 1541,
+        "training_prevalence": 0.339727,
+        "evaluation_rows": 1399,
+        "evaluation_positives": 391,
+        "evaluation_prevalence": 0.279485,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "LEGACY_2025_01",
+        "regime": "LEGACY",
+        "evaluation_origin": "2025-01",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-09",
+        "max_training_label_window_end": "2024-12",
+        "training_rows": 6092,
+        "training_positives": 2083,
+        "training_prevalence": 0.341924,
+        "evaluation_rows": 1360,
+        "evaluation_positives": 366,
+        "evaluation_prevalence": 0.269118,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "LEGACY_2025_02",
+        "regime": "LEGACY",
+        "evaluation_origin": "2025-02",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-10",
+        "max_training_label_window_end": "2025-01",
+        "training_rows": 7514,
+        "training_positives": 2508,
+        "training_prevalence": 0.333777,
+        "evaluation_rows": 1343,
+        "evaluation_positives": 327,
+        "evaluation_prevalence": 0.243485,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "LEGACY_2025_03",
+        "regime": "LEGACY",
+        "evaluation_origin": "2025-03",
+        "training_month_min": "2024-06",
+        "training_month_max": "2024-11",
+        "max_training_label_window_end": "2025-02",
+        "training_rows": 8920,
+        "training_positives": 2912,
+        "training_prevalence": 0.326457,
+        "evaluation_rows": 1299,
+        "evaluation_positives": 339,
+        "evaluation_prevalence": 0.26097,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "MODERN_2025_12",
+        "regime": "MODERN",
+        "evaluation_origin": "2025-12",
+        "training_month_min": "2025-07",
+        "training_month_max": "2025-08",
+        "max_training_label_window_end": "2025-11",
+        "training_rows": 1443,
+        "training_positives": 587,
+        "training_prevalence": 0.406791,
+        "evaluation_rows": 1316,
+        "evaluation_positives": 169,
+        "evaluation_prevalence": 0.128419,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "MODERN_2026_01",
+        "regime": "MODERN",
+        "evaluation_origin": "2026-01",
+        "training_month_min": "2025-07",
+        "training_month_max": "2025-09",
+        "max_training_label_window_end": "2025-12",
+        "training_rows": 2174,
+        "training_positives": 875,
+        "training_prevalence": 0.402484,
+        "evaluation_rows": 1578,
+        "evaluation_positives": 204,
+        "evaluation_prevalence": 0.129278,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "MODERN_2026_02",
+        "regime": "MODERN",
+        "evaluation_origin": "2026-02",
+        "training_month_min": "2025-07",
+        "training_month_max": "2025-10",
+        "max_training_label_window_end": "2026-01",
+        "training_rows": 2932,
+        "training_positives": 1152,
+        "training_prevalence": 0.392906,
+        "evaluation_rows": 1796,
+        "evaluation_positives": 215,
+        "evaluation_prevalence": 0.11971,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "MODERN_2026_03",
+        "regime": "MODERN",
+        "evaluation_origin": "2026-03",
+        "training_month_min": "2025-07",
+        "training_month_max": "2025-11",
+        "max_training_label_window_end": "2026-02",
+        "training_rows": 3701,
+        "training_positives": 1439,
+        "training_prevalence": 0.388814,
+        "evaluation_rows": 1692,
+        "evaluation_positives": 480,
+        "evaluation_prevalence": 0.283688,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      },
+      {
+        "fold_id": "MODERN_2026_04",
+        "regime": "MODERN",
+        "evaluation_origin": "2026-04",
+        "training_month_min": "2025-07",
+        "training_month_max": "2025-12",
+        "max_training_label_window_end": "2026-03",
+        "training_rows": 5017,
+        "training_positives": 1608,
+        "training_prevalence": 0.32051,
+        "evaluation_rows": 1640,
+        "evaluation_positives": 502,
+        "evaluation_prevalence": 0.306098,
+        "embargo_formula": "T_train + 3 < E",
+        "embargo_valid": true,
+        "status": "ACCEPTED"
+      }
+    ],
+    "candidate_origins_audit": [
+      {
+        "regime": "LEGACY",
+        "month": "2023-01",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-02",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-03",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-04",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-05",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-06",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-07",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-08",
+        "accepted": false,
+        "reason": "LAYOUT_PROGRESS_UNSUPPORTED_SEGMENT_1"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-09",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-10",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2023-11",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-01",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-02",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-03",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_SEGMENT_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-06",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_TRAINING_HISTORY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-07",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_TRAINING_HISTORY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-08",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_TRAINING_HISTORY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-09",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_TRAINING_HISTORY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-10",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-11",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2024-12",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-01",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-02",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-03",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-04",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_REGIME_REDESIGN_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-05",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_REGIME_REDESIGN_BOUNDARY"
+      },
+      {
+        "regime": "LEGACY",
+        "month": "2025-06",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_CROSSES_REGIME_REDESIGN_BOUNDARY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-07",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_MODERN_TRAINING_HISTORY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-08",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_MODERN_TRAINING_HISTORY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-09",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_MODERN_TRAINING_HISTORY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-10",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_MODERN_TRAINING_HISTORY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-11",
+        "accepted": false,
+        "reason": "WARMUP_INSUFFICIENT_MODERN_TRAINING_HISTORY"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2025-12",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-01",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-02",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-03",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-04",
+        "accepted": true,
+        "reason": "ACCEPTED_FOLD"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-05",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_EXCEEDS_PANEL_END"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-06",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_EXCEEDS_PANEL_END"
+      },
+      {
+        "regime": "MODERN",
+        "month": "2026-07",
+        "accepted": false,
+        "reason": "RIGHT_CENSORED_LABEL_EXCEEDS_PANEL_END"
+      }
+    ]
+  },
+  "random_seeds": {
+    "model_training": 20260910,
+    "bootstrap": 20260910
+  },
+  "environment": {
+    "python_version": "3.13.5",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "artifact_inventory": {
+    "manifest": "artifacts\\ml\\implementation_risk_model_v1\\manifest.json",
+    "candidate_summary": "artifacts\\ml\\implementation_risk_model_v1\\candidate_summary.csv",
+    "fold_metrics": "artifacts\\ml\\implementation_risk_model_v1\\fold_metrics.csv",
+    "regime_metrics": "artifacts\\ml\\implementation_risk_model_v1\\regime_metrics.csv",
+    "calibration_metrics": "artifacts\\ml\\implementation_risk_model_v1\\calibration_metrics.csv",
+    "calibration_bins": "artifacts\\ml\\implementation_risk_model_v1\\calibration_bins.csv",
+    "threshold_research": "artifacts\\ml\\implementation_risk_model_v1\\threshold_research.csv",
+    "feature_importance": "artifacts\\ml\\implementation_risk_model_v1\\feature_importance.csv",
+    "explainability_summary": "artifacts\\ml\\implementation_risk_model_v1\\explainability_summary.csv",
+    "robustness_metrics": "artifacts\\ml\\implementation_risk_model_v1\\robustness_metrics.csv",
+    "candidate_recommendation": "artifacts\\ml\\implementation_risk_model_v1\\candidate_recommendation.json"
+  }
+}
