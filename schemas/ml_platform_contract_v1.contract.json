@@ -1,0 +1,391 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_name": "ml_platform_contract_v1",
+  "contract_version": "1.0.0",
+  "contract_id": "iris_ml_platform_contract_v1",
+  "description": "Authoritative frozen schema and integration contract between ML and Platform/Backend for IRIS.",
+  "generation_policy": "deterministic_platform_contract_derivation",
+  "governance_states": [
+    "LOCKED_PRODUCTION",
+    "VIABLE_WITH_LIMITATIONS",
+    "NOT_READY_FOR_PRODUCTION"
+  ],
+  "production_availability_states": [
+    "AVAILABLE",
+    "NOT_AVAILABLE",
+    "EVALUATION_ONLY",
+    "INELIGIBLE"
+  ],
+  "type": "object",
+  "required": [
+    "$schema",
+    "contract_name",
+    "contract_version",
+    "contract_id",
+    "description",
+    "generation_policy",
+    "registry_reference",
+    "domains",
+    "unified_profile",
+    "input_contracts",
+    "output_contracts",
+    "governance_policy",
+    "path_masking_policy"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "contract_name": { "type": "string", "const": "ml_platform_contract_v1" },
+    "contract_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "contract_id": { "type": "string", "const": "iris_ml_platform_contract_v1" },
+    "description": { "type": "string" },
+    "generation_policy": { "type": "string" },
+    "registry_reference": {
+      "type": "object",
+      "required": ["registry_id", "registry_version", "registry_path", "registry_sha256"],
+      "properties": {
+        "registry_id": { "type": "string", "const": "iris_ml_model_registry_v1" },
+        "registry_version": { "type": "string" },
+        "registry_path": { "type": "string" },
+        "registry_sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" }
+      }
+    },
+    "domains": {
+      "type": "object",
+      "required": ["schedule_3m", "cost_overrun", "implementation_risk"],
+      "properties": {
+        "schedule_3m": { "$ref": "#/$defs/DomainContract" },
+        "cost_overrun": { "$ref": "#/$defs/DomainContract" },
+        "implementation_risk": { "$ref": "#/$defs/DomainContract" }
+      },
+      "additionalProperties": false
+    },
+    "unified_profile": { "$ref": "#/$defs/UnifiedProfileContract" },
+    "input_contracts": {
+      "type": "object",
+      "required": [
+        "architecture",
+        "platform_visible_inputs",
+        "feature_engineering_boundary",
+        "prohibited_leakage_fields"
+      ],
+      "properties": {
+        "architecture": { "type": "string" },
+        "platform_visible_inputs": {
+          "type": "object",
+          "required": ["required_fields", "optional_fields"],
+          "properties": {
+            "required_fields": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "optional_fields": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "feature_engineering_boundary": { "type": "string" },
+        "prohibited_leakage_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "output_contracts": {
+      "type": "object",
+      "required": [
+        "prediction_response_schema",
+        "unified_risk_response_schema",
+        "unified_profile_response_schema"
+      ],
+      "properties": {
+        "prediction_response_schema": { "type": "object" },
+        "unified_risk_response_schema": { "type": "object" },
+        "unified_profile_response_schema": { "type": "object" }
+      }
+    },
+    "governance_policy": {
+      "type": "object",
+      "required": [
+        "fail_closed_rules",
+        "unavailability_rules",
+        "ineligibility_rules",
+        "non_causal_explanation_rule",
+        "aggregation_prohibition_rule"
+      ],
+      "properties": {
+        "fail_closed_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unavailability_rules": { "type": "string" },
+        "ineligibility_rules": { "type": "string" },
+        "non_causal_explanation_rule": { "type": "string" },
+        "aggregation_prohibition_rule": { "type": "string" }
+      }
+    },
+    "path_masking_policy": {
+      "type": "object",
+      "required": ["mask_internal_paths", "replacement_pattern", "exposed_artifact_formats"],
+      "properties": {
+        "mask_internal_paths": { "type": "boolean", "const": true },
+        "replacement_pattern": { "type": "string" },
+        "exposed_artifact_formats": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "DomainContract": {
+      "type": "object",
+      "required": [
+        "domain_id",
+        "domain_name",
+        "target",
+        "horizon_months",
+        "governance_status",
+        "production_availability",
+        "operational_decision_threshold",
+        "governance_rationale",
+        "models"
+      ],
+      "properties": {
+        "domain_id": { "type": "string" },
+        "domain_name": { "type": "string" },
+        "target": { "type": "string" },
+        "horizon_months": { "type": "integer", "enum": [3] },
+        "governance_status": {
+          "type": "string",
+          "enum": [
+            "LOCKED_PRODUCTION",
+            "VIABLE_WITH_LIMITATIONS",
+            "NOT_READY_FOR_PRODUCTION"
+          ]
+        },
+        "production_availability": {
+          "type": "string",
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "EVALUATION_ONLY",
+            "INELIGIBLE"
+          ]
+        },
+        "operational_decision_threshold": {
+          "type": ["number", "null"]
+        },
+        "governance_rationale": { "type": "string" },
+        "serving_behavior": { "type": "string" },
+        "safety_rule": { "type": "string" },
+        "models": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ModelPredictionContract"
+          }
+        }
+      }
+    },
+    "ModelPredictionContract": {
+      "type": "object",
+      "required": [
+        "model_id",
+        "model_name",
+        "model_version",
+        "model_family",
+        "domain",
+        "regime",
+        "candidate_type",
+        "target",
+        "horizon_months",
+        "governance_status",
+        "production_availability",
+        "operational_decision_threshold",
+        "calibration",
+        "explanation",
+        "feature_contract",
+        "validation",
+        "limitations"
+      ],
+      "properties": {
+        "model_id": { "type": "string" },
+        "model_name": { "type": "string" },
+        "model_version": { "type": "string" },
+        "model_family": { "type": "string" },
+        "domain": { "type": "string" },
+        "regime": {
+          "type": "string",
+          "enum": ["LEGACY", "MODERN", "CROSS_REGIME", "NONE"]
+        },
+        "candidate_type": {
+          "type": "string",
+          "enum": ["production", "baseline", "challenger"]
+        },
+        "target": { "type": "string" },
+        "target_definition": {
+          "type": ["object", "string"]
+        },
+        "horizon_months": { "type": "integer", "enum": [3] },
+        "governance_status": {
+          "type": "string",
+          "enum": [
+            "LOCKED_PRODUCTION",
+            "VIABLE_WITH_LIMITATIONS",
+            "NOT_READY_FOR_PRODUCTION"
+          ]
+        },
+        "production_availability": {
+          "type": "string",
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "EVALUATION_ONLY",
+            "INELIGIBLE"
+          ]
+        },
+        "operational_decision_threshold": {
+          "type": ["number", "null"]
+        },
+        "artifact": {
+          "type": ["object", "null"],
+          "properties": {
+            "path": { "type": "string" },
+            "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+            "format": { "type": "string" },
+            "size_bytes": { "type": "integer" },
+            "version": { "type": "string" }
+          },
+          "required": ["path", "sha256", "format"]
+        },
+        "calibration": {
+          "type": "object",
+          "required": ["status", "method", "limitations"],
+          "properties": {
+            "status": { "type": "string" },
+            "method": { "type": "string" },
+            "limitations": { "type": "string" }
+          }
+        },
+        "explanation": {
+          "type": "object",
+          "required": [
+            "available",
+            "method",
+            "contribution_space",
+            "non_causal",
+            "disclaimer",
+            "limitations"
+          ],
+          "properties": {
+            "available": { "type": "boolean" },
+            "method": { "type": ["string", "null"] },
+            "contribution_space": { "type": ["string", "null"] },
+            "non_causal": { "type": "boolean", "const": true },
+            "disclaimer": { "type": "string" },
+            "limitations": { "type": "string" }
+          }
+        },
+        "feature_contract": {
+          "type": "object",
+          "required": [
+            "contract_reference",
+            "feature_count",
+            "ordered_names",
+            "categorical_features",
+            "leakage_exclusion_policy"
+          ],
+          "properties": {
+            "contract_reference": { "type": "string" },
+            "feature_count": { "type": "integer", "minimum": 1 },
+            "ordered_names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "categorical_features": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "leakage_exclusion_policy": { "type": "string" }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "required": ["methodology", "embargo_policy", "performance_summary"],
+          "properties": {
+            "methodology": { "type": "string" },
+            "embargo_policy": { "type": "string" },
+            "performance_summary": {
+              "type": ["object", "null"]
+            }
+          }
+        },
+        "limitations": {
+          "type": "object",
+          "required": [
+            "general_limitations",
+            "eligibility_limitations",
+            "regime_limitations",
+            "telemetry_limitations",
+            "governance_limitations"
+          ],
+          "properties": {
+            "general_limitations": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "eligibility_limitations": { "type": "string" },
+            "regime_limitations": { "type": "string" },
+            "telemetry_limitations": { "type": "string" },
+            "governance_limitations": { "type": "string" }
+          }
+        }
+      }
+    },
+    "UnifiedProfileContract": {
+      "type": "object",
+      "required": [
+        "profile_version",
+        "policy_version",
+        "domain_list",
+        "aggregation_prohibition_rule",
+        "overall_statuses",
+        "coverage_statuses",
+        "priority_levels",
+        "attention_levels",
+        "recommendation_codes",
+        "profile_schema"
+      ],
+      "properties": {
+        "profile_version": { "type": "string" },
+        "policy_version": { "type": "string" },
+        "domain_list": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "aggregation_prohibition_rule": { "type": "string" },
+        "overall_statuses": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "coverage_statuses": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "priority_levels": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "attention_levels": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "recommendation_codes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "profile_schema": { "type": "object" }
+      }
+    }
+  }
+}
